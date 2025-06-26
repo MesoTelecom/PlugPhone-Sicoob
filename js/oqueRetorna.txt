@@ -1,0 +1,609 @@
+{
+  event: 'FullyBooted',
+  privilege: 'system,all',
+  status: 'Fully Booted'
+}
+{
+  event: 'Newchannel',
+  privilege: 'call,all',
+  channel: 'SIP/205-000023bd',
+  channelstate: '0',
+  channelstatedesc: 'Down',
+  calleridnum: '205',
+  calleridname: 'Lucas Teste',
+  accountcode: '',
+  exten: '166744',
+  context: 'from-internal',
+  uniqueid: '1671547792.14696'
+}
+{
+  event: 'ChannelUpdate',
+  privilege: 'system,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  channeltype: 'SIP',
+  sipcallid: '10b68ed3f3ba40a3a170f4247964f1f0',
+  sipfullcontact: 'sip:205@187.111.23.30:62352;ob'
+}
+{
+  event: 'Newstate',
+  privilege: 'call,all',
+  channel: 'SIP/205-000023bd',
+  channelstate: '4',
+  channelstatedesc: 'Ring',
+  calleridnum: '205',
+  calleridname: 'Lucas Teste',
+  connectedlinenum: '',
+  connectedlinename: '',
+  uniqueid: '1671547792.14696'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '308',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'static',
+  penalty: '0',
+  callstaken: '12',
+  lastcall: '1671473361',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'ExtensionStatus',
+  privilege: 'call,all',
+  exten: '205',
+  context: 'ext-local',
+  hint: 'SIP/205,CustomPresence:205',
+  status: '1'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '310',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'static',
+  penalty: '0',
+  callstaken: '12',
+  lastcall: '1671473361',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '0',
+  lastcall: '0',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-000023bd',
+  context: 'from-internal',
+  extension: '166744',
+  priority: '1',
+  application: 'Goto',
+  appdata: 'cpf,s,1',
+  uniqueid: '1671547792.14696'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-000023bd',
+  context: 'cpf',
+  extension: 's',
+  priority: '1',
+  application: 'NoOp',
+  appdata: 'Ligacao entrou no digitacpf',
+  uniqueid: '1671547792.14696'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-000023bd',
+  context: 'cpf',
+  extension: 's',
+  priority: '2',
+  application: 'Answer',
+  appdata: '',
+  uniqueid: '1671547792.14696'
+}
+{
+  event: 'Newstate',
+  privilege: 'call,all',
+  channel: 'SIP/205-000023bd',
+  channelstate: '6',
+  channelstatedesc: 'Up',
+  calleridnum: '205',
+  calleridname: 'Lucas Teste',
+  connectedlinenum: '',
+  connectedlinename: '',
+  uniqueid: '1671547792.14696'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '308',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'static',
+  penalty: '0',
+  callstaken: '12',
+  lastcall: '1671473361',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '310',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'static',
+  penalty: '0',
+  callstaken: '12',
+  lastcall: '1671473361',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '0',
+  lastcall: '0',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '308',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'static',
+  penalty: '0',
+  callstaken: '12',
+  lastcall: '1671473361',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '310',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'static',
+  penalty: '0',
+  callstaken: '12',
+  lastcall: '1671473361',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '0',
+  lastcall: '0',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-000023bd',
+  context: 'cpf',
+  extension: 's',
+  priority: '3',
+  application: 'Playback',
+  appdata: '8',
+  uniqueid: '1671547792.14696'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-000023bd',
+  context: 'cpf',
+  extension: 's',
+  priority: '4',
+  application: 'WaitExten',
+  appdata: '10',
+  uniqueid: '1671547792.14696'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '1',
+  direction: 'Received',
+  begin: 'Yes',
+  end: 'No'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '1',
+  direction: 'Received',
+  begin: 'No',
+  end: 'Yes'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '6',
+  direction: 'Received',
+  begin: 'Yes',
+  end: 'No'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '6',
+  direction: 'Received',
+  begin: 'No',
+  end: 'Yes'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '6',
+  direction: 'Received',
+  begin: 'Yes',
+  end: 'No'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '6',
+  direction: 'Received',
+  begin: 'No',
+  end: 'Yes'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '7',
+  direction: 'Received',
+  begin: 'Yes',
+  end: 'No'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '7',
+  direction: 'Received',
+  begin: 'No',
+  end: 'Yes'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '4',
+  direction: 'Received',
+  begin: 'Yes',
+  end: 'No'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '4',
+  direction: 'Received',
+  begin: 'No',
+  end: 'Yes'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '4',
+  direction: 'Received',
+  begin: 'Yes',
+  end: 'No'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '4',
+  direction: 'Received',
+  begin: 'No',
+  end: 'Yes'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '6',
+  direction: 'Received',
+  begin: 'Yes',
+  end: 'No'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '6',
+  direction: 'Received',
+  begin: 'No',
+  end: 'Yes'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '2',
+  direction: 'Received',
+  begin: 'Yes',
+  end: 'No'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '2',
+  direction: 'Received',
+  begin: 'No',
+  end: 'Yes'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '6',
+  direction: 'Received',
+  begin: 'Yes',
+  end: 'No'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '6',
+  direction: 'Received',
+  begin: 'No',
+  end: 'Yes'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '6',
+  direction: 'Received',
+  begin: 'Yes',
+  end: 'No'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '6',
+  direction: 'Received',
+  begin: 'No',
+  end: 'Yes'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '7',
+  direction: 'Received',
+  begin: 'Yes',
+  end: 'No'
+}
+{
+  event: 'DTMF',
+  privilege: 'dtmf,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  digit: '7',
+  direction: 'Received',
+  begin: 'No',
+  end: 'Yes'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-000023bd',
+  context: 'cpf',
+  extension: '16674462667',
+  priority: '1',
+  application: 'Set',
+  appdata: 'CPF=16674462667',
+  uniqueid: '1671547792.14696'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-000023bd',
+  context: 'cpf',
+  extension: '16674462667',
+  priority: '2',
+  application: 'NoOp',
+  appdata: 'este é o cpf: 16674462667',
+  uniqueid: '1671547792.14696'
+}
+{
+  event: 'SoftHangupRequest',
+  privilege: 'call,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  cause: '16'
+}
+{
+  event: 'Hangup',
+  privilege: 'call,all',
+  channel: 'SIP/205-000023bd',
+  uniqueid: '1671547792.14696',
+  calleridnum: '205',
+  calleridname: 'Lucas Teste',
+  connectedlinenum: '<unknown>',
+  connectedlinename: '<unknown>',
+  accountcode: '',
+  cause: '0',
+  'cause-txt': 'Unknown'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '308',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'static',
+  penalty: '0',
+  callstaken: '12',
+  lastcall: '1671473361',
+  incall: '0',
+  status: '1',
+  paused: '0'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '310',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'static',
+  penalty: '0',
+  callstaken: '12',
+  lastcall: '1671473361',
+  incall: '0',
+  status: '1',
+  paused: '0'
+}
+{
+  event: 'ExtensionStatus',
+  privilege: 'call,all',
+  exten: '205',
+  context: 'ext-local',
+  hint: 'SIP/205,CustomPresence:205',
+  status: '0'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '0',
+  lastcall: '0',
+  incall: '0',
+  status: '1',
+  paused: '0'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '308',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'static',
+  penalty: '0',
+  callstaken: '12',
+  lastcall: '1671473361',
+  incall: '0',
+  status: '1',
+  paused: '0'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '310',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'static',
+  penalty: '0',
+  callstaken: '12',
+  lastcall: '1671473361',
+  incall: '0',
+  status: '1',
+  paused: '0'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '0',
+  lastcall: '0',
+  incall: '0',
+  status: '1',
+  paused: '0'
+}

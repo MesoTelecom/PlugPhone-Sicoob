@@ -1,0 +1,46 @@
+[30/12/2024 10:49:22] Cron job configurado para executar no dia 1 de cada mês
+[30/12/2024 10:49:22] Iniciando os processos no cron job
+[30/12/2024 10:49:22] Iniciando backup da tabela 'meso_entrar'...
+[30/12/2024 10:49:22] Erro ao realizar o backup: Command failed: mysqldump -u root -pMtes0 asteriskcdrdb meso_entrar > ./backups/backup_meso_entrar.sql
+mysqldump: Got error: 1045: "Access denied for user 'root'@'localhost' (using password: YES)" when trying to connect
+
+[30/12/2024 10:49:22] Erro durante a execução do cron job: Command failed: mysqldump -u root -pMtes0 asteriskcdrdb meso_entrar > ./backups/backup_meso_entrar.sql
+mysqldump: Got error: 1045: "Access denied for user 'root'@'localhost' (using password: YES)" when trying to connect
+
+[30/12/2024 10:50:45] Cron job configurado para executar no dia 1 de cada mês
+[30/12/2024 10:50:45] Iniciando os processos no cron job
+[30/12/2024 10:50:45] Iniciando backup da tabela 'meso_entrar'...
+[30/12/2024 10:50:45] Backup realizado com sucesso: ./backups/backup_meso_entrar.sql
+[30/12/2024 10:50:45] Erro ao copiar dados: Table 'asteriskcdrdb.meso_entrar_bkp' doesn't exist
+[30/12/2024 10:50:45] Erro durante os processos: Table 'asteriskcdrdb.meso_entrar_bkp' doesn't exist
+[30/12/2024 10:50:45] Erro durante a execução do cron job: Table 'asteriskcdrdb.meso_entrar_bkp' doesn't exist
+[30/12/2024 10:52:29] Cron job configurado para executar no dia 1 de cada mês
+[30/12/2024 10:52:29] Iniciando os processos no cron job
+[30/12/2024 10:52:29] Iniciando backup da tabela 'meu_teste'...
+[30/12/2024 10:52:29] Erro ao realizar o backup: Command failed: mysqldump -u root -pMtes0 asteriskcdrdb meu_teste > ./backups/backup_meu_teste.sql
+mysqldump: Got error: 1045: "Access denied for user 'root'@'localhost' (using password: YES)" when trying to connect
+
+[30/12/2024 10:52:29] Erro durante a execução do cron job: Command failed: mysqldump -u root -pMtes0 asteriskcdrdb meu_teste > ./backups/backup_meu_teste.sql
+mysqldump: Got error: 1045: "Access denied for user 'root'@'localhost' (using password: YES)" when trying to connect
+
+[30/12/2024 10:53:18] Cron job configurado para executar no dia 1 de cada mês
+[30/12/2024 10:53:18] Iniciando os processos no cron job
+[30/12/2024 10:53:18] Iniciando backup da tabela 'meu_teste'...
+[30/12/2024 10:53:18] Backup realizado com sucesso: ./backups/backup_meu_teste.sql
+[30/12/2024 10:53:18] Erro ao copiar dados: Unknown column 'dat' in 'where clause'
+[30/12/2024 10:53:18] Erro durante os processos: Unknown column 'dat' in 'where clause'
+[30/12/2024 10:53:18] Erro durante a execução do cron job: Unknown column 'dat' in 'where clause'
+[30/12/2024 10:54:07] Cron job configurado para executar no dia 1 de cada mês
+[30/12/2024 10:54:07] Iniciando os processos no cron job
+[30/12/2024 10:54:07] Iniciando backup da tabela 'meu_teste'...
+[30/12/2024 10:54:07] Backup realizado com sucesso: ./backups/backup_meu_teste.sql
+[30/12/2024 10:54:07] Dados copiados com sucesso!
+[30/12/2024 10:54:07] Dados deletados com sucesso!
+[30/12/2024 10:54:07] Processos concluídos com sucesso
+[30/12/2024 10:55:57] Cron job configurado para executar no dia 1 de cada mês
+[30/12/2024 10:55:57] Iniciando os processos no cron job
+[30/12/2024 10:55:57] Iniciando backup da tabela 'meu_teste'...
+[30/12/2024 10:55:57] Backup realizado com sucesso: ./backups/backup_meu_teste.sql
+[30/12/2024 10:55:58] Dados copiados com sucesso!
+[30/12/2024 10:55:58] Dados deletados com sucesso!
+[30/12/2024 10:55:58] Processos concluídos com sucesso

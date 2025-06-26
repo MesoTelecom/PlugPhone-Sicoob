@@ -1,0 +1,1225 @@
+{
+  event: 'FullyBooted',
+  privilege: 'system,all',
+  status: 'Fully Booted'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '15',
+  lastcall: '1653578326',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'Newchannel',
+  privilege: 'call,all',
+  channel: 'SIP/205-00000080',
+  channelstate: '0',
+  channelstatedesc: 'Down',
+  calleridnum: '205',
+  calleridname: 'Lucas Agente',
+  accountcode: '',
+  exten: '201',
+  context: 'from-internal',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'ChannelUpdate',
+  privilege: 'system,all',
+  channel: 'SIP/205-00000080',
+  uniqueid: '1653579630.136',
+  channeltype: 'SIP',
+  sipcallid: 'a48eeb3cbc754e7a8afd1d3397b5fb45',
+  sipfullcontact: 'sip:205@10.109.2.101:50151;ob'
+}
+{
+  event: 'Newstate',
+  privilege: 'call,all',
+  channel: 'SIP/205-00000080',
+  channelstate: '4',
+  channelstatedesc: 'Ring',
+  calleridnum: '205',
+  calleridname: 'Lucas Agente',
+  connectedlinenum: '',
+  connectedlinename: '',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'ExtensionStatus',
+  privilege: 'call,all',
+  exten: '205',
+  context: 'ext-local',
+  hint: 'SIP/205',
+  status: '1'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '15',
+  lastcall: '1653578326',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'from-internal',
+  extension: '201',
+  priority: '1',
+  application: 'Set',
+  appdata: '__RINGTIMER=15',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'from-internal',
+  extension: '201',
+  priority: '2',
+  application: 'Macro',
+  appdata: 'exten-vm,novm,201,0,0,0',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-exten-vm',
+  extension: 's',
+  priority: '1',
+  application: 'Macro',
+  appdata: 'user-callerid,',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '1',
+  application: 'Set',
+  appdata: 'TOUCH_MONITOR=1653579630.136',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '2',
+  application: 'Set',
+  appdata: 'AMPUSER=205',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '3',
+  application: 'GotoIf',
+  appdata: '0?report',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '4',
+  application: 'ExecIf',
+  appdata: '1?Set(REALCALLERIDNUM=205)',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '5',
+  application: 'Set',
+  appdata: 'AMPUSER=205',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '6',
+  application: 'GotoIf',
+  appdata: '0?limit',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '7',
+  application: 'Set',
+  appdata: 'AMPUSERCIDNAME=Lucas Agente',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '8',
+  application: 'GotoIf',
+  appdata: '0?report',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '9',
+  application: 'Set',
+  appdata: 'AMPUSERCID=205',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '10',
+  application: 'Set',
+  appdata: '__DIAL_OPTIONS=WwTtr',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '11',
+  application: 'Set',
+  appdata: 'CALLERID(all)="Lucas Agente" <205>',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '12',
+  application: 'GotoIf',
+  appdata: '0?limit',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '13',
+  application: 'ExecIf',
+  appdata: '0?Set(GROUP(concurrency_limit)=205)',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '14',
+  application: 'ExecIf',
+  appdata: '0?Set(CHANNEL(language)=)',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '15',
+  application: 'GotoIf',
+  appdata: '0?continue',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '16',
+  application: 'Set',
+  appdata: '__TTL=64',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '17',
+  application: 'GotoIf',
+  appdata: '1?continue',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '28',
+  application: 'Set',
+  appdata: 'CALLERID(number)=205',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '29',
+  application: 'Set',
+  appdata: 'CALLERID(name)=Lucas Agente',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '30',
+  application: 'Set',
+  appdata: 'CDR(cnum)=205',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '31',
+  application: 'Set',
+  appdata: 'CDR(cnam)=Lucas Agente',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-exten-vm',
+  extension: 's',
+  priority: '2',
+  application: 'Set',
+  appdata: 'RingGroupMethod=none',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-exten-vm',
+  extension: 's',
+  priority: '3',
+  application: 'Set',
+  appdata: '__EXTTOCALL=201',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-exten-vm',
+  extension: 's',
+  priority: '4',
+  application: 'Set',
+  appdata: '__PICKUPMARK=201',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-exten-vm',
+  extension: 's',
+  priority: '5',
+  application: 'Set',
+  appdata: 'RT=',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-exten-vm',
+  extension: 's',
+  priority: '6',
+  application: 'Gosub',
+  appdata: 'sub-record-check,s,1(exten,201,)',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '1',
+  application: 'Set',
+  appdata: 'REC_POLICY_MODE_SAVE=',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '2',
+  application: 'GotoIf',
+  appdata: '1?check',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '7',
+  application: 'Set',
+  appdata: '__MON_FMT=wav',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '8',
+  application: 'GotoIf',
+  appdata: '1?next',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '11',
+  application: 'ExecIf',
+  appdata: '0?Return()',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '12',
+  application: 'ExecIf',
+  appdata: '0?Set(__REC_POLICY_MODE=)',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '13',
+  application: 'GotoIf',
+  appdata: '0?exten,1',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '14',
+  application: 'Set',
+  appdata: '__REC_STATUS=INITIALIZED',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '15',
+  application: 'Set',
+  appdata: 'NOW=1653579630',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '16',
+  application: 'Set',
+  appdata: '__DAY=26',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '17',
+  application: 'Set',
+  appdata: '__MONTH=05',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '18',
+  application: 'Set',
+  appdata: '__YEAR=2022',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '19',
+  application: 'Set',
+  appdata: '__TIMESTR=20220526-124030',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '20',
+  application: 'Set',
+  appdata: '__FROMEXTEN=205',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '21',
+  application: 'Set',
+  appdata: '__CALLFILENAME=exten-201-205-20220526-124030-1653579630.136',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '22',
+  application: 'Goto',
+  appdata: 'exten,1',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 'exten',
+  priority: '1',
+  application: 'GotoIf',
+  appdata: '0?callee',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 'exten',
+  priority: '2',
+  application: 'Set',
+  appdata: '__REC_POLICY_MODE=dontcare',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 'exten',
+  priority: '3',
+  application: 'GotoIf',
+  appdata: '1?caller',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 'exten',
+  priority: '10',
+  application: 'Set',
+  appdata: '__REC_POLICY_MODE=dontcare',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 'exten',
+  priority: '11',
+  application: 'GosubIf',
+  appdata: '0?record,1(exten,201,205)',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'sub-record-check',
+  extension: 'exten',
+  priority: '12',
+  application: 'Return',
+  appdata: '',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-exten-vm',
+  extension: 's',
+  priority: '7',
+  application: 'Macro',
+  appdata: 'dial,,WwTtr,201',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-dial',
+  extension: 's',
+  priority: '1',
+  application: 'GotoIf',
+  appdata: '1?dial',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-dial',
+  extension: 's',
+  priority: '3',
+  application: 'AGI',
+  appdata: 'dialparties.agi',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-dial',
+  extension: 's',
+  priority: '7',
+  application: 'Dial',
+  appdata: 'SIP/201,,WwTtr',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newchannel',
+  privilege: 'call,all',
+  channel: 'SIP/201-00000081',
+  channelstate: '0',
+  channelstatedesc: 'Down',
+  calleridnum: '201',
+  calleridname: 'teste',
+  accountcode: '',
+  exten: '',
+  context: 'from-internal',
+  uniqueid: '1653579630.137'
+}
+{
+  event: 'ChannelUpdate',
+  privilege: 'system,all',
+  channel: 'SIP/201-00000081',
+  uniqueid: '1653579630.137',
+  channeltype: 'SIP',
+  sipcallid: '7cc490720d7159cf17074e57319ecb0f@10.109.2.246:5060',
+  sipfullcontact: 'sip:201@10.109.2.101:58433;rinstance=1df74335494474c8;transport=UDP'
+}
+{
+  event: 'ChannelUpdate',
+  privilege: 'system,all',
+  channel: 'SIP/201-00000081',
+  channeltype: 'SIP',
+  sipcallid: '7cc490720d7159cf17074e57319ecb0f@10.109.2.246:5060',
+  sipfullcontact: 'sip:201@10.109.2.101:58433;rinstance=1df74335494474c8;transport=UDP',
+  peername: '201'
+}
+{
+  event: 'ExtensionStatus',
+  privilege: 'call,all',
+  exten: '201',
+  context: 'ext-local',
+  hint: 'SIP/201',
+  status: '8'
+}
+{
+  event: 'Dial',
+  privilege: 'call,all',
+  subevent: 'Begin',
+  channel: 'SIP/205-00000080',
+  destination: 'SIP/201-00000081',
+  calleridnum: '205',
+  calleridname: 'Lucas Agente',
+  connectedlinenum: '<unknown>',
+  connectedlinename: '<unknown>',
+  uniqueid: '1653579630.136',
+  destuniqueid: '1653579630.137',
+  dialstring: '201'
+}
+{
+  event: 'Newstate',
+  privilege: 'call,all',
+  channel: 'SIP/201-00000081',
+  channelstate: '5',
+  channelstatedesc: 'Ringing',
+  calleridnum: '201',
+  calleridname: 'teste',
+  connectedlinenum: '205',
+  connectedlinename: 'Lucas Agente',
+  uniqueid: '1653579630.137'
+}
+{
+  event: 'ChannelUpdate',
+  privilege: 'system,all',
+  channel: 'SIP/201-00000081',
+  channeltype: 'SIP',
+  uniqueid: '1653579630.137',
+  sipcallid: '7cc490720d7159cf17074e57319ecb0f@10.109.2.246:5060',
+  sipfullcontact: 'sip:201@10.109.2.101:58433',
+  peername: '201'
+}
+{
+  event: 'ExtensionStatus',
+  privilege: 'call,all',
+  exten: '201',
+  context: 'ext-local',
+  hint: 'SIP/201',
+  status: '1'
+}
+{
+  event: 'Newstate',
+  privilege: 'call,all',
+  channel: 'SIP/201-00000081',
+  channelstate: '6',
+  channelstatedesc: 'Up',
+  calleridnum: '201',
+  calleridname: 'teste',
+  connectedlinenum: '205',
+  connectedlinename: 'Lucas Agente',
+  uniqueid: '1653579630.137'
+}
+{
+  event: 'Newstate',
+  privilege: 'call,all',
+  channel: 'SIP/205-00000080',
+  channelstate: '6',
+  channelstatedesc: 'Up',
+  calleridnum: '205',
+  calleridname: 'Lucas Agente',
+  connectedlinenum: '201',
+  connectedlinename: 'teste',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'NewAccountCode',
+  privilege: 'call,all',
+  channel: 'SIP/201-00000081',
+  uniqueid: '1653579630.137',
+  accountcode: '',
+  oldaccountcode: ''
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '15',
+  lastcall: '1653578326',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'Bridge',
+  privilege: 'call,all',
+  bridgestate: 'Link',
+  bridgetype: 'core',
+  channel1: 'SIP/205-00000080',
+  channel2: 'SIP/201-00000081',
+  uniqueid1: '1653579630.136',
+  uniqueid2: '1653579630.137',
+  callerid1: '205',
+  callerid2: '201'
+}
+{
+  event: 'Bridge',
+  privilege: 'call,all',
+  bridgestate: 'Unlink',
+  bridgetype: 'core',
+  channel1: 'SIP/205-00000080',
+  channel2: 'SIP/201-00000081',
+  uniqueid1: '1653579630.136',
+  uniqueid2: '1653579630.137',
+  callerid1: '205',
+  callerid2: '201'
+}
+{
+  event: 'Bridge',
+  privilege: 'call,all',
+  bridgestate: 'Link',
+  bridgetype: 'core',
+  channel1: 'SIP/205-00000080',
+  channel2: 'SIP/201-00000081',
+  uniqueid1: '1653579630.136',
+  uniqueid2: '1653579630.137',
+  callerid1: '205',
+  callerid2: '201'
+}
+{
+  event: 'HangupRequest',
+  privilege: 'call,all',
+  channel: 'SIP/201-00000081',
+  uniqueid: '1653579630.137'
+}
+{
+  event: 'Bridge',
+  privilege: 'call,all',
+  bridgestate: 'Unlink',
+  bridgetype: 'core',
+  channel1: 'SIP/205-00000080',
+  channel2: 'SIP/201-00000081',
+  uniqueid1: '1653579630.136',
+  uniqueid2: '1653579630.137',
+  callerid1: '205',
+  callerid2: '201'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-dial',
+  extension: 'h',
+  priority: '1',
+  application: 'Macro',
+  appdata: 'hangupcall',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '1',
+  application: 'GotoIf',
+  appdata: '1?endmixmoncheck',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '20',
+  application: 'NoOp',
+  appdata: 'End of MIXMON check',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '21',
+  application: 'GotoIf',
+  appdata: '1?nomeetmemon',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '39',
+  application: 'NoOp',
+  appdata: 'End of MEETME check',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '40',
+  application: 'GotoIf',
+  appdata: '1?noautomon',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '45',
+  application: 'NoOp',
+  appdata: 'TOUCH_MONITOR_OUTPUT=',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '46',
+  application: 'GotoIf',
+  appdata: '1?noautomon2',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '52',
+  application: 'NoOp',
+  appdata: 'MONITOR_FILENAME=',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '53',
+  application: 'GotoIf',
+  appdata: '1?noautomon3',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '59',
+  application: 'NoOp',
+  appdata: 'MIXMONITOR_FILENAME=',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '60',
+  application: 'GotoIf',
+  appdata: '1?noautomon4',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '62',
+  application: 'NoOp',
+  appdata: 'ONETOUCH_RECFILE=',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '63',
+  application: 'NoOp',
+  appdata: 'CDR recordingfile set to: ',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '64',
+  application: 'GotoIf',
+  appdata: '1?skiprg',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '67',
+  application: 'GotoIf',
+  appdata: '1?skipblkvm',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '70',
+  application: 'GotoIf',
+  appdata: '1?theend',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '72',
+  application: 'AGI',
+  appdata: 'hangup.agi',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/205-00000080',
+  context: 'macro-hangupcall',
+  extension: 's',
+  priority: '73',
+  application: 'Hangup',
+  appdata: '',
+  uniqueid: '1653579630.136'
+}
+{
+  event: 'Hangup',
+  privilege: 'call,all',
+  channel: 'SIP/201-00000081',
+  uniqueid: '1653579630.137',
+  calleridnum: '201',
+  calleridname: 'teste',
+  connectedlinenum: '205',
+  connectedlinename: 'Lucas Agente',
+  accountcode: '',
+  cause: '16',
+  'cause-txt': 'Normal Clearing'
+}
+{
+  event: 'ExtensionStatus',
+  privilege: 'call,all',
+  exten: '201',
+  context: 'ext-local',
+  hint: 'SIP/201',
+  status: '0'
+}
+{
+  event: 'Dial',
+  privilege: 'call,all',
+  subevent: 'End',
+  channel: 'SIP/205-00000080',
+  uniqueid: '1653579630.136',
+  dialstatus: 'ANSWER'
+}
+{
+  event: 'SoftHangupRequest',
+  privilege: 'call,all',
+  channel: 'SIP/205-00000080',
+  uniqueid: '1653579630.136',
+  cause: '16'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '15',
+  lastcall: '1653578326',
+  incall: '0',
+  status: '1',
+  paused: '0'
+}
+{
+  event: 'ExtensionStatus',
+  privilege: 'call,all',
+  exten: '205',
+  context: 'ext-local',
+  hint: 'SIP/205',
+  status: '0'
+}
+{
+  event: 'Hangup',
+  privilege: 'call,all',
+  channel: 'SIP/205-00000080',
+  uniqueid: '1653579630.136',
+  calleridnum: '205',
+  calleridname: 'Lucas Agente',
+  connectedlinenum: '201',
+  connectedlinename: 'teste',
+  accountcode: '',
+  cause: '16',
+  'cause-txt': 'Normal Clearing'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '15',
+  lastcall: '1653578326',
+  incall: '0',
+  status: '1',
+  paused: '0'
+}
+{
+  event: 'PeerStatus',
+  privilege: 'system,all',
+  channeltype: 'SIP',
+  peer: 'SIP/201',
+  peerstatus: 'Registered',
+  address: '10.109.2.101:58433'
+}
+{
+  event: 'PeerStatus',
+  privilege: 'system,all',
+  channeltype: 'SIP',
+  peer: 'SIP/205',
+  peerstatus: 'Registered',
+  address: '10.109.2.101:50151'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '15',
+  lastcall: '1653578326',
+  incall: '0',
+  status: '1',
+  paused: '0'
+}
+{
+  event: 'PeerStatus',
+  privilege: 'system,all',
+  channeltype: 'SIP',
+  peer: 'SIP/201',
+  peerstatus: 'Registered',
+  address: '10.109.2.101:58433'
+}
+{
+  event: 'PeerStatus',
+  privilege: 'system,all',
+  channeltype: 'SIP',
+  peer: 'SIP/201',
+  peerstatus: 'Registered',
+  address: '10.109.2.101:58433'
+}
+{
+  event: 'PeerStatus',
+  privilege: 'system,all',
+  channeltype: 'SIP',
+  peer: 'SIP/201',
+  peerstatus: 'Registered',
+  address: '10.109.2.101:58433'
+}
+{
+  event: 'PeerStatus',
+  privilege: 'system,all',
+  channeltype: 'SIP',
+  peer: 'SIP/2003',
+  peerstatus: 'Registered',
+  address: '10.109.2.101:50144'
+}

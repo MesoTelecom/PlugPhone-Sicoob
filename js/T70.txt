@@ -1,0 +1,5 @@
+{
+  event: 'FullyBooted',
+  privilege: 'system,all',
+  status: 'Fully Booted'
+}

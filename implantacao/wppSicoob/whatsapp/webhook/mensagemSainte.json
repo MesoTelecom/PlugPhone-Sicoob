@@ -1,0 +1,79 @@
+1 - Send
+
+{
+    "messaging_product": "whatsapp",
+    "contacts": [
+        {
+            "input": "31993171915",
+            "wa_id": "553193171915"
+        }
+    ],
+    "messages": [
+        {
+            "id": "wamid.HBgMNTUzMTkzMTcxOTE1FQIAERgSNUM5M0VGMThGNkFBRjc0RTI3AA=="
+        }
+    ]
+}
+
+
+2 - Download
+
+Não há retorno
+
+3 - SendImage
+
+{
+    "data": {
+        "messaging_product": "whatsapp",
+        "contacts": [
+            {
+                "input": "31993171915",
+                "wa_id": "553193171915"
+            }
+        ],
+        "messages": [
+            {
+                "id": "wamid.HBgMNTUzMTkzMTcxOTE1FQIAERgSNDdGMDk1NzczNDYwODFCMEZDAA=="
+            }
+        ]
+    }
+}
+
+
+4 - SendAudio
+
+{
+    "data": {
+        "messaging_product": "whatsapp",
+        "contacts": [
+            {
+                "input": "31989738409",
+                "wa_id": "553189738409"
+            }
+        ],
+        "messages": [
+            {
+                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAERgSODU5QTFERTM5OTY3MTU1RUNGAA=="
+            }
+        ]
+    }
+}
+5 - sendDocument
+{
+    "data": {
+        "messaging_product": "whatsapp",
+        "contacts": [
+            {
+                "input": "31989738409",
+                "wa_id": "553189738409"
+            }
+        ],
+        "messages": [
+            {
+                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAERgSODU5QTFERTM5OTY3MTU1RUNGAA=="
+            }
+        ]
+    }
+}
+
+Negocio aqui {"object":"whatsapp_business_account","entry":[{"id":"118701541326382","changes":[{"value":{"messaging_product":"whatsapp","metadata":{"display_phone_number":"551131646301","phone_number_id":"116793154851650"},"statuses":[{"id":"wamid.HBgNNTUyMTk5MjE4ODY0NBUCABEYEjlGQzE0ODRFMjc3M0E3Mzc5RAA=","status":"sent","timestamp":"1743534085","recipient_id":"5521992188644","conversation":{"id":"78d95420000762878ade6a1b3a882a28","expiration_timestamp":"1743620460","origin":{"type":"marketing"}},"pricing":{"billable":true,"pricing_model":"CBP","category":"marketing"}}]},"field":"messages"}]}]}

@@ -1,0 +1,1319 @@
+{
+  event: 'FullyBooted',
+  privilege: 'system,all',
+  status: 'Fully Booted'
+}
+{
+  event: 'Newchannel',
+  privilege: 'call,all',
+  channel: 'SIP/2003-00000128',
+  channelstate: '0',
+  channelstatedesc: 'Down',
+  calleridnum: '2003',
+  calleridname: 'Marcelo Lomonaco',
+  accountcode: '',
+  exten: '307',
+  context: 'from-internal',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'ExtensionStatus',
+  privilege: 'call,all',
+  exten: '2003',
+  context: 'ext-local',
+  hint: 'SIP/2003,CustomPresence:2003',
+  status: '1'
+}
+{
+  event: 'ChannelUpdate',
+  privilege: 'system,all',
+  channel: 'SIP/2003-00000128',
+  uniqueid: '1653674099.307',
+  channeltype: 'SIP',
+  sipcallid: 'bf7b6e7e2c85487aaf4bc950340ab8ac',
+  sipfullcontact: 'sip:2003@10.109.2.101:52652;ob'
+}
+{
+  event: 'Newstate',
+  privilege: 'call,all',
+  channel: 'SIP/2003-00000128',
+  channelstate: '4',
+  channelstatedesc: 'Ring',
+  calleridnum: '2003',
+  calleridname: 'Marcelo Lomonaco',
+  connectedlinenum: '',
+  connectedlinename: '',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '1',
+  application: 'Macro',
+  appdata: 'user-callerid,',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '1',
+  application: 'Set',
+  appdata: 'TOUCH_MONITOR=1653674099.307',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '2',
+  application: 'Set',
+  appdata: 'AMPUSER=2003',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '3',
+  application: 'GotoIf',
+  appdata: '0?report',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '4',
+  application: 'ExecIf',
+  appdata: '1?Set(REALCALLERIDNUM=2003)',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '5',
+  application: 'Set',
+  appdata: 'AMPUSER=2003',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '6',
+  application: 'GotoIf',
+  appdata: '0?limit',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '7',
+  application: 'Set',
+  appdata: 'AMPUSERCIDNAME=Marcelo Lomonaco',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '8',
+  application: 'GotoIf',
+  appdata: '0?report',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '9',
+  application: 'Set',
+  appdata: 'AMPUSERCID=2003',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '10',
+  application: 'Set',
+  appdata: '__DIAL_OPTIONS=tr',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '11',
+  application: 'Set',
+  appdata: 'CALLERID(all)="Marcelo Lomonaco" <2003>',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '12',
+  application: 'GotoIf',
+  appdata: '0?limit',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '13',
+  application: 'ExecIf',
+  appdata: '0?Set(GROUP(concurrency_limit)=2003)',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '14',
+  application: 'ExecIf',
+  appdata: '0?Set(CHANNEL(language)=)',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '15',
+  application: 'GotoIf',
+  appdata: '0?continue',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '16',
+  application: 'Set',
+  appdata: '__TTL=64',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '17',
+  application: 'GotoIf',
+  appdata: '1?continue',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '28',
+  application: 'Set',
+  appdata: 'CALLERID(number)=2003',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '29',
+  application: 'Set',
+  appdata: 'CALLERID(name)=Marcelo Lomonaco',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '30',
+  application: 'Set',
+  appdata: 'CDR(cnum)=2003',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '31',
+  application: 'Set',
+  appdata: 'CDR(cnam)=Marcelo Lomonaco',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-user-callerid',
+  extension: 's',
+  priority: '32',
+  application: 'Set',
+  appdata: 'CHANNEL(language)=pt_BR',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '2',
+  application: 'Answer',
+  appdata: '',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newstate',
+  privilege: 'call,all',
+  channel: 'SIP/2003-00000128',
+  channelstate: '6',
+  channelstatedesc: 'Up',
+  calleridnum: '2003',
+  calleridname: 'Marcelo Lomonaco',
+  connectedlinenum: '',
+  connectedlinename: '',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '3',
+  application: 'Macro',
+  appdata: 'blkvm-set,reset',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-blkvm-set',
+  extension: 's',
+  priority: '1',
+  application: 'ExecIf',
+  appdata: '1?Set(__BLKVM_CHANNEL=SIP/2003-00000128)',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-blkvm-set',
+  extension: 's',
+  priority: '2',
+  application: 'Set',
+  appdata: 'SHARED(BLKVM,SIP/2003-00000128)=TRUE',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-blkvm-set',
+  extension: 's',
+  priority: '3',
+  application: 'Set',
+  appdata: 'GOSUB_RETVAL=TRUE',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'macro-blkvm-set',
+  extension: 's',
+  priority: '4',
+  application: 'MacroExit',
+  appdata: '',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '4',
+  application: 'ExecIf',
+  appdata: '1?Set(_DIAL_OPTIONS=trM(auto-blkvm))',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '5',
+  application: 'Set',
+  appdata: '__NODEST=307',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '6',
+  application: 'Set',
+  appdata: 'QCIDPP=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '7',
+  application: 'Set',
+  appdata: 'VQ_CIDPP=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '8',
+  application: 'ExecIf',
+  appdata: '0?Macro(prepend-cid,)',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '9',
+  application: 'Set',
+  appdata: 'QAINFO=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '10',
+  application: 'Set',
+  appdata: 'VQ_AINFO=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '11',
+  application: 'ExecIf',
+  appdata: '0?Set(__ALERT_INFO=)',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '12',
+  application: 'Set',
+  appdata: 'QJOINMSG=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '13',
+  application: 'Set',
+  appdata: 'VQ_JOINMSG=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '14',
+  application: 'Set',
+  appdata: 'QMOH=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '15',
+  application: 'Set',
+  appdata: 'VQ_MOH=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '16',
+  application: 'ExecIf',
+  appdata: '0?Set(__MOHCLASS=)',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '17',
+  application: 'ExecIf',
+  appdata: '0?Set(CHANNEL(musicclass)=)',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '18',
+  application: 'Set',
+  appdata: 'QRETRY=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '19',
+  application: 'Set',
+  appdata: 'VQ_RETRY=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '20',
+  application: 'Set',
+  appdata: 'QOPTIONS=t',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '21',
+  application: 'Set',
+  appdata: 'VQ_OPTIONS=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '22',
+  application: 'Set',
+  appdata: 'QGOSUB=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '23',
+  application: 'Set',
+  appdata: 'VQ_GOSUB=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '24',
+  application: 'Set',
+  appdata: 'QAGI=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '25',
+  application: 'Set',
+  appdata: 'VQ_AGI=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '26',
+  application: 'Set',
+  appdata: 'QRULE=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '27',
+  application: 'Set',
+  appdata: 'VQ_RULE=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '28',
+  application: 'Set',
+  appdata: 'QPOSITION=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '29',
+  application: 'Set',
+  appdata: 'VQ_POSITION=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '30',
+  application: 'Gosub',
+  appdata: 'sub-record-check,s,1(q,307,dontcare)',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '1',
+  application: 'Set',
+  appdata: 'REC_POLICY_MODE_SAVE=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '2',
+  application: 'GotoIf',
+  appdata: '1?check',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '7',
+  application: 'Set',
+  appdata: '__MON_FMT=wav',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '8',
+  application: 'GotoIf',
+  appdata: '1?next',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '11',
+  application: 'ExecIf',
+  appdata: '0?Return()',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '12',
+  application: 'ExecIf',
+  appdata: '1?Set(__REC_POLICY_MODE=dontcare)',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '13',
+  application: 'GotoIf',
+  appdata: '0?q,1',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '14',
+  application: 'Set',
+  appdata: '__REC_STATUS=INITIALIZED',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '15',
+  application: 'Set',
+  appdata: 'NOW=1653674099',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '16',
+  application: 'Set',
+  appdata: '__DAY=27',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '17',
+  application: 'Set',
+  appdata: '__MONTH=05',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '18',
+  application: 'Set',
+  appdata: '__YEAR=2022',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '19',
+  application: 'Set',
+  appdata: '__TIMESTR=20220527-145459',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '20',
+  application: 'Set',
+  appdata: '__FROMEXTEN=2003',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '21',
+  application: 'Set',
+  appdata: '__CALLFILENAME=q-307-2003-20220527-145459-1653674099.307',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 's',
+  priority: '22',
+  application: 'Goto',
+  appdata: 'q,1',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 'q',
+  priority: '1',
+  application: 'GosubIf',
+  appdata: '0?recq,1(q,307,2003)',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'sub-record-check',
+  extension: 'q',
+  priority: '2',
+  application: 'Return',
+  appdata: '',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '31',
+  application: 'ExecIf',
+  appdata: '0?Playback(, )',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '32',
+  application: 'QueueLog',
+  appdata: '307,1653674099.307,NONE,DID,',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '33',
+  application: 'Set',
+  appdata: 'QAANNOUNCE=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '34',
+  application: 'Set',
+  appdata: 'VQ_AANNOUNCE=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '35',
+  application: 'Set',
+  appdata: 'QMAXWAIT=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '36',
+  application: 'Set',
+  appdata: 'VQ_MAXWAIT=',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '37',
+  application: 'Set',
+  appdata: 'QUEUENUM=307',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '38',
+  application: 'Set',
+  appdata: 'QUEUEJOINTIME=1653674099',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: '307',
+  priority: '39',
+  application: 'Queue',
+  appdata: '307,t,,,,,,,,',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Join',
+  privilege: 'call,all',
+  channel: 'SIP/2003-00000128',
+  calleridnum: '2003',
+  calleridname: 'Marcelo Lomonaco',
+  connectedlinenum: 'unknown',
+  connectedlinename: 'unknown',
+  queue: '307',
+  position: '1',
+  count: '1',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'MusicOnHold',
+  privilege: 'call,all',
+  state: 'Start',
+  channel: 'SIP/2003-00000128',
+  uniqueid: '1653674099.307',
+  class: 'default'
+}
+{
+  event: 'Newchannel',
+  privilege: 'call,all',
+  channel: 'SIP/205-00000129',
+  channelstate: '0',
+  channelstatedesc: 'Down',
+  calleridnum: '205',
+  calleridname: 'Lucas Agente',
+  accountcode: '',
+  exten: '',
+  context: 'from-internal',
+  uniqueid: '1653674099.308'
+}
+{
+  event: 'ChannelUpdate',
+  privilege: 'system,all',
+  channel: 'SIP/205-00000129',
+  uniqueid: '1653674099.308',
+  channeltype: 'SIP',
+  sipcallid: '465c89276c5c8e2f1b8ad748583b14e1@10.109.2.246:5060',
+  sipfullcontact: 'sip:205@10.109.2.101:62960;ob'
+}
+{
+  event: 'ChannelUpdate',
+  privilege: 'system,all',
+  channel: 'SIP/205-00000129',
+  channeltype: 'SIP',
+  sipcallid: '465c89276c5c8e2f1b8ad748583b14e1@10.109.2.246:5060',
+  sipfullcontact: 'sip:205@10.109.2.101:62960;ob',
+  peername: '205'
+}
+{
+  event: 'ExtensionStatus',
+  privilege: 'call,all',
+  exten: '205',
+  context: 'ext-local',
+  hint: 'SIP/205,CustomPresence:205',
+  status: '8'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '5',
+  lastcall: '1653673839',
+  incall: '0',
+  status: '6',
+  paused: '0'
+}
+{
+  event: 'AgentCalled',
+  privilege: 'agent,all',
+  queue: '307',
+  agentcalled: 'SIP/205',
+  agentname: 'SIP/205',
+  channelcalling: 'SIP/2003-00000128',
+  destinationchannel: 'SIP/205-00000129',
+  calleridnum: '2003',
+  calleridname: 'Marcelo Lomonaco',
+  connectedlinenum: 'unknown',
+  connectedlinename: 'unknown',
+  context: 'from-internal',
+  extension: '307',
+  priority: '39',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Newstate',
+  privilege: 'call,all',
+  channel: 'SIP/205-00000129',
+  channelstate: '5',
+  channelstatedesc: 'Ringing',
+  calleridnum: '205',
+  calleridname: 'Lucas Agente',
+  connectedlinenum: '2003',
+  connectedlinename: 'Marcelo Lomonaco',
+  uniqueid: '1653674099.308'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '5',
+  lastcall: '1653673839',
+  incall: '0',
+  status: '6',
+  paused: '0'
+}
+{
+  event: 'ChannelUpdate',
+  privilege: 'system,all',
+  channel: 'SIP/205-00000129',
+  channeltype: 'SIP',
+  uniqueid: '1653674099.308',
+  sipcallid: '465c89276c5c8e2f1b8ad748583b14e1@10.109.2.246:5060',
+  sipfullcontact: 'sip:205@10.109.2.101:62960;ob',
+  peername: '205'
+}
+{
+  event: 'ExtensionStatus',
+  privilege: 'call,all',
+  exten: '205',
+  context: 'ext-local',
+  hint: 'SIP/205,CustomPresence:205',
+  status: '1'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '5',
+  lastcall: '1653673839',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'Newstate',
+  privilege: 'call,all',
+  channel: 'SIP/205-00000129',
+  channelstate: '6',
+  channelstatedesc: 'Up',
+  calleridnum: '205',
+  calleridname: 'Lucas Agente',
+  connectedlinenum: '2003',
+  connectedlinename: 'Marcelo Lomonaco',
+  uniqueid: '1653674099.308'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '5',
+  lastcall: '1653673839',
+  incall: '0',
+  status: '2',
+  paused: '0'
+}
+{
+  event: 'MusicOnHold',
+  privilege: 'call,all',
+  state: 'Stop',
+  channel: 'SIP/2003-00000128',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'Leave',
+  privilege: 'call,all',
+  channel: 'SIP/2003-00000128',
+  queue: '307',
+  count: '0',
+  position: '1',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'AgentConnect',
+  privilege: 'agent,all',
+  queue: '307',
+  uniqueid: '1653674099.307',
+  channel: 'SIP/205-00000129',
+  member: 'SIP/205',
+  membername: 'SIP/205',
+  holdtime: '2',
+  bridgedchannel: '1653674099.308',
+  ringtime: '2'
+}
+{
+  event: 'NewAccountCode',
+  privilege: 'call,all',
+  channel: 'SIP/205-00000129',
+  uniqueid: '1653674099.308',
+  accountcode: '',
+  oldaccountcode: ''
+}
+{
+  event: 'Bridge',
+  privilege: 'call,all',
+  bridgestate: 'Link',
+  bridgetype: 'core',
+  channel1: 'SIP/2003-00000128',
+  channel2: 'SIP/205-00000129',
+  uniqueid1: '1653674099.307',
+  uniqueid2: '1653674099.308',
+  callerid1: '2003',
+  callerid2: '205'
+}
+{
+  event: 'HangupRequest',
+  privilege: 'call,all',
+  channel: 'SIP/205-00000129',
+  uniqueid: '1653674099.308'
+}
+{
+  event: 'Bridge',
+  privilege: 'call,all',
+  bridgestate: 'Unlink',
+  bridgetype: 'core',
+  channel1: 'SIP/2003-00000128',
+  channel2: 'SIP/205-00000129',
+  uniqueid1: '1653674099.307',
+  uniqueid2: '1653674099.308',
+  callerid1: '2003',
+  callerid2: '205'
+}
+{
+  event: 'Newexten',
+  privilege: 'dialplan,all',
+  channel: 'SIP/2003-00000128',
+  context: 'from-internal',
+  extension: 'h',
+  priority: '1',
+  application: 'Hangup',
+  appdata: '',
+  uniqueid: '1653674099.307'
+}
+{
+  event: 'AgentComplete',
+  privilege: 'agent,all',
+  queue: '307',
+  uniqueid: '1653674099.307',
+  channel: 'SIP/205-00000129',
+  member: 'SIP/205',
+  membername: 'SIP/205',
+  holdtime: '2',
+  talktime: '7',
+  reason: 'agent'
+}
+{
+  event: 'ExtensionStatus',
+  privilege: 'call,all',
+  exten: '205',
+  context: 'ext-local',
+  hint: 'SIP/205,CustomPresence:205',
+  status: '0'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '6',
+  lastcall: '1653674108',
+  incall: '0',
+  status: '1',
+  paused: '0'
+}
+{
+  event: 'Hangup',
+  privilege: 'call,all',
+  channel: 'SIP/205-00000129',
+  uniqueid: '1653674099.308',
+  calleridnum: '205',
+  calleridname: 'Lucas Agente',
+  connectedlinenum: '2003',
+  connectedlinename: 'Marcelo Lomonaco',
+  accountcode: '',
+  cause: '16',
+  'cause-txt': 'Normal Clearing'
+}
+{
+  event: 'QueueMemberStatus',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: 'SIP/205',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '6',
+  lastcall: '1653674108',
+  incall: '0',
+  status: '1',
+  paused: '0'
+}
+{
+  event: 'SoftHangupRequest',
+  privilege: 'call,all',
+  channel: 'SIP/2003-00000128',
+  uniqueid: '1653674099.307',
+  cause: '16'
+}
+{
+  event: 'ExtensionStatus',
+  privilege: 'call,all',
+  exten: '2003',
+  context: 'ext-local',
+  hint: 'SIP/2003,CustomPresence:2003',
+  status: '0'
+}
+{
+  event: 'Hangup',
+  privilege: 'call,all',
+  channel: 'SIP/2003-00000128',
+  uniqueid: '1653674099.307',
+  calleridnum: '2003',
+  calleridname: 'Marcelo Lomonaco',
+  connectedlinenum: '205',
+  connectedlinename: 'Lucas Agente',
+  accountcode: '',
+  cause: '16',
+  'cause-txt': 'Normal Clearing'
+}

@@ -1,0 +1,35 @@
+{
+  event: 'FullyBooted',
+  privilege: 'system,all',
+  status: 'Fully Booted'
+}
+{
+  event: 'QueueMemberAdded',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  stateinterface: '',
+  membership: 'dynamic',
+  penalty: '0',
+  callstaken: '0',
+  lastcall: '0',
+  status: '1',
+  paused: '1'
+}
+{
+  event: 'QueueMemberPaused',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205',
+  paused: '0',
+  reason: 'em pausa'
+}
+{
+  event: 'QueueMemberRemoved',
+  privilege: 'agent,all',
+  queue: '307',
+  location: 'SIP/205',
+  membername: 'SIP/205'
+}
