@@ -6,7 +6,7 @@
       <v-container>
         <h2>Enviar Arquivo CSV</h2>
         <v-file-input label="Selecione o arquivo" @change="onFileChange" :error-messages="fileError"></v-file-input>
-        <v-select label="Campanha" :items="dadosGrupo" v-model="grupo"></v-select>
+
         <v-text-field label="Digite o nome da campanha" name="usuario" type="text" color="#61a5e8"
           v-model="nomeCampanha" />
         <v-btn @click="uploadFile" color="primary">Enviar</v-btn>
@@ -127,7 +127,7 @@ export default {
       console.log('grupo', this.grupo)
 
       console.log('eu sou o this.dados', this.dados)
-      apiWP.get(`/criaCampanha/${this.usuario}/${this.nomeCampanha}/${this.grupo}`)
+      apiWP.get(`/criaCampanha/${this.usuario}/${this.nomeCampanha}`)
 
       this.dados.forEach((d) => {
         console.log('kyojin karate eu sou o dan', d)
@@ -170,7 +170,6 @@ export default {
         const formData = new FormData();
         formData.append('file', this.selectedFile);
         formData.append('usuario', this.usuario);
-        formData.append('grupo', this.grupo);
         formData.append('campanha', this.nomeCampanha)
         console.log('CUCHULAIN', formData)
         apiWP.post('/upload', formData, {
