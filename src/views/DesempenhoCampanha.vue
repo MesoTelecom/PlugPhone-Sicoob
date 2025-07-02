@@ -123,7 +123,6 @@ export default {
 
       console.log(buscaCampanha, campanhas)
 
-
       campanhas.forEach(element => {
         this.dadosCampanha.push({
           text: element.campanha,

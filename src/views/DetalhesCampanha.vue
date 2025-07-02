@@ -11,8 +11,6 @@
 
       <v-select label="Selecione a agencia" :items="dadosGrupo" v-model="grupo" class='filtro'></v-select>
 
-
-
       <v-btn class="botaoA" @click="exibir()">
         Consultar
       </v-btn>

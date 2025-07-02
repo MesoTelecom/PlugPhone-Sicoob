@@ -10,13 +10,14 @@
         <v-text-field label="Digite o nome da campanha" name="usuario" type="text" color="#61a5e8"
           v-model="nomeCampanha" />
         <v-btn @click="uploadFile" color="primary">Enviar</v-btn>
-        <v-btn @click="testaGrupo" color="primary">teste</v-btn>
+        <v-btn @click="importarAversariantes" color="primary" style="margin-left: 1%;">aniversáriantes do dia</v-btn>
 
-        <v-alert v-if="uploadStatus" :type="uploadStatus.type" dismissible>
-          {{ uploadStatus.message }}
-        </v-alert>
+
         <router-link to="./menurealtime" class="linkp">
           <v-btn dark class="botaoSair">voltar</v-btn>
+          <v-alert v-if="uploadStatus" :type="uploadStatus.type" dismissible>
+            {{ uploadStatus.message }}
+          </v-alert>
         </router-link>
       </v-container>
       <br><br>
@@ -160,6 +161,12 @@ export default {
         }
       }
     },
+
+    importarAversariantes() {
+      let getAniversariantes = apiWP.get(`/importaraniversariantes`)
+      console.log(getAniversariantes)
+    },
+
     uploadFile() {
       this.uploadStatus = ""
       console.log('Olha eu aquui', this.Grupo)

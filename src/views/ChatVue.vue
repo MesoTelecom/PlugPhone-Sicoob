@@ -519,7 +519,7 @@ export default {
       setor: [],
       setorSelect: "",
       filtroCargo: "",
-      apiWPurl: apiWP.defaults.baseURL,
+      apiWPurl: api.defaults.baseURL,
       openDialogRamal: false,
       agents: [],
       idAgencia: "",

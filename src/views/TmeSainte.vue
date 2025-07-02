@@ -41,7 +41,7 @@ import Footer from "../components/footer.vue";
 import moment from "moment";
 
 export default {
-    name: "HelloView",
+  name: "HelloView",
   async beforeMount() {
     this.listar();
   },
@@ -89,11 +89,11 @@ export default {
       );
     },
     listar: async function () {
-    
+
       let usuario = JSON.parse(localStorage.getItem('usu'))
       this.grupoRelatorio = usuario.grupo
-      console.log('Oi',this.grupoRelatorio)
-    
+      console.log('Oi', this.grupoRelatorio)
+
       let listarAgente = await api.get(`/realoperadorrtproximo/${this.grupoRelatorio}`)
       let listaTotalAgente = listarAgente.data.dados
       this.items = listaTotalAgente
@@ -10527,4 +10527,5 @@ div.llamadas table>tbody>tr>td {
   position: absolute;
   right: 0px;
   bottom: 0px;
-}</style>
+}
+</style>
