@@ -52,9 +52,15 @@ export default {
         url: '/detalhecampanha'
       },
       {
-        title: 'Desempenho da campanha',
+        title: 'Desempenho da Campanha',
         text: 'Relatório do atendimento da campanha',
         img: 'https://images.pexels.com/photos/8204325/pexels-photo-8204325.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+        url: '/desempenhocampanha'
+      },
+      {
+        title: 'Pesquisa de Satisfação',
+        text: 'Relatório do atendimento da campanha',
+        img: 'https://img.freepik.com/fotos-gratis/colagem-do-conceito-de-experiencia-do-cliente_23-2149367139.jpg',
         url: '/desempenhocampanha'
       }
 

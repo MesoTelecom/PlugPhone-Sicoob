@@ -1,0 +1,731 @@
+API server online and running in port 3000
+Negocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "contacts": [
+                            {
+                                "profile": {
+                                    "name": "Lucas Alves"
+                                },
+                                "wa_id": "553189738409"
+                            }
+                        ],
+                        "messages": [
+                            {
+                                "from": "553189738409",
+                                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAEhggMUFDQUExNkVEM0JDNEQ0ODkwQzdBQTM4MDdBOTQ2NTYA",
+                                "timestamp": "1708014613",
+                                "text": {
+                                    "body": "Opa boa tarde"
+                                },
+                                "type": "text"
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+Negocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "statuses": [
+                            {
+                                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAERgSMTk4NzE3MTM2OUExOUNFQjk3AA==",
+                                "status": "sent",
+                                "timestamp": "1708014646",
+                                "recipient_id": "553189738409",
+                                "conversation": {
+                                    "id": "028dc54f1d8d5b5bd8615ac6bc9b9dcb",
+                                    "expiration_timestamp": "1708101060",
+                                    "origin": {
+                                        "type": "service"
+                                    }
+                                },
+                                "pricing": {
+                                    "billable": true,
+                                    "pricing_model": "CBP",
+                                    "category": "service"
+                                }
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+Negocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "statuses": [
+                            {
+                                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAERgSMTk4NzE3MTM2OUExOUNFQjk3AA==",
+                                "status": "delivered",
+                                "timestamp": "1708014647",
+                                "recipient_id": "553189738409",
+                                "conversation": {
+                                    "id": "028dc54f1d8d5b5bd8615ac6bc9b9dcb",
+                                    "origin": {
+                                        "type": "service"
+                                    }
+                                },
+                                "pricing": {
+                                    "billable": true,
+                                    "pricing_model": "CBP",
+                                    "category": "service"
+                                }
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+Negocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "contacts": [
+                            {
+                                "profile": {
+                                    "name": "Lucas Alves"
+                                },
+                                "wa_id": "553189738409"
+                            }
+                        ],
+                        "messages": [
+                            {
+                                "from": "553189738409",
+                                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAEhggMzExQUY0QzlCQjk1NjVFQ0JDQTcxNjBBNEE3QzU2OUIA",
+                                "timestamp": "1708014686",
+                                "text": {
+                                    "body": "Eu gostaria de fazer um teste na api de vocês"
+                                },
+                                "type": "text"
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+Negocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "statuses": [
+                            {
+                                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAERgSRkI1QUY2NkEzOTMyQkY0OTZFAA==",
+                                "status": "sent",
+                                "timestamp": "1708014715",
+                                "recipient_id": "553189738409",
+                                "conversation": {
+                                    "id": "028dc54f1d8d5b5bd8615ac6bc9b9dcb",
+                                    "expiration_timestamp": "1708101060",
+                                    "origin": {
+                                        "type": "service"
+                                    }
+                                },
+                                "pricing": {
+                                    "billable": true,
+                                    "pricing_model": "CBP",
+                                    "category": "service"
+                                }
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+Negocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "statuses": [
+                            {
+                                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAERgSRkI1QUY2NkEzOTMyQkY0OTZFAA==",
+                                "status": "delivered",
+                                "timestamp": "1708014715",
+                                "recipient_id": "553189738409",
+                                "conversation": {
+                                    "id": "028dc54f1d8d5b5bd8615ac6bc9b9dcb",
+                                    "origin": {
+                                        "type": "service"
+                                    }
+                                },
+                                "pricing": {
+                                    "billable": true,
+                                    "pricing_model": "CBP",
+                                    "category": "service"
+                                }
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+Negocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "contacts": [
+                            {
+                                "profile": {
+                                    "name": "Lucas Alves"
+                                },
+                                "wa_id": "553189738409"
+                            }
+                        ],
+                        "messages": [
+                            {
+                                "from": "553189738409",
+                                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAEhggOEUxODk4RjcwN0M0OTI5RTMxMEFGQkZBQzkwQjNBOUMA",
+                                "timestamp": "1708014737",
+                                "text": {
+                                    "body": "Pir enquanto é só,  muito obrigado"
+                                },
+                                "type": "text"
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+Negocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "contacts": [
+                            {
+                                "profile": {
+                                    "name": "Lucas Alves"
+                                },
+                                "wa_id": "553189738409"
+                            }
+                        ],
+                        "messages": [
+                            {
+                                "from": "553189738409",
+                                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAEhggNTVENzZEOTk3Njk0RjQ2MjI0QTgzN0U2RThGNjdERTcA",
+                                "timestamp": "1708014763",
+                                "text": {
+                                    "body": "Ok, muito obrigado"
+                                },
+                                "type": "text"
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+Negocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "statuses": [
+                            {
+                                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAERgSNzk0RjZERTlGMzdBMTM1MTg2AA==",
+                                "status": "delivered",
+                                "timestamp": "1708014786",
+                                "recipient_id": "553189738409",
+                                "conversation": {
+                                    "id": "028dc54f1d8d5b5bd8615ac6bc9b9dcb",
+                                    "origin": {
+                                        "type": "service"
+                                    }
+                                },
+                                "pricing": {
+                                    "billable": true,
+                                    "pricing_model": "CBP",
+                                    "category": "service"
+                                }
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+Negocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "statuses": [
+                            {
+                                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAERgSNzk0RjZERTlGMzdBMTM1MTg2AA==",
+                                "status": "sent",
+                                "timestamp": "1708014786",
+                                "recipient_id": "553189738409",
+                                "conversation": {
+                                    "id": "028dc54f1d8d5b5bd8615ac6bc9b9dcb",
+                                    "expiration_timestamp": "1708101060",
+                                    "origin": {
+                                        "type": "service"
+                                    }
+                                },
+                                "pricing": {
+                                    "billable": true,
+                                    "pricing_model": "CBP",
+                                    "category": "service"
+                                }
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+Negocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "statuses": [
+                            {
+                                "id": "wamid.HBgMNTUzMTkxODEwMDQ3FQIAERgSNkNBRkYxNkM2MjkxRDg1RUE5AA==",
+                                "status": "read",
+                                "timestamp": "1708016674",
+                                "recipient_id": "553191810047"
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+Negocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "105991812605574",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "15550280022",
+                            "phone_number_id": "110096735523985"
+                        },
+                        "contacts": [
+                            {
+                                "profile": {
+                                    "name": "Lucas Alves Do Nascimento"
+                                },
+                                "wa_id": "553191810047"
+                            }
+                        ],
+                        "messages": [
+                            {
+                                "from": "553191810047",
+                                "id": "wamid.HBgMNTUzMTkxODEwMDQ3FQIAEhgWM0VCMEMzQ0FBNjc1MTNBRkRDMDkzRQA=",
+                                "timestamp": "1708018546",
+                                "text": {
+                                    "body": "Ola"
+                                },
+                                "type": "text"
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+
+{
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "statuses": [
+                            {
+                                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAERgSMzBBN0NCQzA5OEE2RDAxRDNEAA==",
+                                "status": "sent",
+                                "timestamp": "1712170867",
+                                "recipient_id": "553189738409",
+                                "conversation": {
+                                    "id": "9285f67a16cb8ca4a161fa0e9bed2e65",
+                                    "expiration_timestamp": "1712256120",
+                                    "origin": {
+                                        "type": "utility"
+                                    }
+                                },
+                                "pricing": {
+                                    "billable": true,
+                                    "pricing_model": "CBP",
+                                    "category": "utility"
+                                }
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+//---------------------------------------------------------------------------------------------------------------------------------------
+
+Negocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "contacts": [
+                            {
+                                "profile": {
+                                    "name": "Lucas Alves"
+                                },
+                                "wa_id": "553189738409"
+                            }
+                        ],
+                        "messages": [
+                            {
+                                "from": "553189738409",
+                                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAEhgSMkFEQzNGMkU3MTBEMTc1MjVDAA==",
+                                "timestamp": "1716831137",
+                                "type": "image",
+                                "image": {
+                                    "mime_type": "image/jpeg",
+                                    "sha256": "Az0emDgKpf9zpVymjweNgHwL60wtOk0tDXrSiAWliKI=",
+                                    "id": "1130422578222977"
+                                }
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+
+
+egocio aqui {
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "statuses": [
+                            {
+                                "id": "wamid.HBgMNTUzMTg5NzM4NDA5FQIAERgSRDQ5OTExQ0REQkY0N0E5QTIxAA==",
+                                "status": "failed",
+                                "timestamp": "1717425093",
+                                "recipient_id": "553189738409",
+                                "errors": [
+                                    {
+                                        "code": 131053,
+                                        "title": "Media upload error",
+                                        "message": "Media upload error",
+                                        "error_data": {
+                                            "details": "Audio file uploaded with mimetype as audio/mpeg, however on processing it is of type application/octet-stream. Please choose a different file."
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+//---------------------------------------------------
+{
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "statuses": [
+                            {
+                                "id": "wamid.HBgMNTUzMTkxODEwMDQ3FQIAERgSM0QyNUJGQTJBODkyRTBBNTI5AA==",
+                                "status": "read",
+                                "timestamp": "1741263231",
+                                "recipient_id": "553191810047"
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+//-------------------------------------------------------------------------------------------------------------
+{
+    "object": "whatsapp_business_account",
+    "entry": [
+        {
+            "id": "118701541326382",
+            "changes": [
+                {
+                    "value": {
+                        "messaging_product": "whatsapp",
+                        "metadata": {
+                            "display_phone_number": "551131646301",
+                            "phone_number_id": "116793154851650"
+                        },
+                        "statuses": [
+                            {
+                                "id": "wamid.HBgMNTUzMTkxODEwMDQ3FQIAERgSNzhBRjM5REUxQThDQkRDNDExAA==",
+                                "status": "delivered",
+                                "timestamp": "1741352826",
+                                "recipient_id": "553191810047",
+                                "conversation": {
+                                    "id": "aae92c6d3abe94e6d0443f01f196fc45",
+                                    "origin": {
+                                        "type": "marketing"
+                                    }
+                                },
+                                "pricing": {
+                                    "billable": true,
+                                    "pricing_model": "CBP",
+                                    "category": "marketing"
+                                }
+                            }
+                        ]
+                    },
+                    "field": "messages"
+                }
+            ]
+        }
+    ]
+}
+
+dados: [
+    {
+           id: 160,
+           nome: 'Matheus Avelino',
+           telefone: '553199285573',
+           setor: 'Técnico',
+           documento: '1111111111',
+           estado: 'Novo',
+           estadomsg: '',
+           ultimamsg: 'Opa',
+           countMsg: 1,
+           datahora: '2025-04-03 10: 46: 34'
+    },
+    {
+           id: 161,
+           nome: 'Matheus Silva',
+           telefone: '553193171915',
+           setor: 'Técnico',
+           documento: '1111111111',
+           estado: 'Novo',
+           estadomsg: '',
+           ultimamsg: '❤',
+           countMsg: 1,
+           datahora: '2025-04-07 16: 28: 32'
+    },
+    {
+           id: 162,
+           nome: 'Matheus',
+           telefone: '553196472282',
+           setor: 'Técnico',
+           documento: '1111111111',
+           estado: 'Novo',
+           estadomsg: '',
+           ultimamsg: 'Oi tomate',
+           countMsg: 1,
+           datahora: '2025-04-07 12: 40: 29'
+    },
+    {
+           id: 163,
+           nome: 'Lucas Alves Do Nascimento',
+           telefone: '553191810047',
+           setor: 'Técnico',
+           documento: null,
+           estado: null,
+           estadomsg: null,
+           ultimamsg: 'oi',
+           countMsg: null,
+           datahora: '2025-04-07 14: 13: 41'
+    },
+    {
+           id: 164,
+           nome: 'Lucas Alves',
+           telefone: '553189738409',
+           setor: 'Técnico',
+           documento: null,
+           estado: null,
+           estadomsg: null,
+           ultimamsg: 'teste',
+           countMsg: null,
+           datahora: '2025-04-03 16: 39: 52'
+    },
+    {
+           id: 165,
+           nome: 'Camila Passos',
+           telefone: '5528999880837',
+           setor: null,
+           documento: null,
+           estado: null,
+           estadomsg: null,
+           ultimamsg: null,
+           countMsg: null,
+           datahora: undefined
+    }
+],
+       msg: ''
+}

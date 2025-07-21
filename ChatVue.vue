@@ -616,8 +616,8 @@ export default {
   },
   methods: {
 
-  
-    
+
+
     async filtrar() {
       this.messages = []
 
@@ -677,8 +677,8 @@ export default {
         console.error('Erro ao filtrar mensagens:', error);
       }
     },
- 
-    
+
+
     async finalizar(finaliza) {
       console.log('finaliza', finaliza)
 
@@ -810,8 +810,8 @@ export default {
       this.messages.push(...allMessages);
     }
     ,
-    
-    
+
+
 
     playSound() {
 
@@ -1140,7 +1140,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .message {
   margin-bottom: -65px !important;
   padding: 5px;

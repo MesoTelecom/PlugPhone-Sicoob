@@ -10,21 +10,26 @@ const cors = require("cors");
 const axios = require("axios");
 const { executaQry } = require('/meso/whatsapp/webhook/db');
 const { send, sendImage, sendVideo, sendAudio, sendDocument, sendTemplate, download, sendTemplateMenu, reciveMediaLink, gerarProtocolo, sendprotocolo } = require('./methods');
-const { emitMensagem, emitImage, emitAudio, emitDocument, emitContatos, emitMensagemFlutter, emitCadastroMensagem, cadastrarMensagem } = require("./emit");
+const { emitMensagem, emitImage, emitAudio, emitDocument, emitContatos, emitContatosFlutter, emitMensagemFlutter, emitCadastroMensagem, cadastrarMensagem } = require("./emit");
 const { Socket } = require("socket.io");
 const app = express().use(body_parser.json());
 const porta = 3000;
 const admin = require('firebase-admin');
 const bodyParser = require('body-parser');
+const dadosSocket = require('./cache/filtro.js')
+
+
 
 
 let tokens = [];
-const serviceAccount = require('./flutterpushnotification-6cb4d-firebase-adminsdk-xy1ds-7583101b98.json'); // Substitua pelo caminho correto
+const serviceAccount = require('./plugphone-2d637-firebase-adminsdk-fbsvc-1096a56db2.json'); // Substitua pelo caminho correto
 const { componentsToColor } = require("pdf-lib");
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
+
+console.log("Sou admin", admin.app().options)
 
 let entry;
 
@@ -83,13 +88,15 @@ socketConnection(io);
 
 // Rota de webhook para receber dados POST
 app.post("/webhooks", async (req, res) => {
-    console.log('Webhook recebido!');
-
     let body_param = req.body;
+
+    console.log('Negocio aqui', JSON.stringify(body_param))
+
+    //console.log('Webhook recebido!');
+
     let tudo = body_param
     //console.log('FALA FILHA DA PUTA!!!!!!!!!!',tudo.entry[0].changes[0].value.metadata.display_phone_number)
     let numRecebe = tudo.entry[0].changes[0].value.metadata.display_phone_number
-    console.log('Negocio aqui', JSON.stringify(body_param))
 
     //let visualização = tudo?.entry?.[0].changes?.[0].value?.statuses?.[0].status
 
@@ -98,7 +105,7 @@ app.post("/webhooks", async (req, res) => {
     let numeroWhatsapp = body_param?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id;
 
     if (!numeroWhatsapp) {
-        console.log('O número de WhatsApp não foi encontrado.');
+        //console.log('O número de WhatsApp não foi encontrado.');
         return res.status(400).json({ error: "Número de WhatsApp não encontrado na requisição" });
     }
 
@@ -108,11 +115,11 @@ app.post("/webhooks", async (req, res) => {
     let quantNum = quantNumArray.dados[0].quantNum;
 
     let qry1 = `select estado from meso_mensagens_solicitante where type = 'protocolo' and telefone = '${numeroWhatsapp}'  order by id desc  limit 1`
-    console.log('qry 1', qry1)
+    //console.log('qry 1', qry1)
     let estado = await executaQry(qry1)
-    console.log('estado', estado)
+    //console.log('estado', estado)
     let estadoProtocolo = estado.dados.length > 0 ? estado.dados[0].estado : ""
-    console.log(quantNum, 'e o outro', estadoProtocolo)
+    //console.log(quantNum, 'e o outro', estadoProtocolo)
 
     if (quantNum >= 1 && estadoProtocolo === 'aberto') {
 
@@ -143,17 +150,22 @@ app.post("/webhooks", async (req, res) => {
                     //console.log('eu sou nome', nome)
                     let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id
                     //console.log('eu sou waId', waId)
+
                     let query = `SELECT protocolo  FROM meso_mensagens_solicitante  WHERE protocolo IS NOT NULL  ORDER BY id DESC limit 1;`
                     let protocolo = await executaQry(query)
-                    console.log("chuchu blz", protocolo.dados[0].protocolo)
+                    //console.log("chuchu blz", protocolo.dados[0].protocolo)
                     let qry = `insert into meso_mensagens_solicitante (nome, whatsappid, mensagem, telefone, type,protocolo ) VALUES ('${nome}', '${waId}','${msg}','${waId}','${type}','${protocolo.dados[0].protocolo}');`
-                    console.log('veia chata', qry)
+                    //console.log('veia chata', qry)
                     executaQry(qry)
                     let qry1 = `select max(id) as id from meso_mensagens_solicitante where telefone = ${waId}`
                     //console.log('Vai a merda',qry1)
                     let id = await executaQry(qry1)
                     //console.log('Homem solitário',id.dados[0].id)
                     //console.log("Furação de fogo")
+                    let qry44 = `update meso_contatos set estado = 'Aguardando Atendimento' where telefone like '%${waId}%';`
+                    //console.log('veia chata', qry44)
+                    await executaQry(qry44)
+
 
 
                     /*if (visualização !== 'send') {
@@ -162,7 +174,7 @@ app.post("/webhooks", async (req, res) => {
                         executaQry(qry2)
                        //console.log(qry2)
                     }*/
-                    pegatokenfire(msg, nome)
+                    // pegatokenfire(msg, nome)
                     atualizaContato(msg, waId)
                     //console.log("Chiclete ", mensagem)
 
@@ -179,13 +191,14 @@ app.post("/webhooks", async (req, res) => {
 
 
                     if (nome != 'template_plugphone2' && contatoExiste == 0) {
-                        let qry4 = `insert into meso_contatos (nome, telefone ) VALUES ('${nome}', '${waId}');`;
-                        //console.log(qry4)
-                        await executaQry(qry4);
+                        const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
+                        const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
+                        const qry4 = `INSERT INTO meso_contatos (nome, telefone, campanha) VALUES ('${nome}', '${waId}', '${campanha}');`;
+                        executaQry(qry4);
                     }
 
 
-                    const agoraTempo = new Date();
+                    const agora = new Date();
                     const horaFormatada = new Intl.DateTimeFormat('pt-BR', {
                         day: '2-digit',
                         month: '2-digit',
@@ -193,8 +206,8 @@ app.post("/webhooks", async (req, res) => {
                         hour: '2-digit',
                         minute: '2-digit',
                         second: '2-digit',
-                    }).format(agoraTempo);
-                    console.log('minha msg', horaFormatada)
+                    }).format(agora);
+                    //console.log('minha msg', horaFormatada)
 
                     let msgEnviada = {
                         telefone: waId,
@@ -205,6 +218,8 @@ app.post("/webhooks", async (req, res) => {
                         datetime: horaFormatada
                     }
 
+                    //console.log('eu sou o msgEnviada', msgEnviada)
+                    emitMensagem(io, nome, msg, waId)
                     io.emit('receive-message', [
                         msgEnviada.telefone,
                         msgEnviada.nome,
@@ -215,11 +230,13 @@ app.post("/webhooks", async (req, res) => {
                         msgEnviada.datetime
                     ]);
 
+                    let qryBuscaEstadoCampanha = `select * from estado_contato;`
+                    let estadoCampanha = await executaQry(qryBuscaEstadoCampanha)
 
                     let qryContatos = `select * from meso_contatos`
                     let contatosValor = await executaQry(qryContatos)
 
-                    console.log("My contacts", contatosValor.dados)
+                    //console.log("My contacts", contatosValor.dados)
 
                     const estadosValidos = [
                         'Novo',
@@ -251,28 +268,32 @@ app.post("/webhooks", async (req, res) => {
 
                             });
                         } else {
-                            console.log('Estado desconhecido ou não tratado:', estado);
+                            //console.log('Estado desconhecido ou não tratado:', estado);
                         }
                     });
 
                     io.emit('contatos', agrupados)
 
+                    let qry4 = `update meso_contatos set estado = 'Aguardando Atendimento' where telefone like '%${waId}%';`
+                    //console.log('veia chata', qry4)
+                    await executaQry(qry4)
 
                     let qryMandaToken = `select usuario, setor from meso_contatos where telefone = '${waId}'`
                     let mandaToken = await executaQry(qryMandaToken)
-                    console.log("Manda meu setor", mandaToken.dados[0].setor)
+                    //console.log("Manda meu setor", mandaToken.dados[0].setor)
                     //     //estado, usuario, setor, tipo
                     //    // await emitContatosFlutter(io, estadoCampanha.dados[0].estado, mandaToken.dados[0].usuario, mandaToken.dados[0].setor, mandaToken.dados[0].tipo)
 
                     if (mandaToken.dados[0].usuario == null || mandaToken.dados[0].usuario == "") {
                         pegatokenfire(msg, nome, null, mandaToken.dados[0].setor)
-                        console.log("me retorna aqui usuario nulo");
+                        //console.log("me retorna aqui usuario nulo");
                     } else {
                         pegatokenfire(msg, nome, mandaToken.dados[0].usuario, null)
-                        console.log("me retorna aqui setor");
+                        //console.log("me retorna aqui setor");
                     }
 
-                    console.log("Depois me mostre", mandaToken.dados[0].usuario, mandaToken.dados[0].setor)
+                    //console.log("Depois me mostre", mandaToken.dados[0].usuario, mandaToken.dados[0].setor)
+                    // await emitContatosFlutter(io, estadoCampanha.dados[0].estado, estadoCampanha.dados[0].campanha)
 
                 } catch (error) {
                     console.error("Erro ao processar mensagem:", error);
@@ -302,9 +323,15 @@ app.post("/webhooks", async (req, res) => {
                     executaQry(qry)
                     let qry1 = `update meso_contatos set setor = '${msg}' where telefone = '${waId}'`
                     executaQry(qry1)
-                    //console.log('eu sou o teste qry3', qry)
-
+                    //console.log('eu sou o teste qry1', qry1)
+                    let qry4 = `update meso_contatos set estado = 'Novo' where telefone = '${waId}'`
+                    executaQry(qry4)
                     let qry5 = `select count(*) as contatoExiste from meso_contatos where telefone = '${waId}';`
+
+                    let qryBuscaContato = `select * from meso_contatos where estado = 'Novo'`;
+                    let resultBuscaContato = await executaQry(qryBuscaContato)
+                    //console.log("resultBuscarContato", resultBuscaContato);
+                    io.emit('contatos', resultBuscaContato.dados);
 
                     //console.log(qry5)
 
@@ -314,10 +341,12 @@ app.post("/webhooks", async (req, res) => {
 
 
                     if (nome != 'template_plugphone2' && contatoExiste == 0) {
-                        let qry4 = `insert into meso_contatos (nome, telefone ) VALUES ('${nome}', '${waId}');`
-                        //console.log(qry4)
-                        executaQry(qry4)
+                        const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
+                        const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
+                        const qry4 = `INSERT INTO meso_contatos (nome, telefone, campanha) VALUES ('${nome}', '${waId}', '${campanha}');`;
+                        executaQry(qry4);
                     }
+
                     pegatokenfire(msg, nome)
 
                     emitMensagem(io, nome, msg, waId)
@@ -337,7 +366,7 @@ app.post("/webhooks", async (req, res) => {
                 }
             } else if (tudo.entry[0].changes[0].value.messages[0].type == 'image' && numRecebe == '553130580254') {
                 try {
-                    console.log("Sera que passou aqui");
+                    //console.log("Sera que passou aqui");
                     mensagem = entry.changes[0].value.messages[0];
                     produto = entry.changes[0].value;
 
@@ -353,10 +382,10 @@ app.post("/webhooks", async (req, res) => {
                     executaQry(qry);
 
                     let a = await api.get(`/pegaURL/${msg}`);
-                    console.log('FILHO DE ANJO E DEMONIO DEVIL MAY CRY', a.data);
+                    //console.log('FILHO DE ANJO E DEMONIO DEVIL MAY CRY', a.data);
                     let url = a.data.url;
 
-                    console.log("Me mostre oq retorna aqui na imagem", msg)
+                    //console.log("Me mostre oq retorna aqui na imagem", msg)
 
                     let bodyImage = {
                         "url": url,
@@ -437,6 +466,10 @@ app.post("/webhooks", async (req, res) => {
                         const audioBuffer = Buffer.from(geraMidia.data, 'binary');
                         const base64Audio = `data:audio/mp3;base64,${audioBuffer.toString('base64')}`;
 
+                        let qry4 = `update meso_contatos set estado = 'Aguardando Atendimento' where telefone like '%${waId}%';`
+                        //console.log('veia chata', qry4)
+                        await executaQry(qry4)
+
                         // Envia o áudio no formato base64
                         emitAudio(io, nome, base64Audio, waId);
                     }
@@ -457,7 +490,7 @@ app.post("/webhooks", async (req, res) => {
                         minute: '2-digit',
                         second: '2-digit',
                     }).format(agora);
-                    console.log('minha msg', horaFormatada)
+                    //console.log('minha msg', horaFormatada)
 
                     io.emit('receive-message', [
                         waId,
@@ -468,6 +501,7 @@ app.post("/webhooks", async (req, res) => {
                         type,
                         horaFormatada
                     ]);
+                    io.emit('buscar-contato')
 
                     await api.post(`/send`, bodyMsg);
 
@@ -486,7 +520,7 @@ app.post("/webhooks", async (req, res) => {
                     mensagem = entry.changes[0].value.messages[0]
                     produto = entry.changes[0].value
 
-                    console.log('teste produto', produto.value)
+                    //console.log('teste produto', produto.value)
                     // console.log(mensagem, 'recebi')
                     //console.log('maioria', tudo.entry[0].changes[0].value.messages[0])
                     //console.log('eu sou tudo antes do if', tudo.entry[0].changes[0].value)
@@ -501,7 +535,7 @@ app.post("/webhooks", async (req, res) => {
                     let a = await api.get(`/pegaURL/${msg}`);
                     //console.log(a.data);
                     let url = a.data.url;
-                    console.log('MÃE SOLTEIRA', url)
+                    //console.log('MÃE SOLTEIRA', url)
                     let bodyImage = {
                         "url": url,
                         "id": msg
@@ -520,7 +554,7 @@ app.post("/webhooks", async (req, res) => {
                         minute: '2-digit',
                         second: '2-digit',
                     }).format(agora);
-                    console.log('minha msg', msg)
+                    //console.log('minha msg', msg)
 
                     io.emit('receive-message', [
                         waId,
@@ -562,15 +596,19 @@ app.post("/webhooks", async (req, res) => {
 
         //console.log('Eu sou o contatoExiste', contatoExiste)
 
-
+        let qry4 = `update meso_contatos set estado = 'Aguardando Atendimento' where telefone like '%${waId}%';`
+        //console.log('veia chata', qry4)
+        await executaQry(qry4)
         if (nome != 'template_plugphone2' && contatoExiste == 0) {
-            let qry4 = `insert into meso_contatos (nome, telefone ) VALUES ('${nome}', '${waId}');`
-            //console.log(qry4)
-            await executaQry(qry4)
+            const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
+            const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
+            const qry4 = `INSERT INTO meso_contatos (nome, telefone, campanha) VALUES ('${nome}', '${waId}', '${campanha}');`;
+            executaQry(qry4);
         }
+
         let protocolo = gerarProtocolo()
 
-        console.log('eu sou protocolo', protocolo)
+        //console.log('eu sou protocolo', protocolo)
 
 
 
@@ -591,11 +629,11 @@ app.post("/webhooks", async (req, res) => {
         sendprotocolo(waId, `seu protocolo é : ${protocolo}`, 'bot-PlugPhone', res)
 
         let qryproto = `insert into meso_mensagens_solicitante (telefone,nome,agent,wpnumber,protocolo, type, estado,mensagem) values ('${waId}','bot-Meso','bot-Meso','553130580254','${protocolo}','protocolo', 'aberto','seu protocolo é : ${protocolo}');`
-        console.log('KAMEHAMEHAAAAAAAAAAAAAAAAAAAA!', qryproto)
+        //console.log('KAMEHAMEHAAAAAAAAAAAAAAAAAAAA!', qryproto)
         await executaQry(qryproto)
     }
     else {
-        console.log('serve de porra nenhuma')
+        //console.log('serve de porra nenhuma')
     }
     ////else{//console.log('Jurassic world')}
     res.status(200).end()
@@ -754,7 +792,7 @@ app.post("/login", async (req, res, next) => {
 app.use(bodyParser.json());
 
 app.post('/registrar-token', async (req, res) => {
-    console.log("Aqui é bomba")
+    //console.log("Aqui é bomba")
     const { token } = req.body;
     const { usuario } = req.body
     const tokenFunc = await funcToken(usuario);
@@ -767,68 +805,132 @@ app.post('/registrar-token', async (req, res) => {
     res.status(200).send({ 'token': 'Token registrado com sucesso!' });
 });
 
+app.post('/registrar-token-mobile', async (req, res) => {
+    const { token } = req.body;
+    const { usuario } = req.body
+
+    //console.log('auauau 123', token, usuario)
+
+    const tokenFuncMobile = await funcTokenMobile(usuario);
+
+    //console.log("token e usuario aqui", token, usuario);
+
+    if (token !== tokenFuncMobile) {
+        let qry = `update meso_usuariologin set tokenMobile = '${token}' where usuario like '%${usuario}%'`;
+        executaQry(qry);
+        //console.log("Token atualizado", qry);
+    }
+    res.status(200).send('Token registrado com sucesso!');
+});
+
+
 let funcToken = async function (nome) {
-    let qry = `select token from meso_usuariologin where usuario = '${nome}';`;
+    let qry = `select token from meso_usuariologin where usuario like '%${nome}%';`;
     token = await executaQry(qry)
     let tokenFormatado = token.dados.length > 0 ? token.dados[0].token : "";
     return tokenFormatado
 }
 
-let pegatokenfire = async function (mensagem, nome) {
-    try {
-        // Consulta para buscar todos os tokens válidos
-        let qry = `select token from meso_usuariologin where token <> '';`;
-        let resultado = await executaQry(qry);
+let funcTokenMobile = async function (nome) {
+    let qry = `select tokenMobile from meso_usuariologin where usuario like '%${nome}%';`;
+    token = await executaQry(qry)
+    let tokenFormatado = token.dados.length > 0 ? token.dados[0].tokenMobile : "";
+    return tokenFormatado
+}
 
-        // Verifica se há tokens registrados
+let pegatokenfire = async function (mensagem, nome, usuario, setor) {
+    try {
+        // 1. Buscar tokens do banco
+        let qry = `
+            SELECT token, tokenMobile 
+            FROM meso_usuariologin 
+            `
+
+        let resultado = await executaQry(qry);
+        //console.log('🔍 Consulta executada:', qry);
+
         if (!Array.isArray(resultado.dados) || resultado.dados.length === 0) {
-            //console.log("Nenhum token encontrado para enviar a notificação.");
+            //console.log('⚠️ Nenhum token encontrado');
             return;
         }
 
-        // Mapeia todos os tokens
-        let tokens = resultado.dados.map((registro) => registro.token);
+        // 2. Coletar e filtrar tokens válidos
+        let tokens = [];
+        resultado.dados.forEach(({ token, tokenMobile }) => {
+            if (token && token.trim() !== '') tokens.push(token.trim());
+            if (tokenMobile && tokenMobile.trim() !== '') tokens.push(tokenMobile.trim());
+        });
 
-        // Define o limite de tokens por lote (Firebase suporta até 500 por vez)
+        tokens = [...new Set(tokens)]; // remover duplicados
+
+        if (tokens.length === 0) {
+            //console.log('⚠️ Lista final de tokens está vazia');
+            return;
+        }
+
         const MAX_TOKENS = 500;
 
+        // 3. Enviar notificações em lotes
         for (let i = 0; i < tokens.length; i += MAX_TOKENS) {
-            // Divide os tokens em lotes de até 500
             const tokenBatch = tokens.slice(i, i + MAX_TOKENS);
 
-            // Prepara o payload para cada lote
             const multicastMessage = {
                 notification: {
                     title: nome,
                     body: mensagem,
                 },
+                android: {
+                    priority: 'high',
+                    notification: {
+                        sound: 'notification.wav',
+                        channelId: 'custom_sound_channel',
+                    },
+                },
+                apns: {
+                    headers: {
+                        'apns-priority': '10',
+                    },
+                    payload: {
+                        aps: {
+                            sound: 'notification.wav',
+                        },
+                    },
+                },
                 tokens: tokenBatch,
             };
 
-            // Envia mensagens usando o método atualizado
             const response = await admin.messaging().sendEachForMulticast(multicastMessage);
 
-            //console.log(`Lote ${i / MAX_TOKENS + 1} enviado com sucesso:`, response.successCount);
+            //console.log(`✅ Enviado lote de ${tokenBatch.length} tokens - Sucesso: ${response.successCount}, Falha: ${response.failureCount}`);
 
-            // Trata falhas específicas
+            // 4. Tratar falhas
             if (response.failureCount > 0) {
-                //console.log('Erros no lote:', response.responses.filter(r => !r.success));
-                response.responses.forEach(async (res, idx) => {
+                await Promise.all(response.responses.map(async (res, idx) => {
                     if (!res.success) {
-                        //console.log(`Erro no token: ${tokenBatch[idx]}, motivo: ${res.error.message}`);
-                        // Remove tokens inválidos ou expirados
-                        if (res.error.code === 'messaging/registration-token-not-registered') {
-                            //console.log(`Removendo token inválido: ${tokenBatch[idx]}`);
-                            let removeQry = `update meso_usuariologin set token = '' where token = '${tokenBatch[idx]}';`;
+                        const failedToken = tokenBatch[idx];
+                        const errCode = res.error?.code || 'unknown';
+                        const errMsg = res.error?.message || 'Mensagem desconhecida';
+
+                        console.warn(`⚠️ Falha no token: ${failedToken} → ${errCode} - ${errMsg}`);
+
+                        if (errCode === 'messaging/registration-token-not-registered') {
+                            //console.log(`🗑️ Limpando token inválido: ${failedToken}`);
+
+                            let removeQry = `
+                                UPDATE meso_usuariologin 
+                                SET token = CASE WHEN token = '${failedToken}' THEN '' ELSE token END,
+                                    tokenMobile = CASE WHEN tokenMobile = '${failedToken}' THEN '' ELSE tokenMobile END
+                                WHERE token = '${failedToken}' OR tokenMobile = '${failedToken}';
+                            `;
                             await executaQry(removeQry);
                         }
                     }
-                });
+                }));
             }
         }
     } catch (error) {
-        console.error("Erro ao enviar notificações:", error.message);
-        console.error("Detalhes do erro:", error);
+        console.error("🔥 Erro geral ao enviar notificações:", error.message);
+        console.error("📄 Detalhes completos:", error);
     }
 };
 
@@ -837,7 +939,7 @@ let pegatokenfire = async function (mensagem, nome) {
 let atualizaContato = async function (mensagem, telefone) {
     let qry = `update meso_contatos set ultimamsg = '${mensagem}', datahora = now() where telefone = '${telefone}'`;
     await executaQry(qry);
-    console.log("chegou aqui", qry)
+    //console.log("chegou aqui", qry)
 
 
 }

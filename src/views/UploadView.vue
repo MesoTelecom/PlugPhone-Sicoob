@@ -11,10 +11,10 @@
           v-model="nomeCampanha" />
         <v-btn @click="uploadFile" color="primary">Enviar</v-btn>
         <v-btn @click="importarAversariantes" color="primary" style="margin-left: 1%;">aniversáriantes do dia</v-btn>
-
+        <v-btn @click="importarAssociados" color="primary" style="left: 1%;">Importar Associados</v-btn>
 
         <router-link to="./menurealtime" class="linkp">
-          <v-btn dark class="botaoSair">voltar</v-btn>
+          <v-btn dark class="botaoSair" style="left: 2%;">voltar</v-btn>
           <v-alert v-if="uploadStatus" :type="uploadStatus.type" dismissible>
             {{ uploadStatus.message }}
           </v-alert>
@@ -205,7 +205,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .botaoSair {
   left: 1%;
   background-color: green !important;

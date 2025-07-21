@@ -83,6 +83,98 @@ ${is_funcionario}, '${mei}', 'Novo', '${pa_id}', NOW()
     }
 };
 
-module.exports = { aniversariantes };
+let associados = async function (nomeAssociado = '') {  // <-- adiciona parâmetro
+    const agent = new https.Agent({ rejectUnauthorized: false });
+
+    const config = {
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: `https://api-nxcoop.sicoobnossacoop.com.br/api/v1/associados/?nomeAssociado=${encodeURIComponent(nomeAssociado)}&size=1000`,
+        headers: {
+            Authorization: '72dd78d0-f4b6-4beb-8db4-a971dad01999'
+        },
+        httpsAgent: agent
+    };
+
+
+    try {
+        const { data } = await axios.request(config);
+        const dados = data.content ?? [];
+
+        for (const item of dados) {
+            /* ---------- Desestruturação segura ---------- */
+            const {
+                pessoa: {
+                    nomeAssociado: nome = 'NÃO INFORMADO',
+                    document: documento = 'NÃO INFORMADO',
+                    email = 'NÃO INFORMADO',
+                    dataNascimento = null,
+                    sexo = 'NÃO INFORMADO',
+                    estadoCivil = 'NÃO INFORMADO',
+                    escolaridade = 'NÃO INFORMADO',
+                    endereco: end = [],
+                    telefone: tel = []
+                } = {},
+                tipoRenda = 'NÃO INFORMADO',
+                vinculoEmpregaticio = 'NÃO INFORMADO',
+                descricaoProfissao: profissao = 'NÃO INFORMADO',
+                atividadeEconomica = 'NÃO INFORMADO',
+                pa: { numero: pa_id = 0, descricao: pa_descricao = 'NÃO INFORMADO' } = {},
+                isFuncionario: is_funcionario = false,
+                mei = 'NÃO INFORMADO'
+            } = item;
+
+            /* ---------- Tratamento de arrays ---------- */
+            const telCelular = tel.length ? tel[0].telefone?.replace(/\D/g, '') || 'NÃO INFORMADO' : 'NÃO INFORMADO';
+
+            const {
+                logradouro = 'NÃO INFORMADO',
+                numero = 'NÃO INFORMADO',
+                complemento = 'NÃO INFORMADO',
+                bairro = 'NÃO INFORMADO',
+                municipio = 'NÃO INFORMADO',
+                uf = 'NÃO INFORMADO',
+                cep = 'NÃO INFORMADO'
+            } = end[0] || {};
+
+            const gerente_nome = item.gerenteSisBR?.pessoa?.nome ?? 'NÃO INFORMADO';
+
+            /* ---------- INSERT em meso_contatos ---------- */
+            const qry = `
+INSERT INTO meso_contatos (
+  nome, telefone, documento, email, data_nascimento, sexo, estado_civil, escolaridade,
+  logradouro, numero, complemento, bairro, municipio, uf, cep,
+  tipo_renda, vinculo_empregaticio, profissao, atividade_economica,
+  pa_id, pa_descricao, gerente_nome, is_funcionario, mei,
+  estado, id_agencia, datahora
+) VALUES (
+  '${nome}', '${telCelular}', '${documento}', '${email}', '${dataNascimento}', '${sexo}',
+  '${estadoCivil}', '${escolaridade}', '${logradouro}', '${numero}', '${complemento}',
+  '${bairro}', '${municipio}', '${uf}', '${cep}', '${tipoRenda}', '${vinculoEmpregaticio}',
+  '${profissao}', '${atividadeEconomica}', ${pa_id}, '${pa_descricao}', '${gerente_nome}',
+  ${is_funcionario}, '${mei}', 'Novo', '${pa_id}', NOW()
+)
+ON DUPLICATE KEY UPDATE
+  telefone='${telCelular}',
+  email='${email}',
+  atividade_economica='${atividadeEconomica}',
+  datahora=NOW();
+`;
+
+            console.log('📥 Inserindo/Atualizando:', documento);
+            await executaQry(qry);
+        }
+
+        return data;
+    } catch (err) {
+        console.error('Erro ao buscar associados:', err);
+        return null;
+    }
+};
+
+
+
+
+module.exports = { aniversariantes, associados };
 
 

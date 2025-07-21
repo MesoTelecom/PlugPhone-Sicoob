@@ -32,6 +32,15 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/RelatoriosCampanha.vue')
   },
+  
+  {
+    path: '/editarcontato',
+    name: 'editarcontato',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/EditarContato.vue')
+  },
   {
     path: '/detalhecampanha',
     name: 'detalhecampanha',
@@ -71,6 +80,15 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/ServiceComg.vue')
+  },
+  
+  {
+    path: '/campanhas',
+    name: 'campanhas',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/EditarCampanha.vue')
   },
   {
     path: '/permissao',

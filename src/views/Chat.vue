@@ -1167,7 +1167,7 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
 .message {
   margin-bottom: -65px !important;
   padding: 5px;

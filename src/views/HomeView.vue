@@ -3,25 +3,59 @@
   <v-container class="fill-height" fluid>
     <v-card-text class="mt-12" id="centralizado">
 
-      <!--text--accent-NUMBER altera a cor da letra do texto-->
-      <h1 class="text-center display-1">Seja bem-vindo ao PlugPhone Cloud</h1>
-      <!--div que trata botões de Facebook, Google e Linkedin-->
+      <div style="width: 100%;
+    position: relative;
+    margin-top: -9% !important;">
+        <!--text--accent-NUMBER altera a cor da letra do texto-->
+        <!--<img src="../assets/plugbranco3.png" alt="" class="icone">-->
+        <br>
+        <br>
 
-      <v-form style="width: 53%; margin-left: 23%;">
-        <v-text-field label="Digite seu usuário" name="usuario" type="text" color="#61a5e8" v-model="usuario"
-          prepend-icon="email" />
 
-        <v-text-field id="password" label="Digite sua senha" name="senha" type="password" color="#61a5e8"
-          v-model="senha" prepend-icon="lock" />
+        <h1 class="text-center display-1" style="color: white;">Seja bem-vindo ao PlugPhone Cloud</h1>
+        <br>
+        <br>
 
+        <br>
+        <!--div que trata botões de Facebook, Google e Linkedin-->
+      </div>
+      <v-form style="        top: 44% !important;
+    width: 55% !important;
+    left: 21% !important;
+    position: relative;">
+        <v-row style="width: 60% !important;margin-left: 20% !important;">
+          <v-icon style="
+          left: 20% !important;
+          height: 50px;
+          font-size: 40px;
+          color: white;">mdi-account</v-icon>
+          <v-text-field label="Digite seu usuário" name="usuario" type="text" v-model="usuario"
+            class="custom-text-field" solo />
+        </v-row>
+
+        <v-row style="    width: 60% !important;
+    margin-left: 20% !important;">
+          <v-icon style="
+          left: 20% !important;
+          height: 50px;
+          font-size: 40px;
+          color: white;">mdi-lock</v-icon>
+          <v-text-field id="password" label="Digite sua senha" name="senha" type="password" v-model="senha"
+            class="custom-text-field" solo />
+        </v-row>
+        <div class="text-center" style="width: 100%">
+          <br>
+          <br>
+          <br>
+          <v-btn rounded @click="login" color="#61a5e8" class="centralizado"
+            style="color: white;    margin-bottom: 1px;margin-left: 20px;">Login</v-btn>
+
+
+
+        </div>
       </v-form>
     </v-card-text>
-    <div class="text-center" style="width: 100%">
-      <v-btn rounded @click="login" color="#61a5e8" class="centralizado" style="color: white;">Login</v-btn>
 
-
-
-    </div>
   </v-container>
 
 
@@ -111,71 +145,73 @@ export default {
 </script>
 
 <style scoped>
+/* Centralização */
 #centralizado {
-  margin-left: 3% !important;
-  margin-top: 14% !important;
+  margin-left: 4% !important;
+
 }
 
+/* Estilização do título */
 h1 {
-
-  color: #595E71;
+  color: #ffffff;
 }
 
+/* Fundo do container */
 #fill-height {
-
-  background-color: #243e57;
+  background-color: #ffffff;
 }
 
+/* Ajuste dos campos de texto */
 .v-text-field {
-
   width: 50%;
   margin-left: 24%;
 }
 
+/* Fundo branco e bordas arredondadas nos v-text-field */
+.v-text-field .v-input__control {
+  background-color: white !important;
+  /* Deixa os campos com fundo branco */
+  border-radius: 8px;
+  /* Bordas arredondadas */
+  border: 2px solid #ccc;
+  /* Borda cinza leve */
+}
+
+/* Texto digitado dentro do v-text-field */
+.v-text-field input {
+  color: black !important;
+  /* Deixa o texto preto */
+}
+
+/* Placeholder (label) dentro do v-text-field */
+.v-text-field .v-label {
+  color: black !important;
+  /* Placeholder preto */
+  font-weight: bold;
+  /* Deixa o texto do label mais forte */
+}
+
+/* Ícones dentro dos campos */
+.v-text-field .v-icon {
+  color: black !important;
+  /* Ícones pretos */
+}
+
+/* Estilização do botão */
 .v-btn {
-
   margin-left: 0%;
-
 }
 
-.text-center {
-
-  color: #595E71;
-  position: center;
-}
-
-.text-center1 {
-
-  color: #595E71;
-  position: center;
-  background-color: transparent;
-}
-
-
-.cardanna {
-
-  /* background-image: url(../assets/modelo.jpg);*/
-  background-repeat: no-repeat;
-  background-size: 0%;
-
-
-
-}
-
-.col-md-4 {
-  color: transparent;
-}
-
+/* Estilização do conteúdo do botão */
 .v-btn__content {
-
   position: center;
 }
 
-
+/* Animações de entrada e saída */
 .show-enter-active,
 .show-leave-enter {
   transform: translateX(0);
-  transition: all .3s linear;
+  transition: all 0.3s linear;
 }
 
 .show-enter,
@@ -183,29 +219,47 @@ h1 {
   transform: translateX(100%);
 }
 
+/* Estilização do container principal */
 .fill-height {
-
-
-
-
   background-repeat: no-repeat;
-  background-size: 100%;
-
-  box-shadow: inset 0 0 0 1000px rgb(205 205 205 / 52%);
-  background-image: url(../assets/mesofundo.jpg);
+  background-size: cover !important;
+  background-image: url(../assets/mesofundoPlug.jpg);
   padding: 15px;
   background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-
-
+  background-size: 100%;
+  background-position: bottom;
 }
 
+/* Hover para manter fundo transparente */
 .text-center:hover,
 .col-md-4:hover {
-
   background-color: transparent;
+}
 
+/* Outros ajustes */
+.text-center {
+  color: #ffffff;
+  position: center;
+}
 
+.text-center1 {
+  color: #ffffff;
+  position: center;
+  background-color: transparent;
+}
+
+/* Ajuste de fundo para evitar erros em divs invisíveis */
+.cardanna {
+  background-repeat: no-repeat;
+  background-size: 0%;
+}
+
+.col-md-4 {
+  color: transparent;
+}
+
+.icone {
+  width: 14%;
+  margin-left: 42%;
 }
 </style>

@@ -3,7 +3,7 @@ const csv = require('csv-parser');
 const router = express.Router();
 const { executaQry } = require("../banco/bd");
 const { geraToken } = require("./jwt/jwt");
-const { send, sendImage, sendVideo, sendAudio, sendDocument, sendTemplate, download, test, getImage, getAudio, getDocument, reciveMediaLink, geraMedia, sendprotocolo, gerarProtocolo, verificaPalavrao } = require('/meso/whatsapp/webhook/methods.js');
+const { send, sendImage, sendVideo, sendAudio, sendDocument, sendTemplate, download, test, getImage, getAudio, getDocument, reciveMediaLink, geraMedia, sendprotocolo, gerarProtocolo, verificaPalavrao, getAniversariante } = require('/meso/whatsapp/webhook/methods.js');
 const axios = require("axios");
 const { executaQryServer } = require('../banco/dbServer');
 const multer = require('multer');
@@ -134,6 +134,16 @@ class ExpressController {
 
     });
 
+    this.expressAppWrapper.get('/getaniversario', async (req, res) => {
+      try {
+        let aniversariantes = await getAniversariante(); // ← CHAMA a função!
+        res.json(aniversariantes);
+      } catch (error) {
+        console.error('Erro ao buscar aniversariantes:', error);
+        res.status(500).json({ erro: 'Erro ao buscar aniversariantes' });
+      }
+    });
+
     this.expressAppWrapper.get('/lidamsg/:num', async (req, res, next) => {
       let num = req.params.num
 
@@ -146,7 +156,7 @@ class ExpressController {
     })
 
 
-    this.expressAppWrapper.get('/importarAniversariante', async (req, res, next) => {
+    this.expressAppWrapper.get('/importaraniversariantes', async (req, res, next) => {
       try {
         let dados = await aniversariantes();
         res.json(dados);
@@ -584,83 +594,211 @@ class ExpressController {
       console.log(`tipo recebido bruto => [${tipo}]`);
       console.log("tipo == 'Root'?", tipo == 'Root');
 
+
       if (tipo == 'Root' || tipo == 'Monitor') {
-        qry = `select * from meso_contatos order by datahora desc`
-        console.log(qry)
+        // base = contatos + campanha ativa
+        qry = `
+    SELECT ct.* 
+    FROM meso_contatos ct
+    JOIN meso_campanhas cp ON cp.campanha = ct.campanha
+    WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
+    ORDER BY ct.datahora DESC
+  `;
+
         if (filtro == "Nome") {
           if (estadoContato == 'Todos') {
-            qry = `select * from meso_contatos where nome like '${filtroValor}%' ORDER BY datahora DESC`
-            console.log("bala kuku ", qry)
+            qry = `
+        SELECT ct.* 
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha AND ct.nome LIKE '${filtroValor}%'
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
+          
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           } else {
-            qry = `select * from meso_contatos where nome like '${filtroValor}%' and estado = '${estadoContato}' ORDER BY datahora DESC`
+            qry = `
+        SELECT ct.* 
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha AND ct.nome LIKE '${filtroValor}%'
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
+          
+          AND ct.estado = '${estadoContato}'
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           }
-          console.log('Olha estou aqui qry nome', qry)
         } else if (filtro == "Cpf") {
           if (estadoContato == 'Todos') {
-            qry = `select * from meso_contatos where documento like '${filtroValor}%' ORDER BY datahora DESC`
-            console.log("Bumbum guloso", qry)
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha AND ct.documento LIKE '${filtroValor}%'
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
+          
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           } else {
-            qry = `select * from meso_contatos where documento like '${filtroValor}%' and estado = '${estadoContato}' ORDER BY datahora DESC`
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha AND ct.documento LIKE '${filtroValor}%'
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
+          
+          AND ct.estado = '${estadoContato}'
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           }
-          console.log('Olha estou aqui qry cpf', qry)
-        }
-        else if (filtro == "Campanha") {
+        } else if (filtro == "Campanha") {
           if (estadoContato == 'Todos') {
-            qry = `select * from meso_contatos where campanha like '${filtroValor}%' ORDER BY datahora DESC`
-            console.log("Bumbum guloso", qry)
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha AND ct.campanha LIKE '${filtroValor}%'
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
+          
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           } else {
-            qry = `select * from meso_contatos where campanha like '${filtroValor}%' and estado = '${estadoContato}' ORDER BY datahora DESC`
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha AND ct.campanha LIKE '${filtroValor}%'
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
+          
+          AND ct.estado = '${estadoContato}'
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           }
-          console.log('Olha estou aqui qry cpf', qry)
-        }
-        else if (filtro == "Geral") {
-          if (estadoContato == "Todos") {
-            qry = `select * from meso_contatos ORDER BY datahora DESC`
+        } else if (filtro == "Geral") {
+          if (estadoContato == 'Todos') {
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           } else {
-            qry = `select * from meso_contatos WHERE estado = '${estadoContato}' ORDER BY datahora DESC`
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
+          AND ct.estado = '${estadoContato}'
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           }
         }
-      }
-      else {
-        console.log('Olha estou aqui tipo', tipo, filtro, filtroValor, estadoContato)
-
+      } else {
+        // Demais perfis → filtra id_agencia
         if (filtro == "Nome") {
           if (estadoContato == 'Todos') {
-            qry = `select * from meso_contatos where nome like '${filtroValor}%' and id_agencia = '${idAgencia}' ORDER BY datahora DESC`
-            console.log("bala kuku ", qry)
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andame AND ct.nome LIKE '${filtroValor}%'nto' 
+          AND ct.id_agencia = '${idAgencia}'
+          
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           } else {
-            qry = `select * from meso_contatos where nome like '${filtroValor}%' and id_agencia = '${idAgencia}' and estado = '${estadoContato}' ORDER BY datahora DESC`
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andame AND ct.nome LIKE '${filtroValor}%'nto' 
+          AND ct.id_agencia = '${idAgencia}'
+          
+          AND ct.estado = '${estadoContato}'
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           }
-          console.log('Olha estou aqui qry nome', qry)
-        }
-        else if (filtro == "Campanha") {
+        } else if (filtro == "Campanha") {
           if (estadoContato == 'Todos') {
-            qry = `select * from meso_contatos where campanha like '${filtroValor}%' and id_agencia = '${idAgencia}' ORDER BY datahora DESC`
-            console.log("Bumbum guloso", qry)
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andame AND ct.campanha LIKE '${filtroValor}%'nto' 
+          AND ct.id_agencia = '${idAgencia}'
+          
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           } else {
-            qry = `select * from meso_contatos where campanha like '${filtroValor}%' and id_agencia = '${idAgencia}' and estado = '${estadoContato}' ORDER BY datahora DESC`
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andame AND ct.campanha LIKE '${filtroValor}%'nto' 
+          AND ct.id_agencia = '${idAgencia}'
+          
+          AND ct.estado = '${estadoContato}'
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           }
-          console.log('Olha estou aqui qry cpf', qry)
-        }
-        else if (filtro == "Cpf") {
+        } else if (filtro == "Cpf") {
           if (estadoContato == 'Todos') {
-            qry = `select * from meso_contatos where documento like '${filtroValor}%' and id_agencia = '${idAgencia}' ORDER BY datahora DESC`
-            console.log("Bumbum guloso", qry)
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andame AND ct.documento LIKE '${filtroValor}%'nto' 
+          AND ct.id_agencia = '${idAgencia}'
+          
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           } else {
-            qry = `select * from meso_contatos where documento like '${filtroValor}%' and id_agencia = '${idAgencia}' and estado = '${estadoContato}' ORDER BY datahora DESC`
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andame AND ct.documento LIKE '${filtroValor}%'nto' 
+          AND ct.id_agencia = '${idAgencia}'
+          
+          AND ct.estado = '${estadoContato}'
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           }
-          console.log('Olha estou aqui qry cpf', qry)
         } else if (filtro == "Geral") {
-          if (estadoContato == "Todos") {
-            qry = `select * from meso_contatos where id_agencia = '${idAgencia}' ORDER BY datahora DESC`
-            console.log("Aqui Venezuela", qry)
+          if (estadoContato == 'Todos') {
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
+          AND ct.id_agencia = '${idAgencia}'
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           } else {
-            qry = `select * from meso_contatos where id_agencia = '${idAgencia}' and estado = '${estadoContato}' ORDER BY datahora DESC`
+            qry = `
+        SELECT ct.*
+        FROM meso_contatos ct
+        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
+        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
+          AND ct.id_agencia = '${idAgencia}'
+          AND ct.estado = '${estadoContato}'
+        ORDER BY ct.datahora DESC
+      `;
+            console.log('query kkkkk', qry)
           }
-
         }
-
       }
+
 
       console.log('contato', qry)
       let res20 = await executaQry(qry)
@@ -678,12 +816,13 @@ class ExpressController {
       let filtroValor = req.params.valorfiltro
 
 
-      ////console.log('Olha estou aqui tipo', tipo, filtro, filtroValor)
+      ////console.log('Olha estou aqui tipo', tipo, filtr qry = `select * from meso_contatos where nome like '${filtroValor}%' and setor = '${tipo}' ORDER BY datahora DESC`o, filtroValor)
       if (filtro == "Nome") {
-        qry = `select * from meso_contatos where nome like '${filtroValor}%' and setor = '${tipo}' ORDER BY datahora DESC`
+
         ////console.log('Olha estou aqui qry', qry)
-      } else if (filtro == "Cpf") {
         qry = `select * from meso_contatos where documento like '${filtroValor}%' and setor = '${tipo}' ORDER BY datahora DESC`
+      } else if (filtro == "Cpf") {
+
         ////console.log('Olha estou aqui qry', qry)
       } else if (filtro == "Geral") {
         ////console.log("Aqui Vazio")
@@ -1057,15 +1196,22 @@ class ExpressController {
 
 
     this.expressAppWrapper.get(`/listarcampanhafiltrado/:idAgencia`, async (req, res, next) => {
-      let idAgencia = req.params.idAgencia
+      let idAgencia = req.params.idAgencia;
       try {
-        let qry = `select * from meso_campanhas where id_agencia = ${idAgencia}`
-        let res1 = await executaQry(qry)
-        res.json(res1)
+        let qry = `
+          SELECT DISTINCT mc.id_campanha, mc.campanha
+          FROM meso_campanhas mc
+          JOIN meso_contatos c ON c.campanha = mc.campanha
+          WHERE c.id_agencia = ${idAgencia}
+        `;
+        let res1 = await executaQry(qry);
+        res.json(res1);
       } catch (error) {
-        ////////console.log(e)
+        console.error("Erro ao buscar campanhas filtradas:", error);
+        res.status(500).send("Erro interno");
       }
     });
+
 
     this.expressAppWrapper.get('/basecontatos/:campanha', async (req, res, next) => {
       let campanha = req.params.campanha
@@ -1585,7 +1731,7 @@ class ExpressController {
               gerente_nome: row['nome_gerente'] || '',
               mei: row['mei'] || '',
               pa_descricao: row['nome_pa'] || '',
-              pa_id: row['id_pa'] || null,
+              id_pa: row['id_pa'] || null,
               id_agencia: row['id_agencia'] || null,
               is_funcionario: row['is_funcionario'] || 0,
               setor: row['setor'] || '',
@@ -1607,7 +1753,7 @@ class ExpressController {
     let terminou = false;
 
     //const uploadCSV3 = uploadArquivo();
-    let inserirCsv = async (resultadoCsv, usuario, grupo, campanha) => {
+    let inserirCsv = async (resultadoCsv, usuario, campanha) => {
       for (const e of resultadoCsv) {
         // Query para inserir na tabela meso_contato
         let qry = `
@@ -1621,7 +1767,7 @@ class ExpressController {
         '${e.estado_civil}', '${e.escolaridade}', '${e.logradouro}', '${e.numero}', '${e.complemento}',
         '${e.bairro}', '${e.municipio}', '${e.uf}', '${e.cep}', '${e.tipo_renda}',
         '${e.vinculo_empregaticio}', '${e.profissao}', '${e.atividade_economica}', '${e.gerente_nome}',
-        '${e.mei}', '${e.pa_descricao}', '${usuario}','${grupo}','${campanha}', now()
+        '${e.mei}', '${e.pa_descricao}', '${usuario}','${e.id_pa}','${campanha}', now()
       );
     `;
 
@@ -1733,7 +1879,7 @@ class ExpressController {
       }
       try {
         const dadosCsv = await lerCsv(file.path);
-        await inserirCsv(dadosCsv, usuario, grupo, campanha
+        await inserirCsv(dadosCsv, usuario, campanha
 
         );
         res.send('Arquivo recebido e salvo com sucesso');
@@ -3215,6 +3361,35 @@ class ExpressController {
       }
     });
 
+    this.expressAppWrapper.get("/listacontatos", async (req, res) => {
+      //let dataini = req.params.d1;
+      // let datafim = req.params.d2;
+      try {
+        let qry = `
+        select * from meso_contatos
+        `;
+        let res27 = await executaQry(qry);
+        res.json(res27);
+      } catch (e) {
+        //////console.log(e);
+      }
+    });
+
+
+    this.expressAppWrapper.get("/listacampanha", async (req, res) => {
+      //let dataini = req.params.d1;
+      // let datafim = req.params.d2;
+      try {
+        let qry = `
+        select * from meso_campanhas
+        `;
+        let res27 = await executaQry(qry);
+        res.json(res27);
+      } catch (e) {
+        //////console.log(e);
+      }
+    });
+
     this.expressAppWrapper.get("/listausuarioAgencia/:id", async (req, res) => {
       let id = req.params.id
 
@@ -3247,6 +3422,33 @@ class ExpressController {
     });
 
 
+    this.expressAppWrapper.get("/campanhatira/:id", async (req, res, next) => {
+      let id = req.params.id;
+      //////console.log(id)
+      try {
+        let qry = `
+              delete from meso_campanha where id_campanha = ${id}
+            `;
+        let res28 = await executaQry(qry);
+        res.json(res28);
+      } catch (e) {
+        //////console.log(e);
+      }
+    });
+
+    this.expressAppWrapper.get("/contatotira/:id", async (req, res, next) => {
+      let id = req.params.id;
+      //////console.log(id)
+      try {
+        let qry = `
+              delete from meso_contatos where id = ${id}
+            `;
+        let res28 = await executaQry(qry);
+        res.json(res28);
+      } catch (e) {
+        //////console.log(e);
+      }
+    });
 
     this.expressAppWrapper.get("/usuariotira/:id", async (req, res, next) => {
       let id = req.params.id;
@@ -3281,6 +3483,59 @@ class ExpressController {
     });
 
     //FIM Cadastro de usuário ----------------------------------------------------------------------------------
+
+    this.expressAppWrapper.post("/contatoaltera", async (req, res, next) => {
+      console.log(req.body)
+      let mostra = req.body;
+      let { id, nome, telefone, campanha, id_agencia } = mostra;
+      //console.log(id,  senha, tipo);
+
+      try {
+        let qry = `
+              update meso_contatos set nome = '${nome}', telefone='${telefone}', campanha = '${campanha}', id_agencia='${id_agencia}' where id = ${id}
+            `;
+        console.log('aeeeee', qry)
+        let res14 = await executaQry(qry);
+        res.json(res14);
+      } catch (e) {
+        res.json({ message: e.message })
+      }
+    });
+
+    this.expressAppWrapper.post("/campanhaaltera", async (req, res, next) => {
+      console.log(req.body)
+      let mostra = req.body;
+      let { id_campanha, estado } = mostra;
+      //console.log(id,  senha, tipo);
+
+      try {
+        let qry = `
+              update meso_campanhas set estado = '${estado}' where id_campanha = ${id_campanha}
+            `;
+        let res14 = await executaQry(qry);
+        res.json(res14);
+      } catch (e) {
+        res.json({ message: e.message })
+      }
+    });
+
+    this.expressAppWrapper.post("/contatoaltera", async (req, res, next) => {
+      console.log(req.body)
+      let mostra = req.body;
+      let { id, nome, telefone, campanha, id_agencia } = mostra;
+      //console.log(id,  senha, tipo);
+
+      try {
+        let qry = `
+              update meso_contatos set nome = '${nome}', telefone='${telefone}', campanha = '${campanha}', id_agencia='${id_agencia}' where id = ${id}
+            `;
+        let res14 = await executaQry(qry);
+        res.json(res14);
+      } catch (e) {
+        res.json({ message: e.message })
+      }
+    });
+
 
     //MESO DETALHES --------------------------------------------------------------------------------------------
 
@@ -3520,13 +3775,13 @@ class ExpressController {
     });
 
 
-    this.expressAppWrapper.get(`/criaCampanha/:nome/:nomeCampanha/:grupo`, async (req, res, next) => {
+    this.expressAppWrapper.get(`/criaCampanha/:nome/:nomeCampanha/`, async (req, res, next) => {
       let nome = req.params.nome;
       let campanha = req.params.nomeCampanha
       let grupo = req.params.grupo
       try {
         let qry = `
-              insert into meso_campanhas(criador,  campanha, id_agencia) values ('${nome}', '${campanha}', '${grupo}')
+              insert into meso_campanhas(criador,  campanha ) values ('${nome}', '${campanha}')
             `;
         console.log(qry)
         let res26 = await executaQry(qry);

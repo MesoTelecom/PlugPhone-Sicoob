@@ -58,8 +58,8 @@ export default {
         { text: 'Relatórios Realtime', route: '/menurealtime', icon: 'mdi-timer', permission: 'Relatórios' },
         { text: 'Cadastro Usuário', route: '/cadastrousuario', icon: 'mdi-account-plus', permission: 'manage_users' },
         { text: 'Campanhas', route: '/upload', icon: 'mdi-bullhorn', permission: 'manage_campaign' },
-        { text: 'Horário de Atendimento', route: '/horarioatendimento', icon: 'mdi-clock', permission: 'horarios' },
-        { text: 'Criação de Templates', route: '/templates', icon: 'mdi-file-document-edit', permission: 'manage_template' },
+        { text: 'Editar Contatos', route: '/editarcontato', icon: 'mdi-account-multiple-plus', permission: 'horarios' },
+        { text: 'Editar Campanhas', route: '/campanhas', icon: 'mdi-file-document-edit', permission: 'manage_template' },
         { text: 'Visualização de Setores', route: '/viewsetores', icon: 'mdi-office-building', permission: 'view_setores' },
         { text: 'Visualização de Agentes', route: '/viewagentes', icon: 'mdi-account-tie', permission: 'view_agentes' },
 

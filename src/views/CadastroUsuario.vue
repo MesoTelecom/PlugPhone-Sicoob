@@ -37,7 +37,12 @@
                         type="password"></v-text-field>
                     </v-col>
                     <v-col class="d-flex" cols="12" sm="6">
-                      <v-select :items="pegaGrupo" v-model="editedItem.tipo" label="SELECIONE" outlined></v-select>
+                      <v-select :items="pegaPermissao" v-model="editedItem.tipo" label="SELECIONE" outlined></v-select>
+
+                    </v-col>
+                    <v-col class="d-flex" cols="12" sm="6">
+                      <v-select :items="dadosGrupo" v-model="grupo" label="SELECIONE" outlined></v-select>
+
                     </v-col>
                   </v-row>
                 </v-container>
@@ -87,6 +92,7 @@ export default {
   data: () => ({
     selectedValue: "",
     pegaGrupo: [],
+    pegaPermissao: [],
     dialog: false,
     dialogDelete: false,
     grupos: null,
@@ -153,22 +159,42 @@ export default {
   },
   methods: {
     async initialize() {
-      this.buscargrupo()
+      this.buscarpermissao()
+      this.buscarGrupo()
       let res = await api.get("/listausuario");
       //console.log(res.data.dados);
       this.desserts = res.data.dados;
 
+
     },
-    async buscargrupo() {
+    async buscarpermissao() {
       console.log('VOu', this.editedItem.tipo)
-      let res1 = await api.get("/listargrupo");
+      let res1 = await api.get("/listarpermissao");
       console.log('Res1.data', res1.data)
-      this.grupos = res1.data.dados;
+      this.permissao = res1.data.dados;
 
 
-      for (let x = 0; x < this.grupos.length; x++) {
-        this.pegaGrupo.push(this.grupos[x].grupo);
+      for (let x = 0; x < this.permissao.length; x++) {
+        this.pegaPermissao.push(this.permissao[x].nome);
       }
+    },
+    async buscarGrupo() {
+      let buscaGrupo = await api.get(`/listargrupo`)
+      let grupo = buscaGrupo.data.dados
+
+      this.dadosGrupo = [] // zera pra não duplicar
+
+      grupo.forEach(element => {
+        this.dadosGrupo.push({
+          text: element.nome,
+          value: element.id_agencia
+        });
+      });
+      console.log('Teste grupo', this.grupo)
+      console.log("Grupo formatado:", this.dadosGrupo)
+      console.log('tIPo', this.editedItem.tipo)
+
+
     },
     editItem(item) {
 
@@ -218,7 +244,8 @@ export default {
 
     async save() {
       let res;
-      this.editedItem.grupo = this.selectedValue
+      this.editedItem.grupo = this.grupo
+
       if (this.editedIndex > -1) {
         //edita
 

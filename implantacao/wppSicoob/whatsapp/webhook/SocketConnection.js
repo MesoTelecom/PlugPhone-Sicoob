@@ -4,8 +4,8 @@ const { cadastrarMensagem } = require("./emit");
 let socketConnection = function (io) {
   ioGlobal = io;
   io.on("connection", async (socket) => {
-    console.log('buhahahaha')
-    console.log("🟢 Usuário conectado:", socket.id);
+   // console.log('buhahahaha')
+   // console.log("🟢 Usuário conectado:", socket.id);
 
     socket.on("create-message", async (msg) => {
       //console.log("📩 Nova mensagem recebida:", msg);
@@ -38,7 +38,7 @@ let socketConnection = function (io) {
       let qryContatos = `select * from meso_contatos order by datahora desc`
       let contatosValor = await executaQry(qryContatos)
 
-      console.log("My contacts", contatosValor)
+      //console.log("My contacts", contatosValor)
 
       const estadosValidos = [
         'Novo',
@@ -71,10 +71,10 @@ let socketConnection = function (io) {
             id_agencia: element.id_agencia
           });
         } else {
-          console.log('Estado desconhecido ou não tratado:', estado);
+         // console.log('Estado desconhecido ou não tratado:', estado);
         }
       });
-      console.log("me mostra os contatos", agrupados)
+     // console.log("me mostra os contatos", agrupados)
       io.emit("contatos-sicoob", agrupados);
 
     });
@@ -98,7 +98,7 @@ let socketConnection = function (io) {
 
         let qry;
 
-        console.log("Mama eu", data)
+       // console.log("Mama eu", data)
 
         if (data.campanha == null || data.campanha == '') {
           qry = `
@@ -152,7 +152,7 @@ ORDER BY FIELD(estado, 'Todos', 'Novo', 'Aguardando Cliente', 'Aguardando Atendi
         `;
         }
 
-        console.log('me mostrar o select esquisito', qry)
+       // console.log('me mostrar o select esquisito', qry)
 
 
         const quantContatos = await executaQry(qry);
