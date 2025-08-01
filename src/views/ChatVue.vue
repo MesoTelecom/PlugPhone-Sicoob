@@ -596,7 +596,7 @@ export default {
         console.log(a);
         this.scrollToBottom(); // 🔥 Rola para baixo ao receber mensagem
       } else {
-        // this.playSound();
+        this.playSound();
         console.log('foi aqui não my badkkkkkkkkk');
         this.mudaEstado(telefone);
       }
@@ -619,7 +619,7 @@ export default {
 
           // Teste abrindo em uma nova aba
           //window.open(imageUrl, '_blank');
-          this.playSound()
+          //this.playSound()
           this.lido(telefone)
           let a = await apiWP.get(`/lidamsg/${this.wppnum}`,);
           console.log(a)
@@ -636,7 +636,7 @@ export default {
 
 
       } else {
-        this.playSound()
+        //this.playSound()
         console.log('foi aqui não my badkkkkkkkkk')
         this.mudaEstado(telefone)
       }
@@ -659,7 +659,7 @@ export default {
 
           // Teste abrindo em uma nova aba
           //window.open(audioUrl, '_blank');
-          this.playSound()
+          //this.playSound()
           this.lido(telefone)
           let a = await apiWP.get(`/lidamsg/${this.wppnum}`,);
           console.log(a)
@@ -674,7 +674,7 @@ export default {
         }
 
       } else {
-        this.playSound()
+        //  this.playSound()
         console.log('foi aqui não my badkkkkkkkkk')
         this.mudaEstado(telefone)
       }
@@ -847,9 +847,16 @@ export default {
       if (finaliza == true) {
         //   let response = await api.get(`/finaliza/${processo}/aprovado`);
         //  console.log(response)
-        let a = await api.get(`/concluido/${this.wppnum}`)
+        let a = await apiWP.get(`/concluido/${this.wppnum}`)
         console.log(a)
-        location.reload()
+
+        let c = await apiWP.get(`/finalizaprotocolo/${this.wppnum}`)
+        console.log(c)
+
+        let b = await apiWP.get(`/gerapesquisa/${this.wppnum}/${this.usuario}`)
+        console.log(b)
+
+        // location.reload()
 
       } else {
         //let response = await api.get(`/finaliza/${processo}/reprovado`);
@@ -1406,7 +1413,7 @@ export default {
       console.log('passei', tel
         , setorV
         , usuarioV, '// \n', telefone, setor, usuario)
-      this.playSound()
+      // this.playSound()
 
 
       if ((setorV == setor || setor == 'admin') && (usuarioV == usuario || usuarioV == null)) {

@@ -61,7 +61,7 @@ export default {
         title: 'Pesquisa de Satisfação',
         text: 'Relatório do atendimento da campanha',
         img: 'https://img.freepik.com/fotos-gratis/colagem-do-conceito-de-experiencia-do-cliente_23-2149367139.jpg',
-        url: '/desempenhocampanha'
+        url: '/AgenteCampanha'
       }
 
     ],

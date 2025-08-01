@@ -116,7 +116,7 @@ export default {
       //let buscaGrupo = await apiWP.get(`/listargrupofiltrado/${idAgencia}`)
       //let grupo = buscaGrupo.data.dados
 
-      let buscaCampanha = await apiWP.get(`/listarcampanhafiltrado/${idAgencia}`)
+      let buscaCampanha = await apiWP.get(`/listarcampanha`)
       let campanhas = buscaCampanha.data.dados
 
       this.dadosCampanha = [] // zera pra não duplicar

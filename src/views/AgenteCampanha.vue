@@ -10,15 +10,12 @@
       <input type="date" class="datest" v-model="d2" required />
 
 
-      <v-select v-model="fila" :items="items" item-text="descr" item-value="extension" label="Informe a fila"
-        class="filtro" persistent-hint return-object single-line></v-select>
-
+      <v-select label="Selecione a campanha" :items="dadosCampanha" v-model="campanha" class='filtro'></v-select>
 
 
       <v-btn class="botaoA" @click="exibir()">
         Consultar
       </v-btn>
-
 
 
       <v-btn color="primary" dark href="/relatorioscampanha" class="botaoSair">voltar</v-btn>
@@ -43,6 +40,7 @@
 </template>
 <script>
 
+import { apiWP } from "@/conf/apiWP";
 import { api } from "@/conf/api";
 import moment from "moment";
 import Navbar from "../components/Navbar";
@@ -65,66 +63,19 @@ export default {
 
 
       headers: [
-        { text: "Usuário", value: "usuario" },
-        { text: "Quantidade de Atendimentos por Agência", value: "quantidade_atendimentos_agencia" },
-        { text: "TME de resposta", value: "tempo_espera" },
-        { text: "Índices de Satisfação", value: "indices_satisfacao" },
+        { text: "Campanha", value: "nomeCampanha" },
+        { text: "Soluções atendidas", value: "contaPesq" },
+        { text: "Solicitações Atendidas(%)", value: "mediaSolicitacao" },
+        { text: "Media de satisfação", value: "mediaPesq" },
       ],
 
-      dados: [
-        {
-          usuario: "João",
-          quantidade_atendimentos_agencia: 208,
-          tempo_espera: "3 min",
-          indices_satisfacao: "100%",
-        },
-        {
-          usuario: "Ana",
-          quantidade_atendimentos_agencia: 150,
-          tempo_espera: "8 min",
-          indices_satisfacao: "96%",
-        },
-        {
-          usuario: "Fernanda",
-          quantidade_atendimentos_agencia: 148,
-          tempo_espera: "10 min",
-          indices_satisfacao: "79%",
-        },
-        {
-          usuario: "João",
-          quantidade_atendimentos_agencia: 188,
-          tempo_espera: "6 min",
-          indices_satisfacao: "93%",
-        },
-        {
-          usuario: "Sofia",
-          quantidade_atendimentos_agencia: 118,
-          tempo_espera: "6 min",
-          indices_satisfacao: "75%",
-        },
-        {
-          usuario: "Pedro",
-          quantidade_atendimentos_agencia: 220,
-          tempo_espera: "5 min",
-          indices_satisfacao: "85%",
-        },
-        {
-          usuario: "Carlos",
-          quantidade_atendimentos_agencia: 130,
-          tempo_espera: "7 min",
-          indices_satisfacao: "91%",
-        },
-        {
-          usuario: "Matheus",
-          quantidade_atendimentos_agencia: 175,
-          tempo_espera: "4 min",
-          indices_satisfacao: "97%",
-        }
-      ],
+      dados: [],
 
 
 
-
+      campanha: "",
+      nomeCampanha: "",
+      dadosCampanha: [],
       items: [],
       items2: [],
 
@@ -140,23 +91,25 @@ export default {
 
 
     carregar: async function () {
-      //// console.log(this.fila)
-      //// console.log(filareal, pinreal);
-      //Lista filas
-      let listafila = await api.get(`/listafilastotais`);
-      // let entrajoin = join.data.dados;
-      //console.log(listafila);
-      let listatotalfilas = listafila.data.dados;
-      //console.log("Lista as filas", listatotalfilas);
-      this.items = listatotalfilas;
 
-      //Listando os agentes para o filtro
 
-      let listaagentes = await api.get(`/realoperador`);
-      //console.log(listaagentes);
-      let listatotalagentes = listaagentes.data.dados;
-      //console.log("Lista os agentes", listatotalagentes);
-      this.items2 = listatotalagentes;
+
+      let buscaCampanha = await apiWP.get(`/listarcampanha`)
+      let campanhas = buscaCampanha.data.dados
+
+      this.dadosCampanha = [] // zera pra não duplicar
+
+      console.log(buscaCampanha, campanhas)
+
+      campanhas.forEach(element => {
+        this.dadosCampanha.push({
+          text: element.campanha,
+          value: element.id_campanha
+        });
+        this.nomeCampanha = element.campanha
+      });
+      console.log('Teste Campanhas', this.campanha)
+      console.log("Campanhas formatado:", this.dadosCampanha)
     },
 
 
@@ -175,36 +128,43 @@ export default {
       let filaapi = this.fila.extension
       console.log(filaapi)
       //console.log(this.d1, this.d2)
-      let a = await api.get(`/detalhesligacoes/${this.d1}/${this.d2}/${filaapi}`)
-      let ver = a.data.dados
+      let a = await apiWP.get(`/mediaSolicitacao/${this.d1}/${this.d2}/${this.campanha}`)
+      console.log('aaaaaaa', a)
+      let ver = a
       console.log('ver', ver)
 
-      let datahora, uniqueid, duracao, holdtime, tronco, solicitante, teleatendente, estado, fila, desligou
+      let mediaSolicitacao = ver.data.porcentagem_aprovacao
 
+      let arrayPesq = await apiWP.get(`/mediaPesq/${this.d1}/${this.d2}/${this.campanha}`)
+
+      console.log('eu sou o array de pesquisa', arrayPesq);
+
+      let mediaPesq = arrayPesq.data.dados[0].mediaPesq
+
+      let arrayConta = await apiWP.get(`/contaPesq/${this.d1}/${this.d2}/${this.campanha}`)
+
+      console.log('eu sou o array de pesquisa', arrayConta);
+
+      let contaPesq = arrayConta.data.dados[0].contaPesq
 
       let ligacoes = []
+      /*
+            ver.forEach((d) => {
+      
+      
+              datahora = this.dataF(moment(d.datahora).locale("pt-br").format())
+      
+      
+      
+            });
+      */
 
-      ver.forEach((d) => {
-
-
-        datahora = this.dataF(moment(d.datahora).locale("pt-br").format())
-        uniqueid = d.uniqueid
-        fila = d.fila
-        duracao = d.duracao
-        holdtime = d.holdtime
-        tronco = d.tronco
-        desligou = d.reason
-        solicitante = d.solicitante
-        teleatendente = d.teleatendente
-        estado = d.estado
-
-        ligacoes.push({ datahora, fila, uniqueid, duracao, holdtime, tronco, solicitante, teleatendente, desligou, estado })
-      });
-
+      console.log('eu sou o dadosCampanha', this.dadosCampanha)
+      let nomeCampanha = this.dadosCampanha[0].text
       console.log('ver ligacoes', ligacoes)
       //console.log(calldate, channel, clid, cnam, cnum, dcontext, did, disposition, dst, dstchannel, duration, lastapp, lastdata, outbound_cnam, outbound_cnum, recordingfile, src, uniqueid)
 
-      this.dados = ligacoes
+      this.dados = [{ nomeCampanha, mediaSolicitacao, mediaPesq, contaPesq }]
 
     },
 
