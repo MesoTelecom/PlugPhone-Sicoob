@@ -29,9 +29,9 @@
                   <b style="font-size: 14px;"> {{ contact.nome }}</b>
                   <br>
 
-                  <texto style="    margin-left: 21%;
+                  <a style="    margin-left: 21%;
                     font-size: 12px;
-                    color: #494949;">{{ contact.ultimamsg }}</texto>
+                    color: #494949;">{{ contact.ultimamsg }}</a>
                   <v-icon v-if="contact.estadomsg === 'novamsg'" color="#25D366"
                     style="font-size: 15px; left: 3%;">mdi-checkbox-blank-circle
                   </v-icon>
@@ -46,7 +46,7 @@
                     {{ contact.estado }}
                   </v-icon>
                   <br>
-                  <datahora style="margin-left: 21%; color: #8f8f8f !important;">{{ contact.datahora }}</datahora>
+                  <a style="margin-left: 21%; color: #8f8f8f !important;">{{ contact.datahora }}</a>
                   <hr>
 
                 </v-list-item-title>
@@ -584,7 +584,8 @@ export default {
 
 
     this.socket.on('chat message', async (nome, msg, telefone) => {
-      this.verificaMensagem(telefone, this.tipo, this.usuario)
+      console.log('ME MOSTRE O IDAGENCIA', this.idAgencia)
+      this.verificaMensagem(telefone, this.idAgencia, this.usuario)
       this.buscarContato(this.filtroCargo, this.estadoContatoFiltro);
       if (telefone == this.wppnum) {
 
@@ -596,7 +597,7 @@ export default {
         console.log(a);
         this.scrollToBottom(); // 🔥 Rola para baixo ao receber mensagem
       } else {
-        this.playSound();
+        //this.playSound();
         console.log('foi aqui não my badkkkkkkkkk');
         this.mudaEstado(telefone);
       }
@@ -1395,28 +1396,28 @@ export default {
 
 
 
-    async verificaMensagem(telefone, setor, usuario) {
+    async verificaMensagem(telefone, idAgencia, usuario) {
       this.contacts = []
       let contatos = await apiWP.get(`/verificamensagem/${telefone}/`);
       let contatosArray = contatos.data.dados;
       console.log('EITA TESTE BÃO SÔ', contatosArray)
       let tel = ""
-      let setorV = ""
+      let idAgenciaV = ""
       let usuarioV = ""
       contatosArray.forEach(e => {
 
         tel = e.telefone
-        setorV = e.setor
+        idAgenciaV = e.id_agencia
         usuarioV = e.usuario
       });
 
       console.log('passei', tel
-        , setorV
-        , usuarioV, '// \n', telefone, setor, usuario)
+        , idAgenciaV
+        , usuarioV, '// \n', telefone, idAgencia, usuario)
       // this.playSound()
 
 
-      if ((setorV == setor || setor == 'admin') && (usuarioV == usuario || usuarioV == null)) {
+      if ((idAgenciaV == idAgencia) && (usuarioV == usuario || usuarioV == null)) {
         this.playSound()
       } else {
         console.log('não passei pelo if')

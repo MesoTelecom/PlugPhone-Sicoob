@@ -112,8 +112,8 @@ export default {
         sortable: false,
         value: "usuario",
       },
-      { text: "acesso", value: "tipo" },
-      { text: "grupo", value: "grupo" },
+      { text: "acesso", value: "id_permissao" },
+      { text: "grupo", value: "id_agencia" },
       { text: "Editar | Excluir", value: "actions", sortable: false },
     ],
 
