@@ -300,7 +300,7 @@
             <br>
           </v-row>
           <br>
-          <v-btn @click="filtrar(), sendTemplate(), openDialog2 = false" class="filtrar">
+          <v-btn @click="filtrar(), openDialog2 = false" class="filtrar">
             Filtrar
           </v-btn>
 
@@ -451,6 +451,8 @@ export default {
   async beforeMount() {
     this.buscaCidadao();
     this.listarSetores();
+    this.buscaProtocolo(this.wppnum)
+
     this.funcTokenFirebase();
     let usuario = JSON.parse(localStorage.getItem('usu'));
     console.log('usuario oque?', usuario)
@@ -512,6 +514,7 @@ export default {
 
       ],
       messages: [],
+      protocoloArray: [],
       d1: "",
       d2: "",
       filtroSelecionado: "",
@@ -529,7 +532,6 @@ export default {
       idsetinterval: null,
       name: "template_plugphone2",
       wppnum: "",
-      protocoloArray: "",
       ramal: "",
       items: [],
       plataforma: "",
@@ -832,6 +834,24 @@ export default {
       }
     },
 
+    async buscaProtocolo(telefone) {
+      if (telefone) {
+        this.protocoloArray = []
+        console.log('eita', telefone)
+        let a = await apiWP.get(`/listaprotocolo/${telefone}`)
+        console.log('copo de café', a)
+        let protocolo = a.data.dados
+
+        protocolo.forEach(e => {
+          this.protocoloArray.push(e.protocolo)
+        });
+
+        console.log('cafezin dahora', this.protocoloArray)
+      } else {
+        console.log('aff meo')
+      }
+    },
+
     async transferir() {
       let usuario = this.usuarioSelect[0]
       let area = this.setorSelect
@@ -941,6 +961,7 @@ export default {
 
       console.log('MAIS FACIL DE ACHAR', this.usuario);
 
+      this.buscaProtocolo(this.wppnum)
 
       if (this.tipo == 'admin') {
         console.log('admin não atualiza usuario')
@@ -1020,7 +1041,7 @@ export default {
 
 
       };
-      let template = await api.post("/sendtemplate", msg);
+      let template = await apiWP.post("/sendtemplate", msg);
 
       console.log(template)
     },

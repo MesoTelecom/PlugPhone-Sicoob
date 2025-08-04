@@ -14,7 +14,7 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 var proxy = require('express-http-proxy');
 const { exec } = require("child_process");
 const zlib = require('zlib');
-const { aniversariantes } = require("../methods");
+const { aniversariantes, sendPesquisa, sendSatisfacao } = require("../methods");
 const upload = multer({ dest: 'uploads/' });
 class ExpressController {
   constructor(expressAppWrapper, porta) {
@@ -167,16 +167,36 @@ class ExpressController {
       }
     });
 
-
     this.expressAppWrapper.post('/cadastrarcontato', async (req, res) => {
-      let nome = req.body.nome
-      let telefone = req.body.telefone
+      let nome = req.body.nome;
+      let telefone = req.body.telefone;
+      let cpf = req.body.cpf;
+      let id_agencia = req.body.idAgencia;
 
-      let qry = `insert into meso_contatos (nome,telefone,estado,datahora) values ('${nome}','${telefone}','Novo',now())`
-      console.log('bumbum profundo', qry)
-      await executaQry(qry)
-      res.json("Usuário Cadastrado");
-    })
+      let qry = `
+    INSERT INTO meso_contatos (nome, telefone, estado, documento, id_agencia, setor, datahora)
+    VALUES ('${nome}', '${telefone}', 'Novo', '${cpf}', '${id_agencia}', 'Gerente', NOW())
+  `;
+
+      console.log('bumbum profundo', qry);
+
+      try {
+        let resultado = await executaQry(qry);
+
+        // Se não der erro, vamos garantir que algo foi afetado
+        if (resultado?.dados.affectedRows > 0) {
+          console.log('chegou aqui no insert');
+          res.json({ success: true, message: 'Usuário cadastrado com sucesso!' });
+        } else {
+          console.log('não chegou aqui no insert');
+          res.json({ success: false, message: 'Não foi possível cadastrar usuário!' });
+        }
+      } catch (error) {
+        console.error('Erro ao cadastrar contato:', error);
+        res.status(500).json({ success: false, message: 'Erro ao cadastrar o contato!', error: error.message });
+      }
+    });
+
 
     this.expressAppWrapper.get('/finalizaprotocolo/:telefone', async (req, res) => {
       let telefone = req.params.telefone
@@ -367,7 +387,7 @@ class ExpressController {
 
     // Middleware para tratamento de erros
     this.expressAppWrapper.use((err, req, res, next) => {
-      //console.error(err.stack);
+      console.error(err.stack);
       res.status(500).send('Algo deu errado!');
     });
 
@@ -538,6 +558,39 @@ class ExpressController {
       res.json(res2)
     })
 
+    this.expressAppWrapper.get('/gerapesquisa/:telefone/:usuario', async (req, res) => {
+      try {
+        let telefone = req.params.telefone;
+        let usuario = req.params.usuario;
+
+        let campanhaArray = await executaQry(`SELECT campanha FROM meso_contatos WHERE telefone = '${telefone}'`);
+
+        if (!campanhaArray.dados || campanhaArray.dados.length === 0) {
+          return res.status(404).json({ erro: 'Telefone não encontrado' });
+        }
+
+        let campanha = campanhaArray.dados[0].campanha;
+
+        let qry = `INSERT INTO meso_pesquisa (operador, cliente, campanha, datahora)
+               VALUES ('${usuario}', '${telefone}', '${campanha}', now())`;
+        let res2 = await executaQry(qry);
+
+        let sat = await sendSatisfacao(telefone, usuario);
+        let pesq = await sendPesquisa(telefone, usuario);
+
+        return res.json({
+          pesquisa: res2,
+          satisfacao: sat,
+          pesquisaMsg: pesq
+        });
+
+      } catch (error) {
+        console.error('Erro ao gerar pesquisa:', error);
+        return res.status(500).json({ erro: 'Erro interno ao gerar pesquisa' });
+      }
+    });
+
+
     //Pesquisa de satisfação
 
     this.expressAppWrapper.get("/pesquisa/:d1/:d2", async (req, res, next) => {
@@ -552,26 +605,108 @@ class ExpressController {
 
     });
 
+    this.expressAppWrapper.get("/mediaPesq/:d1/:d2/:campanha", async (req, res, next) => {
+      let data1 = req.params.d1 + ' 00:00:00';
+      let data2 = req.params.d2 + ' 23:59:59';
+      let campanhaId = req.params.campanha
+
+      let qry1 = `select campanha from meso_campanhas  where id_campanha = '${campanhaId}'`
+      console.log(qry1)
+      let campanhaArray = await executaQry(qry1)
+
+      console.log('eu terei a minha', campanhaArray)
+      let campanha = campanhaArray.dados[0].campanha
+
+      let qry = `select avg(pergunta2) as mediaPesq from meso_pesquisa WHERE datahora BETWEEN '${data1}' AND '${data2}'
+        AND pergunta1 IS NOT NULL and campanha = '${campanha}' AND pergunta2 IS NOT NULL 
+    `;
+      console.log(qry);
+
+      let res1 = await executaQry(qry);
+      res.json(res1);
+      //////console.log(res1);
+
+    });
+
+    this.expressAppWrapper.get("/contaPesq/:d1/:d2/:campanha", async (req, res, next) => {
+      let data1 = req.params.d1 + ' 00:00:00';
+      let data2 = req.params.d2 + ' 23:59:59';
+      let campanhaId = req.params.campanha
+
+      let qry1 = `select campanha from meso_campanhas  where id_campanha = '${campanhaId}'`
+      console.log(qry1)
+      let campanhaArray = await executaQry(qry1)
+
+      console.log('eu terei a minha', campanhaArray)
+      let campanha = campanhaArray.dados[0].campanha
+
+      let qry = `select count(*) as contaPesq from meso_pesquisa WHERE datahora BETWEEN '${data1}' AND '${data2}'
+        AND campanha = '${campanha}' AND pergunta2 IS NOT NULL 
+    `;
+      console.log(qry);
+
+      let res1 = await executaQry(qry);
+      res.json(res1);
+      //////console.log(res1);
+
+    });
+
+
+    this.expressAppWrapper.get("/mediaSolicitacao/:d1/:d2/:campanha", async (req, res, next) => {
+      let data1 = req.params.d1 + ' 00:00:00';
+      let data2 = req.params.d2 + ' 23:59:59';
+      let campanhaId = req.params.campanha
+
+      let qry1 = `select campanha from meso_campanhas  where id_campanha = '${campanhaId}'`
+      console.log(qry1)
+      let campanhaArray = await executaQry(qry1)
+
+      //console.log('eu terei a minha', campanhaArray)
+      let campanha = campanhaArray.dados[0].campanha
+      let qry = `
+        SELECT pergunta1 
+        FROM meso_pesquisa 
+        WHERE datahora BETWEEN '${data1}' AND '${data2}'
+        AND pergunta1 IS NOT NULL and campanha = '${campanha}'
+    `;
+
+      try {
+        let res1 = await executaQry(qry);
+        let respostas = res1.dados.map(r => (r.pergunta1 || '').trim());
+
+        let total = respostas.filter(r => r === 'Sim' || r === 'Não').length;
+        let aprovados = respostas.filter(r => r === 'Sim').length;
+        let reprovados = respostas.filter(r => r === 'Não').length;
+
+        let porcentagemAprovacao = total > 0 ? ((aprovados / total) * 100).toFixed(2) : '0.00';
+
+        res.json({
+          total_respostas: total,
+          aprovados,
+          reprovados,
+          porcentagem_aprovacao: `${porcentagemAprovacao}%`
+        });
+
+      } catch (err) {
+        console.error("Erro ao calcular média de solicitação:", err);
+        res.status(500).json({ erro: 'Erro interno ao calcular a média' });
+      }
+
+    });
+
+
     let funcBuscarMensagem = async function () {
 
     }
 
-    this.expressAppWrapper.get("/buscarcontatosDart/:tipo", async (req, res, next) => {
+    this.expressAppWrapper.get("/buscarcontatostel/:telefone", async (req, res, next) => {
       let qry
 
-      let tipo = req.params.tipo
+      let telefone = req.params.telefone
 
-      if (tipo == 'admin') {
-        qry = `select * from meso_contatos order by datahora desc`
-
-      } else {
-
-        qry = `select * from meso_contatos where setor = '${tipo}' order by datahora desc`
-
-
-        ////console.log('contato', qry)
-        ////console.log('contatos resposta', res20)
-      }
+      qry = `select * from meso_contatos where telefone = '${telefone}' order by datahora desc`
+      console.log('contato', qry)
+      ////console.log('contatos resposta', res20)
       let res20 = await executaQry(qry)
       res.json(res20)
 
@@ -595,215 +730,65 @@ class ExpressController {
       console.log("tipo == 'Root'?", tipo == 'Root');
 
 
-      if (tipo == 'Root' || tipo == 'Monitor') {
-        // base = contatos + campanha ativa
-        qry = `
-    SELECT ct.* 
+      if (tipo === 'Root' || tipo === 'Monitor') {
+        let baseQuery = `
+    SELECT ct.*
     FROM meso_contatos ct
     JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-    WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
-    ORDER BY ct.datahora DESC
+    WHERE (cp.estado = 'Ativo' OR cp.estado = 'Em Andamento')
   `;
 
-        if (filtro == "Nome") {
-          if (estadoContato == 'Todos') {
-            qry = `
-        SELECT ct.* 
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha AND ct.nome LIKE '${filtroValor}%'
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
-          
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          } else {
-            qry = `
-        SELECT ct.* 
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha AND ct.nome LIKE '${filtroValor}%'
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
-          
-          AND ct.estado = '${estadoContato}'
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          }
-        } else if (filtro == "Cpf") {
-          if (estadoContato == 'Todos') {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha AND ct.documento LIKE '${filtroValor}%'
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
-          
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          } else {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha AND ct.documento LIKE '${filtroValor}%'
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
-          
-          AND ct.estado = '${estadoContato}'
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          }
-        } else if (filtro == "Campanha") {
-          if (estadoContato == 'Todos') {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha AND ct.campanha LIKE '${filtroValor}%'
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
-          
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          } else {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha AND ct.campanha LIKE '${filtroValor}%'
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
-          
-          AND ct.estado = '${estadoContato}'
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          }
-        } else if (filtro == "Geral") {
-          if (estadoContato == 'Todos') {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          } else {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
-          AND ct.estado = '${estadoContato}'
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          }
+        if (filtro === "Nome") {
+          baseQuery += ` AND ct.nome LIKE '${filtroValor}%'`;
+        } else if (filtro === "Cpf") {
+          baseQuery += ` AND ct.documento LIKE '${filtroValor}%'`;
+        } else if (filtro === "Campanha") {
+          baseQuery += ` AND ct.campanha LIKE '${filtroValor}%'`;
         }
+
+        if (estadoContato !== 'Todos') {
+          baseQuery += ` AND ct.estado = '${estadoContato}'`;
+        }
+
+        baseQuery += ` ORDER BY ct.datahora DESC`;
+
+        qry = baseQuery;
+        console.log('query kkkkk', qry);
+
+
       } else {
         // Demais perfis → filtra id_agencia
-        if (filtro == "Nome") {
-          if (estadoContato == 'Todos') {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andame AND ct.nome LIKE '${filtroValor}%'nto' 
-          AND ct.id_agencia = '${idAgencia}'
-          
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          } else {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andame AND ct.nome LIKE '${filtroValor}%'nto' 
-          AND ct.id_agencia = '${idAgencia}'
-          
-          AND ct.estado = '${estadoContato}'
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          }
-        } else if (filtro == "Campanha") {
-          if (estadoContato == 'Todos') {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andame AND ct.campanha LIKE '${filtroValor}%'nto' 
-          AND ct.id_agencia = '${idAgencia}'
-          
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          } else {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andame AND ct.campanha LIKE '${filtroValor}%'nto' 
-          AND ct.id_agencia = '${idAgencia}'
-          
-          AND ct.estado = '${estadoContato}'
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          }
-        } else if (filtro == "Cpf") {
-          if (estadoContato == 'Todos') {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andame AND ct.documento LIKE '${filtroValor}%'nto' 
-          AND ct.id_agencia = '${idAgencia}'
-          
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          } else {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andame AND ct.documento LIKE '${filtroValor}%'nto' 
-          AND ct.id_agencia = '${idAgencia}'
-          
-          AND ct.estado = '${estadoContato}'
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          }
-        } else if (filtro == "Geral") {
-          if (estadoContato == 'Todos') {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
-          AND ct.id_agencia = '${idAgencia}'
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          } else {
-            qry = `
-        SELECT ct.*
-        FROM meso_contatos ct
-        JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-        WHERE cp.estado = 'Ativo' or cp.estado = 'Em Andamento' 
-          AND ct.id_agencia = '${idAgencia}'
-          AND ct.estado = '${estadoContato}'
-        ORDER BY ct.datahora DESC
-      `;
-            console.log('query kkkkk', qry)
-          }
+        let baseQuery = `
+    SELECT ct.*
+    FROM meso_contatos ct
+    JOIN meso_campanhas cp ON cp.campanha = ct.campanha
+    WHERE (cp.estado = 'Ativo' OR cp.estado = 'Em Andamento')
+      AND ct.id_agencia = '${idAgencia}'
+  `;
+
+        if (filtro === "Nome") {
+          baseQuery += ` AND ct.nome LIKE '${filtroValor}%'`;
+        } else if (filtro === "Cpf") {
+          baseQuery += ` AND ct.documento LIKE '${filtroValor}%'`;
+        } else if (filtro === "Campanha") {
+          baseQuery += ` AND ct.campanha LIKE '${filtroValor}%'`;
         }
+
+        if (estadoContato !== 'Todos') {
+          baseQuery += ` AND ct.estado = '${estadoContato}'`;
+        }
+
+        baseQuery += ` ORDER BY ct.datahora DESC`;
+
+        qry = baseQuery;
+        console.log('query kkkkk', qry);
       }
 
 
-      console.log('contato', qry)
-      let res20 = await executaQry(qry)
-      res.json(res20)
-      //////console.log('contatos resposta', res20)
+      console.log('contato', qry);
+      let res20 = await executaQry(qry);
+      console.log('eu sou a porra do res20', res20);
+      res.json(res20);
 
     });
 
@@ -820,7 +805,7 @@ class ExpressController {
       if (filtro == "Nome") {
 
         ////console.log('Olha estou aqui qry', qry)
-        qry = `select * from meso_contatos where documento like '${filtroValor}%' and setor = '${tipo}' ORDER BY datahora DESC`
+        qry = `select * from meso_contatos where documento like '${filtroValor}%' and id_agencia = '${tipo}' ORDER BY datahora DESC`
       } else if (filtro == "Cpf") {
 
         ////console.log('Olha estou aqui qry', qry)
@@ -900,7 +885,7 @@ class ExpressController {
 
       let telefone = req.params.telefone
 
-      qry = `select telefone, setor, usuario from meso_contatos where telefone = '${telefone}'`
+      qry = `select telefone, id_agencia, usuario from meso_contatos where telefone = '${telefone}'`
 
       console.log('Verifica mensagem', qry)
       let res20 = await executaQry(qry)
@@ -908,6 +893,23 @@ class ExpressController {
       //console.log('contatos resposta', res20)
 
     })
+
+    this.expressAppWrapper.post("/reciveMsg", async (req, res, next) => {
+      ////console.log('estou aqui só pra vc saber ta?')
+      let telefone = req.body.telefone
+      let telFormatado = telefone
+
+      if (telefone.length == 13) {
+      }
+
+      let qry = ` select * from meso_mensagens_solicitante where telefone like "${telFormatado}"`;
+
+      ////console.log('qry:', qry)
+      let res3 = await executaQry(qry);
+      res.json(res3);
+      ////console.log(res3);
+
+    });
 
     this.expressAppWrapper.post("/reciveMsg", async (req, res, next) => {
       ////console.log('estou aqui só pra vc saber ta?')
@@ -991,19 +993,33 @@ class ExpressController {
       ////console.log('pirulito1', data1.length)
       ////console.log('pirulito2', data2.length)
 
-      if (data1.length == 19 && data2.length == 19) {
-        qry = ` select * from meso_mensagens_solicitante where telefone like "${telFormatado}" and datetime > '${data1}' and datetime < '${data2}'`;
-      } else {
-        let protocoloFormatado = protocolo.split(" ")
-        qry = ` select * from meso_mensagens_solicitante where telefone like "${telFormatado}" and protocolo like '${protocoloFormatado[0]}'`;
+      let protocoloQry = `SELECT datetime, datafinal_protocolo FROM meso_mensagens_solicitante WHERE telefone LIKE "${telFormatado}" AND protocolo LIKE '${protocolo}' LIMIT 1`;
+      let protocoloResult = await executaQry(protocoloQry);
+
+      console.log('resultado do protocolo', protocoloResult)
+
+      if (protocoloResult.length === 0) {
+        return res.json([]); // Não achou o protocolo
       }
 
-      ////console.log('qry:', qry)
+      let dataInicio = protocoloResult.dados[0].datetime;
+      let dataFim = protocoloResult.dados[0].datafinal_protocolo;
+
+      if (data1.length == 19 && data2.length == 19) {
+        qry = ` select * from meso_mensagens_solicitante where telefone like "${telFormatado}" and datetime >= '${data1}' and datetime <= '${data2}'`;
+      } else {
+        let protocoloFormatado = protocolo.split(" ")
+        qry = ` select * from meso_mensagens_solicitante where telefone like "${telFormatado}" and protocolo like '${protocoloFormatado[0]}' and datetime >= '${dataInicio}' and datetime <= '${dataFim}'`;
+      }
+
+      console.log('qry:', qry)
       let res3 = await executaQry(qry);
       res.json(res3);
       ////console.log(res3);
 
     });
+
+
 
     this.expressAppWrapper.get("/mediapesquisaconta/:d1/:d2", async (req, res, next) => {
       let data1 = req.params.d1 + ' 00:00:00'
@@ -1191,6 +1207,23 @@ class ExpressController {
         res.json(res1)
       } catch (error) {
         ////////console.log(e)
+      }
+    });
+
+
+    this.expressAppWrapper.get(`/listarcampanha/`, async (req, res, next) => {
+      try {
+        let qry = `
+          SELECT DISTINCT mc.id_campanha, mc.campanha
+          FROM meso_campanhas mc
+          JOIN meso_contatos c ON c.campanha = mc.campanha
+      
+        `;
+        let res1 = await executaQry(qry);
+        res.json(res1);
+      } catch (error) {
+        console.error("Erro ao buscar campanhas filtradas:", error);
+        res.status(500).send("Erro interno");
       }
     });
 
@@ -2878,6 +2911,40 @@ class ExpressController {
 
     })
 
+    this.expressAppWrapper.post("/atualizarcontato", async (req, res, next) => {
+      let nome = req.body.nome;
+      let telefone = req.body.telefone;
+      let cpf = req.body.cpf;
+      let oldTelefone = req.body.oldTelefone;
+
+      let qry = `
+UPDATE meso_contatos
+SET nome = '${nome}', telefone = '${telefone}', documento = '${cpf}'
+WHERE telefone = '${oldTelefone}'
+`;
+
+      console.log('churrasquei ou churrascou:', qry);
+
+      try {
+        let resultado = await executaQry(qry);
+
+        if (resultado?.dados?.affectedRows > 0) {
+          console.log("Chegou no atualizar");
+          res.json({ success: true, message: 'Contato atualizado com sucesso!' });
+        } else {
+          console.log("Não Chegou no atualizar");
+          res.json({ success: false, message: 'Nenhum contato encontrado para atualizar.' });
+        }
+
+      } catch (error) {
+        console.error('Erro ao atualizar contato:', error);
+        res.status(500).json({ success: false, message: 'Erro ao atualizar o contato.', error: error.message });
+      }
+    });
+
+
+
+
     this.expressAppWrapper.post("/acciolyaltera/", async (req, res, next) => {
       let id = req.body.id;
       let pedido = req.body.pedido;
@@ -3420,6 +3487,30 @@ class ExpressController {
         console.log(e);
       }
     });
+
+    this.expressAppWrapper.post("/insere-usuario", async (req, res, next) => {
+      let usuario = req.body.usuario + "-Meso";
+      let senha = req.body.senha;
+
+      try {
+        let qry = `
+      INSERT INTO meso_usuariologin(usuario, senha, tipo)
+      VALUES ('${usuario}', MD5('${senha}'), 'Gerente')
+    `;
+        console.log('caveira na sala da faculdade', qry);
+        let resultado = await executaQry(qry);
+
+        if (resultado.affectedRows > 0) {
+          res.json({ sucesso: true, mensagem: "Usuário cadastrado com sucesso." });
+        } else {
+          res.status(400).json({ sucesso: false, mensagem: "Não foi possível cadastrar o usuário." });
+        }
+      } catch (e) {
+        console.error(e);
+        res.status(500).json({ sucesso: false, mensagem: "Erro ao cadastrar usuário.", erro: e.message });
+      }
+    });
+
 
 
     this.expressAppWrapper.get("/campanhatira/:id", async (req, res, next) => {
