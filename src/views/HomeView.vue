@@ -23,7 +23,7 @@
     width: 55% !important;
     left: 21% !important;
     position: relative;">
-        <v-row style="width: 60% !important;margin-left: 20% !important;">
+        <v-row style="width: 70% !important;margin-left: 5% !important;">
           <v-icon style="
           left: 20% !important;
           height: 50px;
@@ -33,8 +33,7 @@
             class="custom-text-field" solo />
         </v-row>
 
-        <v-row style="    width: 60% !important;
-    margin-left: 20% !important;">
+        <v-row style="width: 70% !important;margin-left: 5% !important;">
           <v-icon style="
           left: 20% !important;
           height: 50px;

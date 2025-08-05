@@ -60,8 +60,6 @@ export default {
         { text: 'Campanhas', route: '/upload', icon: 'mdi-bullhorn', permission: 'manage_campaign' },
         { text: 'Editar Contatos', route: '/editarcontato', icon: 'mdi-account-multiple-plus', permission: 'horarios' },
         { text: 'Editar Campanhas', route: '/campanhas', icon: 'mdi-file-document-edit', permission: 'manage_template' },
-        { text: 'Visualização de Setores', route: '/viewsetores', icon: 'mdi-office-building', permission: 'view_setores' },
-        { text: 'Visualização de Agentes', route: '/viewagentes', icon: 'mdi-account-tie', permission: 'view_agentes' },
 
 
 

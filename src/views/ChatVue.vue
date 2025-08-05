@@ -1415,8 +1415,6 @@ export default {
       }
     },
 
-
-
     async verificaMensagem(telefone, idAgencia, usuario) {
       this.contacts = []
       let contatos = await apiWP.get(`/verificamensagem/${telefone}/`);
@@ -1438,11 +1436,10 @@ export default {
       // this.playSound()
 
 
-      if ((idAgenciaV == idAgencia) && (usuarioV == usuario || usuarioV == null)) {
-        this.playSound()
+      if ((idAgenciaV == idAgencia) && (usuarioV == usuario || usuarioV == null || usuarioV == "" || usuarioV == "null" || typeof usuarioV === "undefined")) {
+        this.playSound();
       } else {
-        console.log('não passei pelo if')
-
+        console.log('não passei pelo if');
       }
 
     },
