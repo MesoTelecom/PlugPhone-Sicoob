@@ -4,13 +4,9 @@
     <Navbar />
     <div class="text-center">
       <v-col cols="12" sm="6" md="3">
-        <v-select
-          :items="items"
-          label="Informar o número da fila"
-          v-model="fila"
-        ></v-select>
-        
-        
+        <v-select :items="items" label="Informar o número da fila" v-model="fila"></v-select>
+
+
 
       </v-col>
       <v-btn @click="reloadPage">Geral</v-btn>
@@ -22,19 +18,13 @@
       <v-row>
         <v-col cols="12" sm="12" style="    margin-top: 4%;
     margin-left: 2%;;">
-          
+
 
           <v-row class="px-5 mt-n6 ml-5">
-         
-  
+
+
             <v-col cols="12" sm="3" v-for="list in lists" :key="list.id">
-              <v-card
-                align="center"
-                class="rounded-circle border pt-10"
-                width="200"
-                height="200"
-                flat
-              >
+              <v-card align="center" class="rounded-circle border pt-10" width="200" height="200" flat>
                 <v-icon size="60">
                   {{ list.icon }}
                 </v-icon>
@@ -43,14 +33,7 @@
                   {{ list.title }}
                 </v-card-text>
 
-                <v-btn
-                  absolute
-                  color="#243e57"
-                  class="white--text"
-                  fab
-                  left
-                  top
-                >
+                <v-btn absolute color="#243e57" class="white--text" fab left top>
                   <h2>{{ list.count }}</h2>
                 </v-btn>
               </v-card>
@@ -79,30 +62,30 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/footer.vue";
 
 export default {
-    name: "HelloView",
-   async beforeMount() {
+  name: "HelloView",
+  async beforeMount() {
     //const { setIntervalAsync } = require("set-interval-async/legacy");
     this.exibir();
     console.log("eu sou idsetinterval Before mount", this.idsetinterval);
 
     this.idsetinterval = setInterval(() => this.exibir(), 5000);
-    
-     this.alarme();
+
+    this.alarme();
     this.listfila();
     this.exibir();
-  
+
   },
 
   async beforeDestroy() {
     console.log("eu sou idsetinterval", this.idsetinterval);
-        clearInterval(this.idsetinterval)
+    clearInterval(this.idsetinterval)
     this.idsetinterval = 0;
   },
-   
+
 
 
   data: () => ({
-          idsetinterval: null,
+    idsetinterval: null,
 
     fila: "",
     items: [],
@@ -166,7 +149,7 @@ export default {
     Navbar,
     Footer,
   },
-  
+
   methods: {
     currentDateTime() {
       const current = new Date();
@@ -216,6 +199,7 @@ export default {
         this.items.push([numerofila]);
       });
     },
+
     exibir: async function () {
       //Segunda bolinha do painel das filas
 
@@ -227,8 +211,7 @@ export default {
       //Primeira bolinha do painel das filas
 
       let total = await api.get(
-        `/listajointotalrt/${
-          this.fila
+        `/listajointotalrt/${this.fila
         }/${this.PastDateTime()}/${this.currentDateTime()}`
       );
       let entrajointotal = total.data.dados;
@@ -245,8 +228,7 @@ export default {
 
       //Quarta bolinha de chamadas da fila - Abandonadas do dia
       let abandonadasfila = await api.get(
-        `/filasabandonadasrt/${
-          this.fila
+        `/filasabandonadasrt/${this.fila
         }/${this.PastDateTime()}/${this.currentDateTime()}`
       );
       let abandonadastotal = abandonadasfila.data.dados;
@@ -261,8 +243,7 @@ export default {
 
       //Sexta bolinha tma
       let tmafila = await api.get(
-        `/tmafilasrt/${
-          this.fila
+        `/tmafilasrt/${this.fila
         }/${this.PastDateTime()}/${this.currentDateTime()}`
       );
       //console.log("primeiro:", tmafila);
@@ -280,8 +261,7 @@ export default {
 
       //Setima bolinha TME Atendidas
       let tmefila = await api.get(
-        `/tmefilasrt/${
-          this.fila
+        `/tmefilasrt/${this.fila
         }/${this.PastDateTime()}/${this.currentDateTime()}`
       );
       //console.log("primeiro:", tmefila);
@@ -300,8 +280,7 @@ export default {
       //Oitava bolinha TME do abandono
 
       let tmefilaabandono = await api.get(
-        `/tmefilasabandonadas/${
-          this.fila
+        `/tmefilasabandonadas/${this.fila
         }/${this.PastDateTime()}/${this.currentDateTime()}`
       );
       //console.log("primeiro:", tmefilaabandono);
@@ -309,7 +288,7 @@ export default {
       //console.log("Opa eu sou o edu array completo:", tmerealfilaabandonada);
 
       tmerealfilaabandonada.forEach((d) => {
-           let temposegundosC = d.mediaesperaabandonada;
+        let temposegundosC = d.mediaesperaabandonada;
         //console.log("Eu sou o Edu:", temposegundosC);
         ////console.log('Eu sou o Edu A:', temposegundosB);
         let tmeabandonadas = temposegundosC / 60;
@@ -339,14 +318,14 @@ export default {
     alarme: async function () {
       if (this.lists[1].count >= 10) {
         this.playSound();
-        this.lists[1].icon ='mdi mdi-alert'
+        this.lists[1].icon = 'mdi mdi-alert'
       } else {
         this.sound = "";
-        this.lists[1].icon= 'mdi mdi-phone-log'
+        this.lists[1].icon = 'mdi mdi-phone-log'
       }
     },
   },
-  
+
 };
 </script>
 <style scoped>
@@ -357,24 +336,28 @@ export default {
 .v-btn--fab.v-size--default.v-btn--absolute.v-btn--top {
   top: 65px !important;
 }
+
 .v-btn--absolute.v-btn--left,
 .v-btn--fixed.v-btn--left {
   left: -26px !important;
 }
+
 .mdi-phone-in-talk {
   color: green;
 }
+
 .mdi-alarm {
   color: blue;
 }
 
-.mdi-map-search
- {
+.mdi-map-search {
   color: rgb(59, 137, 255);
 }
+
 .linkp {
   text-decoration: none;
 }
+
 .botaoSair {
   margin-left: 47%;
   bottom: 9%;
@@ -390,26 +373,32 @@ export default {
 .mdi-phone-log {
   color: orange;
 }
+
 .mdi-phone-minus {
   color: red;
 }
-.mdi-alert{
-    font-size: 70px;
-    color: #ff6f00;
-    border-radius: 16% !important;
-    width: 45%;
+
+.mdi-alert {
+  font-size: 70px;
+  color: #ff6f00;
+  border-radius: 16% !important;
+  width: 45%;
 }
-.footer{
+
+.footer {
   position: absolute;
-bottom: 0%;
-width: 100%;
+  bottom: 0%;
+  width: 100%;
 }
+
 .mdi-phone {
   color: blue;
 }
+
 .mdi-alarm-check {
   color: green;
 }
+
 .mdi-alarm-off {
   color: red;
 }

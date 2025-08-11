@@ -19,11 +19,8 @@
         <br>
         <!--div que trata botões de Facebook, Google e Linkedin-->
       </div>
-      <v-form style="        top: 44% !important;
-    width: 55% !important;
-    left: 21% !important;
-    position: relative;">
-        <v-row style="width: 70% !important;margin-left: 5% !important;">
+      <v-form style=" top: 37% !important;width: 36% !important;left: 33% !important;position: relative;">
+        <v-row style="width: 70% !important;margin-left: 10% !important;">
           <v-icon style="
           left: 20% !important;
           height: 50px;
@@ -33,7 +30,7 @@
             class="custom-text-field" solo />
         </v-row>
 
-        <v-row style="width: 70% !important;margin-left: 5% !important;">
+        <v-row style="width: 70% !important;margin-left: 10% !important;">
           <v-icon style="
           left: 20% !important;
           height: 50px;
@@ -47,7 +44,7 @@
           <br>
           <br>
           <v-btn rounded @click="login" color="#61a5e8" class="centralizado"
-            style="color: white;    margin-bottom: 1px;margin-left: 20px;">Login</v-btn>
+            style="color: white;    margin-bottom: 1px;">Login</v-btn>
 
 
 
@@ -146,7 +143,7 @@ export default {
 <style scoped>
 /* Centralização */
 #centralizado {
-  margin-left: 4% !important;
+  margin-left: 0% !important;
 
 }
 
