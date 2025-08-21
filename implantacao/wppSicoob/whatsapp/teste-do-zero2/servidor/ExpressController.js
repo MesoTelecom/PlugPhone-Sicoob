@@ -15,6 +15,7 @@ var proxy = require('express-http-proxy');
 const { exec } = require("child_process");
 const zlib = require('zlib');
 const { aniversariantes, sendPesquisa, sendSatisfacao } = require("../methods");
+const { Console } = require("console");
 const upload = multer({ dest: 'uploads/' });
 class ExpressController {
   constructor(expressAppWrapper, porta) {
@@ -109,14 +110,14 @@ class ExpressController {
 
     this.expressAppWrapper.post('/upload-image', async (req, res) => {
 
-      ////console.log('Requisição recebida na rota /upload'); // Log para verificar se a rota é acessada
-      ////console.log('Body da requisição:', req.body); // Log do corpo da requisição
-      ////console.log('Arquivo recebido:', req.file); // Log do arquivo recebido
+      console.log('Requisição recebida na rota /upload'); // Log para verificar se a rota é acessada
+      console.log('Body da requisição:', req.body); // Log do corpo da requisição
+      console.log('Arquivo recebido:', req.file); // Log do arquivo recebido
 
       if (!req.file) {
         return res.status(400).send('Nenhuma imagem recebida.');
       }
-      ////console.log('Arquivo salvo com sucesso:', req.file);
+      console.log('Arquivo salvo com sucesso:', req.file);
       let caminho = req.file.path
       let idImage = await getImage(caminho)
       const ext = path.extname(caminho);
@@ -128,7 +129,7 @@ class ExpressController {
       const idImageFinal = parts.slice(6).join('/');  // Adapte isso para seu cenário
 
       ////console.log('ID do áudio:', idaudio);
-      console.log('Caminho final do arquivo:', idImageFinal);
+      console.log('Caminho final do arquivo:', idImage);
 
       res.json({ id: idImage, idImageFinal: idImageFinal });
 
@@ -206,6 +207,7 @@ class ExpressController {
       let qry2 = `update meso_contatos set estado = 'Concluido' where telefone like '%${telefone}%'`
       await executaQry(qry2)
       res.json(res1);
+
       ////console.log('Vai bora não zé', qry)
     });
 
@@ -391,17 +393,6 @@ class ExpressController {
       res.status(500).send('Algo deu errado!');
     });
 
-    this.expressAppWrapper.get("/pegaURL/:id", async (req, res, next) => {
-      let id = req.params.id;
-
-
-      //////console.log(qry);
-      let res2 = await reciveMediaLink(id, res)
-      res.json(res2);
-      ////console.log("Jesus Cristo eu estou aqui")
-      console.log('me mostra o res2 por favor', res2);
-
-    });
 
     this.expressAppWrapper.post("/geraImage", async (req, res, next) => {
       let url = req.body.url;
@@ -474,7 +465,7 @@ class ExpressController {
           ////console.log("Descompressão Brotli");
           stream = stream.pipe(zlib.createBrotliDecompress());
         } else if (contentEncoding && contentEncoding.includes('gzip')) {
-          ////console.log("Descompressão Gzip");
+          console.log("Descompressão Gzip");
           stream = stream.pipe(zlib.createGunzip());
         }
 
@@ -484,7 +475,7 @@ class ExpressController {
         stream.pipe(writer);
 
         writer.on('finish', () => {
-          ////console.log('Mídia salva com sucesso:', uploadPath);
+          console.log('Mídia salva com sucesso:', uploadPath);
           res.status(200).send({ message: 'Mídia salva com sucesso!', path: uploadPath });
         });
 
@@ -730,30 +721,27 @@ class ExpressController {
       console.log("tipo == 'Root'?", tipo == 'Root');
 
 
-      if (tipo === 'Root' || tipo === 'Monitor') {
+      if (tipo === 'Root' || tipo === 'Monitor' || tipo === 'Gerente Cr' || tipo === 'Agente Cr') {
         let baseQuery = `
     SELECT ct.*
     FROM meso_contatos ct
-    JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-    WHERE (cp.estado = 'Ativo' OR cp.estado = 'Em Andamento')
   `;
 
         if (filtro === "Nome") {
-          baseQuery += ` AND ct.nome LIKE '${filtroValor}%'`;
+          baseQuery += ` where ct.nome LIKE '${filtroValor}%'`;
         } else if (filtro === "Cpf") {
-          baseQuery += ` AND ct.documento LIKE '${filtroValor}%'`;
+          baseQuery += ` where ct.documento LIKE '${filtroValor}%'`;
         } else if (filtro === "Campanha") {
-          baseQuery += ` AND ct.campanha LIKE '${filtroValor}%'`;
+          baseQuery += ` where ct.campanha LIKE '${filtroValor}%'`;
         }
 
         if (estadoContato !== 'Todos') {
-          baseQuery += ` AND ct.estado = '${estadoContato}'`;
+          baseQuery += ` where ct.estado = '${estadoContato}'`;
         }
 
         baseQuery += ` ORDER BY ct.datahora DESC`;
 
         qry = baseQuery;
-        console.log('query kkkkk', qry);
 
 
       } else {
@@ -762,7 +750,7 @@ class ExpressController {
     SELECT ct.*
     FROM meso_contatos ct
     JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-    WHERE (cp.estado = 'Ativo' OR cp.estado = 'Em Andamento')
+    WHERE cp.estado = 'Ativo' 
       AND ct.id_agencia = '${idAgencia}'
   `;
 
@@ -781,13 +769,13 @@ class ExpressController {
         baseQuery += ` ORDER BY ct.datahora DESC`;
 
         qry = baseQuery;
-        console.log('query kkkkk', qry);
+        console.log('query kkkkk', qry, '\n');
       }
 
 
-      console.log('contato', qry);
+      console.log('query kkkkk', qry, '\n');
       let res20 = await executaQry(qry);
-      console.log('eu sou a porra do res20', res20);
+      console.log('eu sou a a do res20', res20);
       res.json(res20);
 
     });
@@ -958,6 +946,7 @@ class ExpressController {
           ////console.log("escreve aqui", qry)
           return executaQry(qry);
         });
+
 
         let resultados = await Promise.all(queries);
 
@@ -1788,8 +1777,17 @@ class ExpressController {
     //const uploadCSV3 = uploadArquivo();
     let inserirCsv = async (resultadoCsv, usuario, campanha) => {
       for (const e of resultadoCsv) {
-        // Query para inserir na tabela meso_contato
-        let qry = `
+        let verNumero = `select count(*) as count from meso_contatos where telefone = '${e.telefone}'`
+        let verNumArray = await executaQry(verNumero)
+        console.log('eu sou o verNumArray', verNumArray)
+        if (verNumArray.dados[0].count >= 1) {
+          let qry = `update meso_contatos set campanha = '${campanha}' and id_agencia = '${e.id_pa}' where telefone = '${e.telefone}'  `
+
+          console.log('eu sou o query', qry)
+          await executaQry(qry)
+        } else {
+          // Query para inserir na tabela meso_contato
+          let qry = `
       INSERT INTO meso_contatos (
         nome, telefone, documento, email, data_nascimento, sexo, estado_civil, escolaridade,
         logradouro, numero, complemento, bairro, municipio, uf, cep, tipo_renda,
@@ -1804,9 +1802,9 @@ class ExpressController {
       );
     `;
 
-        console.log('eu sou inserir csv', qry);
-        await executaQry(qry);
-
+          console.log('eu sou inserir csv', qry);
+          await executaQry(qry);
+        }
         // Se quiser adicionar delay entre inserções:
         // await new Promise(resolve => setTimeout(resolve, 1000));
       }
@@ -2920,7 +2918,7 @@ class ExpressController {
       let qry = `
 UPDATE meso_contatos
 SET nome = '${nome}', telefone = '${telefone}', documento = '${cpf}'
-WHERE telefone = '${oldTelefone}'
+WHERE id = (select id from  meso_contatos where telefone = '${oldTelefone}')
 `;
 
       console.log('churrasquei ou churrascou:', qry);
@@ -3402,14 +3400,24 @@ WHERE telefone = '${oldTelefone}'
       let tipo = req.params.tipo
       try {
         let qry = `
-        select * from meso_usuariologin where id_agencia = '${tipo}'
-        `;
+select * from meso_usuariologin where id_agencia = (select id_agencia from meso_agencias where nome = '${tipo}')
+`;
         let res27 = await executaQry(qry);
         res.json(res27);
       } catch (e) {
         //console.log(e);
       }
     });
+
+    this.expressAppWrapper.get("/transferirchamado/:setor/:telefone/:usuario", async (req, res, next) => {
+      let setor = req.params.setor;
+      let telefone = req.params.telefone;
+      let usuario = req.params.usuario
+      let qry = `UPDATE meso_contatos SET setor = (select id_agencia from meso_agencias where nome ='${setor}'), usuario = ${usuario === 'undefined' ? 'NULL' : `'${usuario}'`} WHERE telefone = '${telefone}'`;
+
+      await executaQry(qry);
+      res.send("Tranferido Com Sucesso")
+    })
 
     //Cadastro de usuário ----------------------------------------------------------------------------------
 
@@ -3666,17 +3674,18 @@ WHERE telefone = '${oldTelefone}'
       console.log('me mostra agente', agente)
       ////console.log('dificil heim kkkkkkk', to, body, nome)
       let palavrao = await verificaPalavrao(body)
-      ////console.log('palavrão nãokkkkkkk', palavrao)
+      console.log('palavrão nãokkkkkkk', palavrao)
       if (palavrao) {
         let qry = `insert into meso_mensagens_banidas (nome, mensagem) VALUES ('${nome}', '${body}')`
         await executaQry(qry)
         res.json({ "dados": "mensagem não tolerada" });
       } else {
-        ////console.log('passei mesmo kkkkk')
+        console.log('passei mesmo kkkkk')
         send(to, body, nome, agente, res)
         res.json({ "dados": "mensagem enviada" });
       }
-    })
+    }
+    )
 
     this.expressAppWrapper.get('/updateprotocolo', async (req, res) => {
       let query = `SELECT protocolo,id  FROM meso_mensagens_solicitante  WHERE protocolo IS NOT NULL  ORDER BY id DESC limit 1;`
@@ -3741,9 +3750,11 @@ WHERE telefone = '${oldTelefone}'
     this.expressAppWrapper.post("/senddocument", async (req, res) => {
 
       let to = req.body.to
-      let id = req.body.id
+      let id = req.body.id.replace(/\D/g, "")
       let usuario = req.body.usuario
       let filename = req.body.nomeArquivo
+
+      console.log(`teste do send document, \nto${to},\n id:${id},\n nomeArquivo ${filename},\nusuario ${usuario}`)
 
 
       sendDocument(to, id, filename, usuario, res)
@@ -3880,6 +3891,19 @@ WHERE telefone = '${oldTelefone}'
       } catch (e) {
         ////console.log(e);
       }
+    });
+
+    this.expressAppWrapper.get("/pegaURL/:id", async (req, res, next) => {
+      console.log('eu estou aqui')
+      let id = req.params.id;
+      console.log('id?', id)
+
+
+      let res2 = await reciveMediaLink(id, res)
+      res.json(res2);
+      console.log("Jesus Cristo eu estou aqui")
+      console.log('me mostra o res2 por favor', res2);
+
     });
 
 

@@ -43,7 +43,7 @@ export default {
 
     let usuario = JSON.parse(localStorage.getItem('usu'));
     this.tipo = usuario.permission;
-    this.usuario = usuario.usuario + "-Meso"
+    this.usuario = usuario.usuario + "-Sicoob"
     return {
       minhasTelas2: [],
       drawer: true, // Controla se a sidebar está aberta ou fechada

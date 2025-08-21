@@ -171,10 +171,77 @@ ON DUPLICATE KEY UPDATE
         return null;
     }
 };
+let sendSatisfacao = async (to, usuario) => {
+    console.log('Caramelo');
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': "Bearer EABpILka8Wz0BO2G1rtqYyWSXcueuIsbQZCMYxt6xd3Dp39MB9CIVJxs1yBv9G8W0ZCdnpIdPi5ZAC3pgsqjDZCLwtCMefB5SSdj6p9KeZC56FxdjZBwENoK6B0vlm7jJo1induvWW3tpVQ9mElh1HPJVl8byZBnYACtcnKl4ZCfFemPoOZBLaDsQmIarSCTKDiKMq"
+        },
+        body: JSON.stringify({
+            "messaging_product": "whatsapp",
+            to,
+            "type": "template",
+            "template": {
+                "name": "solicitacao_atendida",
+                "language": { "code": "pt_BR" }
+            }
+        })
+    };
+
+    try {
+        const fetch = require('node-fetch');
+        const response = await fetch("https://graph.facebook.com/v21.0/421167414412878/messages", requestOptions);
+        const data = await response.json();
+
+        let qry = `insert into meso_mensagens_solicitante (telefone,nome,agent,wpnumber,mensagem, type)
+               values ('${to}','${usuario}','${usuario}','553130580254','solicitacao_atendida','document');`;
+        await executaQry(qry);
+
+        return data;
+    } catch (error) {
+        console.error("Erro ao enviar mensagem de satisfação:", error);
+        throw error;
+    }
+};
+
+let sendPesquisa = async (to, usuario) => {
+    console.log('Caramelo');
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': "Bearer EABpILka8Wz0BO2G1rtqYyWSXcueuIsbQZCMYxt6xd3Dp39MB9CIVJxs1yBv9G8W0ZCdnpIdPi5ZAC3pgsqjDZCLwtCMefB5SSdj6p9KeZC56FxdjZBwENoK6B0vlm7jJo1induvWW3tpVQ9mElh1HPJVl8byZBnYACtcnKl4ZCfFemPoOZBLaDsQmIarSCTKDiKMq"
+        },
+        body: JSON.stringify({
+            "messaging_product": "whatsapp",
+            to,
+            "type": "template",
+            "template": {
+                "name": "pesquisa_satisafacao",
+                "language": { "code": "pt_BR" }
+            }
+        })
+    };
+
+    try {
+        const fetch = require('node-fetch');
+        const response = await fetch("https://graph.facebook.com/v21.0/421167414412878/messages", requestOptions);
+        const data = await response.json();
+
+        let qry = `insert into meso_mensagens_solicitante (telefone,nome,agent,wpnumber,mensagem, type)
+               values ('${to}','${usuario}','${usuario}','553130580254','pesquisa_satisafacao','document');`;
+        await executaQry(qry);
+
+        return data;
+    } catch (error) {
+        console.error("Erro ao enviar mensagem de pesquisa:", error);
+        throw error;
+    }
+};
 
 
-
-
-module.exports = { aniversariantes, associados };
+module.exports = { aniversariantes, associados, sendSatisfacao, sendPesquisa };
 
 

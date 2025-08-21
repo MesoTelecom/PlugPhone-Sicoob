@@ -4,14 +4,16 @@ const { cadastrarMensagem } = require("./emit");
 let socketConnection = function (io) {
   ioGlobal = io;
   io.on("connection", async (socket) => {
-   // console.log('buhahahaha')
-   // console.log("🟢 Usuário conectado:", socket.id);
+    // console.log('buhahahaha')
+    console.log("🟢 Usuário conectado:", socket.id);
 
     socket.on("create-message", async (msg) => {
       //console.log("📩 Nova mensagem recebida:", msg);
 
       try {
         await cadastrarMensagem(msg);
+
+        console.log("Deide Costa", msg.telefone)
 
         const agora = new Date();
         const horaFormatada = new Intl.DateTimeFormat("pt-BR", {
@@ -35,7 +37,7 @@ let socketConnection = function (io) {
       //console.log("AAAAAAAAAAAAAAAAA caralho");
 
       //console.log("minha data")
-      let qryContatos = `select * from meso_contatos order by datahora desc`
+      let qryContatos = `select * from meso_contatos where setor = 'Gerente' order by datahora desc`
       let contatosValor = await executaQry(qryContatos)
 
       //console.log("My contacts", contatosValor)
@@ -44,7 +46,7 @@ let socketConnection = function (io) {
         'Novo',
         'Aguardando Cliente',
         'Aguardando Atendimento',
-        'Finalizado'
+        'Concluido'
       ];
 
       const agrupados = {
@@ -52,7 +54,7 @@ let socketConnection = function (io) {
         'Novo': [],
         'Aguardando Cliente': [],
         'Aguardando Atendimento': [],
-        'Finalizado': []
+        'Concluido': []
       };
 
       contatosValor.dados.forEach(element => {
@@ -71,21 +73,24 @@ let socketConnection = function (io) {
             id_agencia: element.id_agencia
           });
         } else {
-         // console.log('Estado desconhecido ou não tratado:', estado);
+          // console.log('Estado desconhecido ou não tratado:', estado);
         }
       });
-     // console.log("me mostra os contatos", agrupados)
+      // console.log("me mostra os contatos", agrupados)
       io.emit("contatos-sicoob", agrupados);
 
     });
 
     socket.on("buscar-mensagens", async (telefone) => {
+
+      console.log("Deide Costa", telefone)
+
       try {
-        //console.log("🔎 Buscando mensagens para telefone:", telefone);
+        console.log("🔎 Buscando mensagens para telefone:", telefone);
 
         const qry = `SELECT * FROM meso_mensagens_solicitante WHERE telefone = '${telefone}'`;
         const mensagens = await executaQry(qry);
-
+        console.log("🔎 Buscando mensagens para telefone:", qry);
         io.emit("mensagens", mensagens.dados || []);
       } catch (error) {
         //console.error("❌ Erro ao buscar mensagens:", error);
@@ -98,7 +103,7 @@ let socketConnection = function (io) {
 
         let qry;
 
-       // console.log("Mama eu", data)
+        // console.log("Mama eu", data)
 
         if (data.campanha == null || data.campanha == '') {
           qry = `
@@ -106,24 +111,25 @@ let socketConnection = function (io) {
 FROM (
     SELECT estado, COUNT(*) AS quantContatos
     FROM meso_contatos
-    WHERE estado IS NOT NULL AND id_agencia = '${data.idAgencia}'
+    WHERE estado IS NOT NULL AND id_agencia = '${data.idAgencia}' and setor = 'Gerente'
     GROUP BY estado
 
     UNION ALL
 
     SELECT 'Todos', COUNT(*)
     FROM meso_contatos
-    WHERE estado IS NOT NULL AND id_agencia = '${data.idAgencia}'
+    WHERE estado IS NOT NULL AND id_agencia = '${data.idAgencia}' and setor = 'Gerente'
 
     UNION ALL SELECT 'Novo', 0
     UNION ALL SELECT 'Aguardando Cliente', 0
     UNION ALL SELECT 'Aguardando Atendimento', 0
-    UNION ALL SELECT 'Finalizado', 0
+    UNION ALL SELECT 'Concluido', 0
 ) AS dados
 GROUP BY estado
-ORDER BY FIELD(estado, 'Todos', 'Novo', 'Aguardando Cliente', 'Aguardando Atendimento', 'Finalizado');
+ORDER BY FIELD(estado, 'Todos', 'Novo', 'Aguardando Cliente', 'Aguardando Atendimento', 'Concluido');
     
         `;
+          console.log('me mostrar o select esquisito 1', qry)
         } else {
 
 
@@ -132,30 +138,32 @@ ORDER BY FIELD(estado, 'Todos', 'Novo', 'Aguardando Cliente', 'Aguardando Atendi
 FROM (
     SELECT estado, COUNT(*) AS quantContatos
     FROM meso_contatos
-    WHERE estado IS NOT NULL  and campanha like '%${data.campanha}%' AND id_agencia = '${data.idAgencia}'
+    WHERE estado IS NOT NULL  and campanha like '%${data.campanha}%' AND id_agencia = '${data.idAgencia}' and setor = 'Gerente'
     GROUP BY estado
 
     UNION ALL
 
     SELECT 'Todos', COUNT(*)
     FROM meso_contatos
-    WHERE estado IS NOT NULL and campanha like '%${data.campanha}%' AND id_agencia = '${data.idAgencia}'
+    WHERE estado IS NOT NULL and campanha like '%${data.campanha}%' AND id_agencia = '${data.idAgencia}'  and setor = 'Gerente'
 
     UNION ALL SELECT 'Novo', 0
     UNION ALL SELECT 'Aguardando Cliente', 0
     UNION ALL SELECT 'Aguardando Atendimento', 0
-    UNION ALL SELECT 'Finalizado', 0
+    UNION ALL SELECT 'Concluido', 0
 ) AS dados
 GROUP BY estado
-ORDER BY FIELD(estado, 'Todos', 'Novo', 'Aguardando Cliente', 'Aguardando Atendimento', 'Finalizado');
+ORDER BY FIELD(estado, 'Todos', 'Novo', 'Aguardando Cliente', 'Aguardando Atendimento', 'Concluido');
     
         `;
+          console.log('me mostrar o select esquisito 2', qry)
         }
 
-       // console.log('me mostrar o select esquisito', qry)
+
 
 
         const quantContatos = await executaQry(qry);
+        console.log("Me mostre a data bb", quantContatos);
         //console.log("Oq retorna", qry)
         io.emit("quantidade-contatos", quantContatos.dados || []);
       } catch (error) {
@@ -166,3 +174,6 @@ ORDER BY FIELD(estado, 'Todos', 'Novo', 'Aguardando Cliente', 'Aguardando Atendi
 };
 
 module.exports = { socketConnection };
+
+
+

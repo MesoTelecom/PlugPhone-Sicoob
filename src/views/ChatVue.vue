@@ -83,16 +83,16 @@
             <v-col cols="12" md="12" style="padding: 0%;">
               <div class="messages" ref="messages" style="margin-left: 3%; max-height: 80vh; overflow-y: auto;">
                 <div v-for="(message, index) in messages" :key="'server-' + index" :class="{
-                  'message-requester': !message.sender.includes('-Meso'),
-                  'message-agent': message.sender.includes('-Meso'),
+                  'message-requester': !message.sender.includes('-Sicoob'),
+                  'message-agent': message.sender.includes('-Sicoob'),
                 }">
                   <div :class="{
-                    buttonSender: !message.sender.includes('-Meso'),
-                    button: message.sender.includes('-Meso'),
-                  }" :style="{ 'text-align': message.sender.includes('-Meso') ? 'end' : 'start' }">
+                    buttonSender: !message.sender.includes('-Sicoob'),
+                    button: message.sender.includes('-Sicoob'),
+                  }" :style="{ 'text-align': message.sender.includes('-Sicoob') ? 'end' : 'start' }">
                     <span :class="{
-                      tituloSender: !message.sender.includes('-Meso'),
-                      titulo: message.sender.includes('-Meso'),
+                      tituloSender: !message.sender.includes('-Sicoob'),
+                      titulo: message.sender.includes('-Sicoob'),
                     }">
                       <b>{{ message.sender }}:</b><br />
                     </span>
@@ -271,7 +271,7 @@
         <v-card class="dialogo">
           <v-card-title>Seu Diálogo</v-card-title>
           <v-card-text>
-            <v-file-input v-model="selectedFile" label="Escolha uma imagem"></v-file-input>
+            <v-file-input v-model="selectedFile" label="Escolha seu documento"></v-file-input>
           </v-card-text>
           <v-row class="linhaBtn">
             <v-card-actions>
@@ -413,8 +413,8 @@
         <v-card>
           <v-card-title>Transferir Contato</v-card-title>
           <v-row class="linhaContatoConcluir">
-            <v-select :items="setor" label="Setor" v-model="setorSelect" @update:modelValue="listar(setorSelect)"
-              class="filtro" />
+            <v-select :items="setor" label="Setor" v-model="setorSelect" @change="listar(setorSelect)" class="filtro" />
+
 
             <v-select :items="items" label="Operadores" v-model="usuarioSelect" class="filtro"></v-select>
           </v-row>
@@ -458,7 +458,7 @@ export default {
     console.log('usuario oque?', usuario)
     this.id = usuario.id
     this.tipo = usuario.tipo;
-    this.usuario = usuario.usuario + "-Meso"
+    this.usuario = usuario.usuario + "-Sicoob"
     //this.idsetinterval = setInterval(() => this.buscarContato(), 5000);
 
     console.log('UM REQUIEEEEEEEEEEM', this.apiWPurl)
@@ -520,9 +520,9 @@ export default {
       filtroSelecionado: "",
       protocoSelecionado: "",
       setor: [],
-      setorSelect: "",
+      setorSelect: 0,
       filtroCargo: "",
-      apiWPurl: api.defaults.baseURL,
+      apiWPurl: apiWP.defaults.baseURL,
       openDialogRamal: false,
       agents: [],
       idAgencia: "",
@@ -646,10 +646,9 @@ export default {
     }
     );
 
-
-
     this.socket.on('chat audio', async (nome, base64Audio, telefone) => {
       this.buscarContato(this.filtroCargo, this.estadoContatoFiltro);
+
       console.log("audio recebida em Base64:", base64Audio);
       if (telefone == this.wppnum) {
         console.log('EU TO AQUIIIIIIIIIIIIIIIIIIIIIIIIII')
@@ -662,7 +661,7 @@ export default {
 
           // Teste abrindo em uma nova aba
           //window.open(audioUrl, '_blank');
-          //this.playSound()
+          // this.playSound()
           this.lido(telefone)
           let a = await apiWP.get(`/lidamsg/${this.wppnum}`,);
           console.log(a)
@@ -677,7 +676,7 @@ export default {
         }
 
       } else {
-        //  this.playSound()
+        //this.playSound()
         console.log('foi aqui não my badkkkkkkkkk')
         this.mudaEstado(telefone)
       }
@@ -692,45 +691,51 @@ export default {
   },
   watch: {
     setorSelect(novoValor) {
-      if (novoValor) {
-        this.listar(novoValor);
-      }
+      // A lógica de disparar a função 'listar' mesmo para '0'
+      this.listar(novoValor);
     }
   },
   methods: {
 
     listar: async function (tipo) {
-      this.items = []
-      // console.log(this.fila)
-      // console.log(filareal, pinreal);
-      //Lista filas
-      let listafila = await api.get(`/listausuariotipo/${tipo}`);
-      // let entrajoin = join.data.dados;
-      console.log(listafila);
-      let listatotalfilas = listafila.data.dados;
-      console.log('Lista as filas', listatotalfilas);
-      let nome = [];
-      //let nomefila = [];
-      listatotalfilas.forEach((d) => {
-        // nomefila = d.descr;
-        nome = d.usuario;
-        console.log('nome da fila:', nome);
-        // this.listafila = [nomefila];
-        //this.items = nomefila;
-        this.items.push([nome]);
-      });
+      console.log("Função 'listar' chamada com tipo:", tipo); // Verifica o valor de 'tipo'
 
-      //Listando os agentes para o filtro
+      // Se 'tipo' for 0, podemos evitar que a função execute
+      if (tipo === 0) {
+        console.log("Valor '0' detectado, a função não será executada.");
+        return; // Não executa o restante da função se 'tipo' for 0
+      }
 
+      this.items = [] // Limpa os itens antes de adicionar novos
 
-    },
+      try {
+        // Faz a requisição à API
+        let listafila = await api.get(`/listausuariotipo/${tipo}`);
+        console.log('Dados da resposta da API:', listafila); // Exibe os dados da resposta
+
+        let listatotalfilas = listafila.data.dados;
+        console.log('Lista das filas:', listatotalfilas);
+
+        // Itera sobre os dados recebidos
+        listatotalfilas.forEach((d) => {
+          console.log('Adicionando o usuário:', d.usuario); // Exibe o nome de cada usuário
+          this.items.push(d.usuario); // Adiciona o nome do usuário aos itens
+        });
+
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+        this.items = []; // Limpa os itens caso ocorra um erro
+      }
+    }
+    ,
+
 
     verificaEstado() {
       console.log('eu sou o tipo', this.tipo)
       if (this.tipo == 'Root' || this.tipo == 'Monitor') {
         console.log('admin Online')
       } else {
-        this.openDialogRamal = true
+        //this.openDialogRamal = true
       }
     },
 
@@ -853,7 +858,7 @@ export default {
     },
 
     async transferir() {
-      let usuario = this.usuarioSelect[0]
+      let usuario = this.usuarioSelect
       let area = this.setorSelect
       console.log('teste de select', area, usuario, this.wppnum)
 
@@ -877,7 +882,7 @@ export default {
         let b = await apiWP.get(`/gerapesquisa/${this.wppnum}/${this.usuario}`)
         console.log(b)
 
-        // location.reload()
+        location.reload()
 
       } else {
         //let response = await api.get(`/finaliza/${processo}/reprovado`);
@@ -893,7 +898,9 @@ export default {
       arraySetores.forEach((d) => {
         this.setor.push({
           text: d.nome,       // o que aparece no select
-          value: d.id_agencia // o valor que será capturado no v-model
+          value: d.id_nome // o valor que será capturado no v-model
+
+          //          value: d.id_agencia // o valor que será capturado no v-model
         })
       })
     },
@@ -963,7 +970,7 @@ export default {
 
       this.buscaProtocolo(this.wppnum)
 
-      if (this.tipo == 'admin') {
+      if (this.tipo == 'Monitor' || this.tipo == 'Root' || this.root == 'Gerente Cr') {
         console.log('admin não atualiza usuario')
       } else {
         await apiWP.get(`/atualizausuario/${this.usuario}/${this.wppnum}`)
@@ -1235,7 +1242,7 @@ export default {
       }
       console.log(token)
       console.log('que gemido foi esse?', this.token)
-      let a = await apiWP.post('/whatsapp/registrar-token', { "usuario": nome + "-Meso", "token": token });
+      let a = await apiWP.post('/whatsapp/registrar-token', { "usuario": nome + "-Sicoob", "token": token });
 
       console.log(a)
     },
@@ -1259,7 +1266,7 @@ export default {
         console.log('verifica resposta da API', resposta.data.dados)
         if (resposta.data.dados == "mensagem não tolerada") {
           console.log('palavrão não kkkkkkkkkkk')
-          alert('Palavras de baixo calão não serão toleradas!')
+          alert('Palavras de baixo calão não serão Permitidas!')
         }
         this.newMessage = "";
         this.$nextTick(() => {
@@ -1274,7 +1281,7 @@ export default {
 
       // Monta com PlugPhone
       let nomeFormatado = usuario.usuario.charAt(0).toUpperCase() + usuario.usuario.slice(1);
-      this.usuario = nomeFormatado + "-Meso";
+      this.usuario = nomeFormatado + "-Sicoob";
 
       console.log('eu sou o this.usuario SATORU GOJO', this.usuario);
     },
@@ -1389,7 +1396,7 @@ export default {
         // Envio para o WhatsApp
         let enviaDoc = {
           to: this.wppnum,
-          id: `${this.apiWPurl}/midia/${caminhoLimpo}`,
+          id: `${caminhoLimpo}`,
           nomeArquivo: this.selectedFile.name,
           usuario: this.usuario
         };

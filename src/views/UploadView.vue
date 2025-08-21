@@ -46,7 +46,7 @@ export default {
     console.log('usuario oque?', usuario)
     this.id = usuario.id
     this.tipo = usuario.tipo;
-    this.usuario = usuario.usuario + "-Meso"
+    this.usuario = usuario.usuario + "-Sicoob"
   },
 
   data() {

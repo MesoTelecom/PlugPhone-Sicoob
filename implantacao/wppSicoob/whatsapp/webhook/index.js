@@ -18,9 +18,6 @@ const admin = require('firebase-admin');
 const bodyParser = require('body-parser');
 const dadosSocket = require('./cache/filtro.js')
 
-
-
-
 let tokens = [];
 const serviceAccount = require('./plugphone-2d637-firebase-adminsdk-fbsvc-1096a56db2.json'); // Substitua pelo caminho correto
 const { componentsToColor } = require("pdf-lib");
@@ -88,322 +85,136 @@ socketConnection(io);
 
 // Rota de webhook para receber dados POST
 app.post("/webhooks", async (req, res) => {
+
+    console.log('Webhook recebido!');
     let body_param = req.body;
-
-    console.log('Negocio aqui', JSON.stringify(body_param))
-
-    //console.log('Webhook recebido!');
-
     let tudo = body_param
     //console.log('FALA FILHA DA PUTA!!!!!!!!!!',tudo.entry[0].changes[0].value.metadata.display_phone_number)
     let numRecebe = tudo.entry[0].changes[0].value.metadata.display_phone_number
-
-    //let visualização = tudo?.entry?.[0].changes?.[0].value?.statuses?.[0].status
-
+    // console.log('Negocio aqui', JSON.stringify(body_param))
 
     // Verificação segura para evitar erros de leitura de propriedades
     let numeroWhatsapp = body_param?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id;
 
     if (!numeroWhatsapp) {
-        //console.log('O número de WhatsApp não foi encontrado.');
+        console.log('O número de WhatsApp não foi encontrado.');
         return res.status(400).json({ error: "Número de WhatsApp não encontrado na requisição" });
+    }// Verifica se o webhook é de mensagem recebida
+    const mensagens = tudo?.entry?.[0]?.changes?.[0]?.value?.messages;
+    if (!mensagens || mensagens.length === 0) {
+        console.log("Webhook não é de mensagem recebida (provavelmente status de entrega/leitura). Ignorando.");
+        return res.sendStatus(200);
     }
 
+    // Evita responder várias vezes para a MESMA mensagem
+    const messageId = mensagens[0].id;
+    if (!global.processedMessages) global.processedMessages = new Set();
+    if (global.processedMessages.has(messageId)) {
+        console.log(`Mensagem ${messageId} já respondida. Ignorando.`);
+        return res.sendStatus(200);
+    }
+    global.processedMessages.add(messageId);
 
-    let qry = `select count(whatsappid) as quantNum from meso_mensagens_solicitante where whatsappid = '${numeroWhatsapp}' and DATE(datetime) = CURDATE()`;
-    let quantNumArray = await executaQry(qry);
-    let quantNum = quantNumArray.dados[0].quantNum;
+    // Hora de Brasília
+    const agoraSP = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
+    const hora = agoraSP.getHours();
+    const diaSemana = agoraSP.getDay(); // 0=Dom, 1=Seg, ... 6=Sab
 
-    let qry1 = `select estado from meso_mensagens_solicitante where type = 'protocolo' and telefone = '${numeroWhatsapp}'  order by id desc  limit 1`
-    //console.log('qry 1', qry1)
-    let estado = await executaQry(qry1)
-    //console.log('estado', estado)
-    let estadoProtocolo = estado.dados.length > 0 ? estado.dados[0].estado : ""
-    //console.log(quantNum, 'e o outro', estadoProtocolo)
+    // Fora do horário comercial OU fora de segunda a sexta
+    if (diaSemana === 0 || diaSemana === 6 || hora < 10 || hora >= 18) {
+        console.log("Mensagem recebida fora do período permitido (10h às 16h)");
+        send(numeroWhatsapp, 'Bot-Sicoob\nOlá, muito obrigado por entrar em contato com o Sicoob Nossacoop. No momento, não estamos disponíveis. O nosso horário de atendimento é de segunda a sexta, das 10:00h às 16:00h. Envie sua solicitação abaixo, em breve retornaremos o seu contato em horario de atendimento.', 'Bot-Sicoob', res);
+        return;
+    } else {
 
-    if (quantNum >= 1 && estadoProtocolo === 'aberto') {
+        let qry = `select count(whatsappid) as quantNum from meso_mensagens_solicitante where whatsappid = '${numeroWhatsapp}' and DATE(datetime) = CURDATE()`;
+        let quantNumArray = await executaQry(qry);
+        let quantNum = quantNumArray.dados[0].quantNum;
 
+        let qry1 = `select estado from meso_mensagens_solicitante where type = 'protocolo' and telefone = '${numeroWhatsapp}'  order by id desc  limit 1`
+        console.log('qry 1', qry1)
+        let estado = await executaQry(qry1)
+        console.log('estado', estado)
+        let estadoProtocolo = estado.dados.length > 0 ? estado.dados[0].estado : ""
+        console.log(quantNum, 'e o outro', estadoProtocolo)
 
-        //console.log(body_param);
-        entry = body_param.entry[0]
-        //console.log(entry.changes[0].value);
-        let mensagem
-        //console.log('eu sou tudo antes de tudo', tudo.entry[0].value)
-        if (tudo.entry[0].changes[0].value.messages) {
-            //console.log("Ninho de mafagafos")
-            if (tudo.entry[0].changes[0].value.messages[0].type == 'text' && numRecebe == '553130580254') {
-                try {
-                    //console.log('o furacao tbm fura o gato?')
-                    mensagem = entry.changes[0].value.messages[0]
-                    produto = entry.changes[0].value
-
-
-                    //console.log('teste produto', produto.value)
-                    //console.log(mensagem, 'recebi')
-                    //console.log('maioria', tudo.entry[0].changes[0].value.messages[0].text.body)
-                    //console.log('eu sou tudo antes do if', tudo)
-
-                    let type = tudo.entry[0].changes[0].value.messages[0].type
-                    let msg = tudo.entry[0].changes[0].value.messages[0].text.body
-                    //console.log('eu sou msg', msg)
-                    let nome = tudo.entry[0].changes[0].value.contacts[0].profile.name
-                    //console.log('eu sou nome', nome)
-                    let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id
-                    //console.log('eu sou waId', waId)
-
-                    let query = `SELECT protocolo  FROM meso_mensagens_solicitante  WHERE protocolo IS NOT NULL  ORDER BY id DESC limit 1;`
-                    let protocolo = await executaQry(query)
-                    //console.log("chuchu blz", protocolo.dados[0].protocolo)
-                    let qry = `insert into meso_mensagens_solicitante (nome, whatsappid, mensagem, telefone, type,protocolo ) VALUES ('${nome}', '${waId}','${msg}','${waId}','${type}','${protocolo.dados[0].protocolo}');`
-                    //console.log('veia chata', qry)
-                    executaQry(qry)
-                    let qry1 = `select max(id) as id from meso_mensagens_solicitante where telefone = ${waId}`
-                    //console.log('Vai a merda',qry1)
-                    let id = await executaQry(qry1)
-                    //console.log('Homem solitário',id.dados[0].id)
-                    //console.log("Furação de fogo")
-                    let qry44 = `update meso_contatos set estado = 'Aguardando Atendimento' where telefone like '%${waId}%';`
-                    //console.log('veia chata', qry44)
-                    await executaQry(qry44)
+        if (quantNum >= 1 && estadoProtocolo === 'aberto') {
 
 
-
-                    /*if (visualização !== 'send') {
-                       //console.log('Foi o Lucas')
-                        let qry2 = `updadate meso_mensagem_solicitante set visualizacao = ${visualização} where id = ${id.dados[0].id}`
-                        executaQry(qry2)
-                       //console.log(qry2)
-                    }*/
-                    // pegatokenfire(msg, nome)
-                    atualizaContato(msg, waId)
-                    //console.log("Chiclete ", mensagem)
-
-
-                    let qry5 = `select count(*) as contatoExiste from meso_contatos where telefone = '${waId}';`
-
-                    //console.log(qry5)
-                    let contatoExisteArray = await executaQry(qry5)
-
-                    let contatoExiste = contatoExisteArray.dados[0].contatoExiste
+            //console.log(body_param);
+            entry = body_param.entry[0]
+            //console.log(entry.changes[0].value);
+            let mensagem
+            //console.log('eu sou tudo antes de tudo', tudo.entry[0].value)
+            if (tudo.entry[0].changes[0].value.messages) {
+                //console.log("Ninho de mafagafos")
+                if (tudo.entry[0].changes[0].value.messages[0].type == 'text' && numRecebe == '553130580254') {
+                    try {
+                        //console.log('o furacao tbm fura o gato?')
+                        mensagem = entry.changes[0].value.messages[0]
+                        produto = entry.changes[0].value
 
 
-                    //console.log('Eu sou o contatoExiste', contatoExiste)
+                        //console.log('teste produto', produto.value)
+                        //console.log(mensagem, 'recebi')
+                        //console.log('maioria', tudo.entry[0].changes[0].value.messages[0].text.body)
+                        //console.log('eu sou tudo antes do if', tudo)
+
+                        let type = tudo.entry[0].changes[0].value.messages[0].type
+                        let msg = tudo.entry[0].changes[0].value.messages[0].text.body
+                        //console.log('eu sou msg', msg)
+                        let nome = tudo.entry[0].changes[0].value.contacts[0].profile.name
+                        //console.log('eu sou nome', nome)
+                        let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id
+                        //console.log('eu sou waId', waId)
+
+                        let query = `SELECT protocolo  FROM meso_mensagens_solicitante  WHERE protocolo IS NOT NULL  ORDER BY id DESC limit 1;`
+                        let protocolo = await executaQry(query)
+                        console.log("chuchu blz", protocolo.dados[0].protocolo)
+                        let qry = `insert into meso_mensagens_solicitante (nome, whatsappid, mensagem, telefone, type,protocolo ) VALUES ('${nome}', '${waId}','${msg}','${waId}','${type}','${protocolo.dados[0].protocolo}');`
+                        console.log('veia chata', qry)
+                        executaQry(qry)
+                        let qry1 = `select max(id) as id from meso_mensagens_solicitante where telefone = ${waId}`
+                        //console.log('Vai a merda',qry1)
+                        let id = await executaQry(qry1)
+                        //console.log('Homem solitário',id.dados[0].id)
+                        console.log("Furação de fogo")
+                        let qry44 = `update meso_contatos set estado = 'Aguardando Atendimento' where telefone like '%${waId}%';`
+                        console.log('veia chata', qry44)
+                        await executaQry(qry44)
 
 
-                    if (nome != 'template_plugphone2' && contatoExiste == 0) {
-                        const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
-                        const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
-                        const qry4 = `INSERT INTO meso_contatos (nome, telefone, campanha) VALUES ('${nome}', '${waId}', '${campanha}');`;
-                        executaQry(qry4);
-                    }
+
+                        /*if (visualização !== 'send') {
+                           //console.log('Foi o Lucas')
+                            let qry2 = `updadate meso_mensagem_solicitante set visualizacao = ${visualização} where id = ${id.dados[0].id}`
+                            executaQry(qry2)
+                           //console.log(qry2)
+                        }*/
+                        // pegatokenfire(msg, nome)
+                        atualizaContato(msg, waId)
+                        //console.log("Chiclete ", mensagem)
 
 
-                    const agora = new Date();
-                    const horaFormatada = new Intl.DateTimeFormat('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                    }).format(agora);
-                    //console.log('minha msg', horaFormatada)
+                        let qry5 = `select count(*) as contatoExiste from meso_contatos where telefone = '${waId}';`
 
-                    let msgEnviada = {
-                        telefone: waId,
-                        nome: nome,
-                        agente: '',
-                        mensagem: msg,
-                        type: 'text',
-                        datetime: horaFormatada
-                    }
+                        //console.log(qry5)
+                        let contatoExisteArray = await executaQry(qry5)
 
-                    //console.log('eu sou o msgEnviada', msgEnviada)
-                    emitMensagem(io, nome, msg, waId)
-                    io.emit('receive-message', [
-                        msgEnviada.telefone,
-                        msgEnviada.nome,
-                        msgEnviada.agente,
-                        '551131646301',
-                        msgEnviada.mensagem,
-                        msgEnviada.type,
-                        msgEnviada.datetime
-                    ]);
+                        let contatoExiste = contatoExisteArray.dados[0].contatoExiste
 
-                    let qryBuscaEstadoCampanha = `select * from estado_contato;`
-                    let estadoCampanha = await executaQry(qryBuscaEstadoCampanha)
 
-                    let qryContatos = `select * from meso_contatos`
-                    let contatosValor = await executaQry(qryContatos)
+                        //console.log('Eu sou o contatoExiste', contatoExiste)
 
-                    //console.log("My contacts", contatosValor.dados)
 
-                    const estadosValidos = [
-                        'Novo',
-                        'Aguardando Cliente',
-                        'Aguardando Atendimento',
-                        'Concluido'
-                    ];
-
-                    const agrupados = {
-                        'Todos': contatosValor.dados,
-                        'Novo': [],
-                        'Aguardando Cliente': [],
-                        'Aguardando Atendimento': [],
-                        'Concluido': []
-                    };
-
-                    contatosValor.dados.forEach(element => {
-                        const estado = element.estado;
-
-                        if (estadosValidos.includes(estado)) {
-                            agrupados[estado].push({
-                                estado: element.estado,
-                                nome: element.nome,
-                                usuario: element.usuario,
-                                telefone: element.telefone,
-                                ultimamsg: element.ultimamsg,
-                                setor: element.setor,
-                                datahora: element.datahora
-
-                            });
-                        } else {
-                            //console.log('Estado desconhecido ou não tratado:', estado);
+                        if (nome != 'template_plugphone2' && contatoExiste == 0) {
+                            const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
+                            const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
+                            const qry4 = `INSERT INTO meso_contatos (nome, telefone, campanha) VALUES ('${nome}', '${waId}', '${campanha}');`;
+                            executaQry(qry4);
                         }
-                    });
-
-                    io.emit('contatos', agrupados)
-
-                    let qry4 = `update meso_contatos set estado = 'Aguardando Atendimento' where telefone like '%${waId}%';`
-                    //console.log('veia chata', qry4)
-                    await executaQry(qry4)
-
-                    let qryMandaToken = `select usuario, setor from meso_contatos where telefone = '${waId}'`
-                    let mandaToken = await executaQry(qryMandaToken)
-                    //console.log("Manda meu setor", mandaToken.dados[0].setor)
-                    //     //estado, usuario, setor, tipo
-                    //    // await emitContatosFlutter(io, estadoCampanha.dados[0].estado, mandaToken.dados[0].usuario, mandaToken.dados[0].setor, mandaToken.dados[0].tipo)
-
-                    if (mandaToken.dados[0].usuario == null || mandaToken.dados[0].usuario == "") {
-                        pegatokenfire(msg, nome, null, mandaToken.dados[0].setor)
-                        //console.log("me retorna aqui usuario nulo");
-                    } else {
-                        pegatokenfire(msg, nome, mandaToken.dados[0].usuario, null)
-                        //console.log("me retorna aqui setor");
-                    }
-
-                    //console.log("Depois me mostre", mandaToken.dados[0].usuario, mandaToken.dados[0].setor)
-                    // await emitContatosFlutter(io, estadoCampanha.dados[0].estado, estadoCampanha.dados[0].campanha)
-
-                } catch (error) {
-                    console.error("Erro ao processar mensagem:", error);
-                }
-            }
-            else if (tudo.entry[0].changes[0].value.messages[0].type == 'button' && numRecebe == '553130580254') {
-                try {
-                    mensagem = entry.changes[0].value.messages[0]
-                    produto = entry.changes[0].value.messaging_product
-
-                    //console.log('teste produto', produto.value)
-                    //console.log(mensagem, 'recebi')
-                    //console.log('maioria', tudo.entry[0].changes[0].value.messages[0].text.body)
-                    //console.log('eu sou tudo antes do if', tudo)
-
-                    let type = tudo.entry[0].changes[0].value.messages[0].type
-                    let msg = tudo.entry[0].changes[0].value.messages[0].button.text
-                    //console.log('eu sou msg', msg)
-                    let nome = tudo.entry[0].changes[0].value.contacts[0].profile.name
-                    //console.log('eu sou nome', nome)
-                    let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id
-                    //console.log('eu sou waId', waId)
-
-                    let qry = `insert into meso_mensagens_solicitante (nome, whatsappid, mensagem, telefone, type ) VALUES ('${nome}', '${waId}','${msg}','${waId}','${type}');`
-                    //console.log(qry)
-
-                    executaQry(qry)
-                    let qry1 = `update meso_contatos set setor = '${msg}' where telefone = '${waId}'`
-                    executaQry(qry1)
-                    //console.log('eu sou o teste qry1', qry1)
-                    let qry4 = `update meso_contatos set estado = 'Novo' where telefone = '${waId}'`
-                    executaQry(qry4)
-                    let qry5 = `select count(*) as contatoExiste from meso_contatos where telefone = '${waId}';`
-
-                    let qryBuscaContato = `select * from meso_contatos where estado = 'Novo'`;
-                    let resultBuscaContato = await executaQry(qryBuscaContato)
-                    //console.log("resultBuscarContato", resultBuscaContato);
-                    io.emit('contatos', resultBuscaContato.dados);
-
-                    //console.log(qry5)
 
 
-
-                    //console.log('Eu sou o contatoExiste', contatoExiste)
-
-
-                    if (nome != 'template_plugphone2' && contatoExiste == 0) {
-                        const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
-                        const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
-                        const qry4 = `INSERT INTO meso_contatos (nome, telefone, campanha) VALUES ('${nome}', '${waId}', '${campanha}');`;
-                        executaQry(qry4);
-                    }
-
-                    pegatokenfire(msg, nome)
-
-                    emitMensagem(io, nome, msg, waId)
-
-
-
-
-
-                } catch (error) {
-                    /*     if (entry.changes[0].value.statuses[0].status != 'read') {
-                             //mensagem = entry.changes[0].value.statuses[0].conversation
-         
-         
-                             //console.log('teste se e aqui', mensagem)
-                         }
-                         */
-                }
-            } else if (tudo.entry[0].changes[0].value.messages[0].type == 'image' && numRecebe == '553130580254') {
-                try {
-                    //console.log("Sera que passou aqui");
-                    mensagem = entry.changes[0].value.messages[0];
-                    produto = entry.changes[0].value;
-
-                    let type = tudo.entry[0].changes[0].value.messages[0].type;
-                    let msg = tudo.entry[0].changes[0].value.messages[0].image.id;
-                    let nome = tudo.entry[0].changes[0].value.contacts[0].profile.name;
-                    let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id;
-
-                    let qry = `insert into meso_mensagens_solicitante (nome, whatsappid, mensagem, telefone, type) VALUES ('${nome}', '${waId}','${msg}.jpeg','${waId}','${type}');`;
-
-                    //console.log(qry);
-
-                    executaQry(qry);
-
-                    let a = await api.get(`/pegaURL/${msg}`);
-                    //console.log('FILHO DE ANJO E DEMONIO DEVIL MAY CRY', a.data);
-                    let url = a.data.url;
-
-                    //console.log("Me mostre oq retorna aqui na imagem", msg)
-
-                    let bodyImage = {
-                        "url": url,
-                        "id": msg
-                    };
-
-                    await api.post(`/geraImage/`, bodyImage);
-
-                    // Obtém a imagem como um buffer
-                    let geraMidia = await api.get(`/get-image/${msg}.jpeg`, { responseType: 'arraybuffer' }); // Certifique-se de definir `responseType`
-
-                    // Verifica se a resposta da imagem é bem-sucedida
-                    if (geraMidia.status === 200) {
-                        const imageBuffer = Buffer.from(geraMidia.data, 'binary');
-                        const base64Image = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
-
-                        // Envia a imagem no formato base64
-                        emitImage(io, nome, base64Image, waId);
                         const agora = new Date();
                         const horaFormatada = new Intl.DateTimeFormat('pt-BR', {
                             day: '2-digit',
@@ -413,46 +224,429 @@ app.post("/webhooks", async (req, res) => {
                             minute: '2-digit',
                             second: '2-digit',
                         }).format(agora);
+                        console.log('minha msg', horaFormatada)
+
+                        let msgEnviada = {
+                            telefone: waId,
+                            nome: nome,
+                            agente: '',
+                            mensagem: msg,
+                            type: 'text',
+                            datetime: horaFormatada
+                        }
+
+                        console.log('eu sou o msgEnviada', msgEnviada)
+                        emitMensagem(io, nome, msg, waId)
+                        io.emit('receive-message', [
+                            msgEnviada.telefone,
+                            msgEnviada.nome,
+                            msgEnviada.agente,
+                            '551131646301',
+                            msgEnviada.mensagem,
+                            msgEnviada.type,
+                            msgEnviada.datetime
+                        ]);
+
+                        let qryBuscaEstadoCampanha = `select * from estado_contato;`
+                        let estadoCampanha = await executaQry(qryBuscaEstadoCampanha)
+
+                        let qryContatos = `select * from meso_contatos`
+                        let contatosValor = await executaQry(qryContatos)
+
+                        console.log("My contacts", contatosValor.dados)
+
+                        const estadosValidos = [
+                            'Novo',
+                            'Aguardando Cliente',
+                            'Aguardando Atendimento',
+                            'Concluido'
+                        ];
+
+                        const agrupados = {
+                            'Todos': contatosValor.dados,
+                            'Novo': [],
+                            'Aguardando Cliente': [],
+                            'Aguardando Atendimento': [],
+                            'Concluido': []
+                        };
+
+                        contatosValor.dados.forEach(element => {
+                            const estado = element.estado;
+
+                            if (estadosValidos.includes(estado)) {
+                                agrupados[estado].push({
+                                    estado: element.estado,
+                                    nome: element.nome,
+                                    usuario: element.usuario,
+                                    telefone: element.telefone,
+                                    ultimamsg: element.ultimamsg,
+                                    setor: element.setor,
+                                    datahora: element.datahora
+
+                                });
+                            } else {
+                                console.log('Estado desconhecido ou não tratado:', estado);
+                            }
+                        });
+
+                        io.emit('contatos', agrupados)
+
+                        let qry4 = `update meso_contatos set estado = 'Aguardando Atendimento' where telefone like '%${waId}%';`
+                        console.log('veia chata', qry4)
+                        await executaQry(qry4)
+
+                        let qryMandaToken = `select usuario, setor from meso_contatos where telefone = '${waId}'`
+                        let mandaToken = await executaQry(qryMandaToken)
+                        console.log("Manda meu setor", mandaToken.dados[0].setor)
+                        //     //estado, usuario, setor, tipo
+                        //    // await emitContatosFlutter(io, estadoCampanha.dados[0].estado, mandaToken.dados[0].usuario, mandaToken.dados[0].setor, mandaToken.dados[0].tipo)
+
+                        if (mandaToken.dados[0].usuario == null || mandaToken.dados[0].usuario == "") {
+                            pegatokenfire(msg, nome, null, mandaToken.dados[0].setor)
+                            console.log("me retorna aqui usuario nulo");
+                        } else {
+                            pegatokenfire(msg, nome, mandaToken.dados[0].usuario, null)
+                            console.log("me retorna aqui setor");
+                        }
+
+                        console.log("Depois me mostre", mandaToken.dados[0].usuario, mandaToken.dados[0].setor)
+                        // await emitContatosFlutter(io, estadoCampanha.dados[0].estado, estadoCampanha.dados[0].campanha)
+
+                    } catch (error) {
+                        console.error("Erro ao processar mensagem:", error);
+                    }
+                }
+                else if (tudo.entry[0].changes[0].value.messages[0].type == 'button' && numRecebe == '553130580254') {
+                    try {
+                        mensagem = entry.changes[0].value.messages[0]
+                        produto = entry.changes[0].value.messaging_product
+
+                        //console.log('teste produto', produto.value)
+                        //console.log(mensagem, 'recebi')
+                        //console.log('maioria', tudo.entry[0].changes[0].value.messages[0].text.body)
+                        //console.log('eu sou tudo antes do if', tudo)
+
+                        let type = tudo.entry[0].changes[0].value.messages[0].type
+                        let msg = tudo.entry[0].changes[0].value.messages[0].button.text
+                        //console.log('eu sou msg', msg)
+                        let nome = tudo.entry[0].changes[0].value.contacts[0].profile.name
+                        //console.log('eu sou nome', nome)
+                        let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id
+                        //console.log('eu sou waId', waId)
+
+                        let qry = `insert into meso_mensagens_solicitante (nome, whatsappid, mensagem, telefone, type ) VALUES ('${nome}', '${waId}','${msg}','${waId}','${type}');`
+                        //console.log(qry)
+
+                        executaQry(qry)
+                        let qry1 = `update meso_contatos set setor = '${msg}' where telefone = '${waId}'`
+                        executaQry(qry1)
+                        console.log('eu sou o teste qry1', qry1)
+                        let qry4 = `update meso_contatos set estado = 'Novo' where telefone = '${waId}'`
+                        executaQry(qry4)
+                        let qry5 = `select count(*) as contatoExiste from meso_contatos where telefone = '${waId}';`
+
+                        let qryBuscaContato = `select * from meso_contatos where estado = 'Novo'`;
+                        let resultBuscaContato = await executaQry(qryBuscaContato)
+                        console.log("resultBuscarContato", resultBuscaContato);
+                        io.emit('contatos', resultBuscaContato.dados);
+
+                        //console.log(qry5)
+
+
+
+                        //console.log('Eu sou o contatoExiste', contatoExiste)
+
+
+                        if (nome != 'template_plugphone2' && contatoExiste == 0) {
+                            const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
+                            const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
+                            const qry4 = `INSERT INTO meso_contatos (nome, telefone, campanha) VALUES ('${nome}', '${waId}', '${campanha}');`;
+                            executaQry(qry4);
+                        }
+
+                        pegatokenfire(msg, nome)
+
+                        emitMensagem(io, nome, msg, waId)
+
+
+
+
+
+                    } catch (error) {
+                        /*     if (entry.changes[0].value.statuses[0].status != 'read') {
+                                 //mensagem = entry.changes[0].value.statuses[0].conversation
+             
+             
+                                 //console.log('teste se e aqui', mensagem)
+                             }
+                             */
+                    }
+                } else if (tudo.entry[0].changes[0].value.messages[0].type == 'image' && numRecebe == '553130580254') {
+                    try {
+                        console.log("Sera que passou aqui");
+                        mensagem = entry.changes[0].value.messages[0];
+                        produto = entry.changes[0].value;
+
+                        let type = tudo.entry[0].changes[0].value.messages[0].type;
+                        let msg = tudo.entry[0].changes[0].value.messages[0].image.id;
+                        let nome = tudo.entry[0].changes[0].value.contacts[0].profile.name;
+                        let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id;
+
+                        let qry = `insert into meso_mensagens_solicitante (nome, whatsappid, mensagem, telefone, type) VALUES ('${nome}', '${waId}','${msg}.jpeg','${waId}','${type}');`;
+
+                        //console.log(qry);
+
+                        executaQry(qry);
+
+                        let a = await api.get(`/pegaURL/${msg}`);
+                        console.log('FILHO DE ANJO E DEMONIO DEVIL MAY CRY', a.data);
+                        let url = a.data.url;
+
+                        console.log("Me mostre oq retorna aqui na imagem", msg)
+
+                        let bodyImage = {
+                            "url": url,
+                            "id": msg
+                        };
+
+                        console.log('eu sou o bodyImage:', bodyImage)
+
+                        await api.post(`/geraImage/`, bodyImage);
+
+                        // Obtém a imagem como um buffer
+                        let geraMidia = await api.get(`/get-image/${msg}.jpeg`, { responseType: 'arraybuffer' }); // Certifique-se de definir `responseType`
+
+                        // Verifica se a resposta da imagem é bem-sucedida
+                        if (geraMidia.status === 200) {
+                            const imageBuffer = Buffer.from(geraMidia.data, 'binary');
+                            const base64Image = `data:image/jpeg;base64,${imageBuffer.toString('base64')}`;
+
+                            // Envia a imagem no formato base64
+                            emitImage(io, nome, base64Image, waId);
+                            const agora = new Date();
+                            const horaFormatada = new Intl.DateTimeFormat('pt-BR', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                            }).format(agora);
+                            io.emit('receive-message', [
+                                waId,
+                                nome,
+                                "",
+                                '551131646301',
+                                `${msg}.jpeg`,
+                                type,
+                                horaFormatada
+                            ]);
+
+                        } else {
+                            console.error('Erro ao obter a imagem:', geraMidia.status);
+                        }
+
+                    } catch (error) {
+                        console.error('Erro ao processar imagem:', error);
+                    }
+                }
+                else if (tudo.entry[0].changes[0].value.messages[0].type == 'audio' && numRecebe == '553130580254') {
+                    console.log('Eu sou o audio pae')
+                    try {
+
+                        mensagem = entry.changes[0].value.messages[0]
+                        produto = entry.changes[0].value
+
+                        //console.log('teste produto', produto.value)
+                        console.log(mensagem, 'recebi')
+                        //console.log('maioria', tudo.entry[0].changes[0].value.messages[0])
+                        //console.log('eu sou tudo antes do if', tudo.entry[0].changes[0].value)
+                        let type = tudo.entry[0].changes[0].value.messages[0].type
+                        let msg = tudo.entry[0].changes[0].value.messages[0].audio.id
+                        let nome = tudo.entry[0].changes[0].value.contacts[0].profile.name
+                        let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id
+
+
+                        console.log('me mostre oque está errado')
+                        console.log('estou aqui', await api.get(`/pegaURL/${msg}`));
+
+                        let a = await api.get(`/pegaURL/${msg}`);
+                        console.log('teste do A', a);
+                        let url = a.data.url;
+
+                        console.log('cheguei aqui')
+                        let bodyImage = {
+                            "url": url,
+                            "id": msg
+                        };
+
+                        await api.post(`/geraAudio/`, bodyImage);
+
+                        let geraMidia = await api.get(`/get-audio/${msg}.mp3`, { responseType: 'arraybuffer' }); // Certifique-se de definir `responseType`
+
+                        if (geraMidia.status === 200) {
+                            const audioBuffer = Buffer.from(geraMidia.data, 'binary');
+                            const base64Audio = `data:audio/mp3;base64,${audioBuffer.toString('base64')}`;
+
+                            let qry4 = `update meso_contatos set estado = 'Aguardando Atendimento', ultimamsg = 'audio' where telefone like '%${waId}%';`
+                            console.log('veia chata', qry4)
+                            await executaQry(qry4)
+                            let qryInsert = `
+                        INSERT INTO meso_mensagens_solicitante 
+                        (nome, whatsappid, mensagem, telefone, type) 
+                        VALUES ('${nome}', '${waId}','${msg}.mp3','${waId}','${type}');
+                    `;
+                            await executaQry(qryInsert)
+                            console.log('antes do envio')
+                            // Envia o áudio no formato base64
+                            emitAudio(io, nome, base64Audio, waId);
+                        }
+
+                        /*let bodyMsg = {
+                            "to": waId,
+                            "body": `Para melhorar nosso atendimento, pedimos que as mensagens sejam enviadas apenas por texto! Obrigado.`,
+                            "nome": "bot-Meso"
+    
+                        };*/
+
+                        const agora = new Date();
+                        const horaFormatada = new Intl.DateTimeFormat('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                        }).format(agora);
+                        console.log('minha msg', horaFormatada)
+
                         io.emit('receive-message', [
                             waId,
                             nome,
-                            "",
+                            "agente",
                             '551131646301',
-                            `${msg}.jpeg`,
+                            `${msg}.mp3`,
+                            type,
+                            horaFormatada
+                        ]);
+                        io.emit('buscar-contato')
+
+                        await api.post(`/send`, bodyMsg);
+
+
+                    } catch (error) {
+                        //   if (entry.changes[0].value.statuses[0].status != 'read') {
+                        //     mensagem = entry.changes[0].value.statuses[0].conversation
+
+                        //console.log('teste se e aqui', mensagem)
+
+                    }
+                }
+                else if (tudo.entry[0].changes[0].value.messages[0].type == 'document' && numRecebe == '553130580254') {
+                    //console.log('Eu sou o audio pae')
+                    try {
+                        mensagem = entry.changes[0].value.messages[0]
+                        produto = entry.changes[0].value
+
+                        console.log('teste produto', produto.value)
+                        // console.log(mensagem, 'recebi')
+                        //console.log('maioria', tudo.entry[0].changes[0].value.messages[0])
+                        //console.log('eu sou tudo antes do if', tudo.entry[0].changes[0].value)
+                        type = tudo.entry[0].changes[0].value.messages[0].document.mime_type
+                        msg = tudo.entry[0].changes[0].value.messages[0].document.id
+                        nome = tudo.entry[0].changes[0].value.contacts[0].profile.name
+                        waId = tudo.entry[0].changes[0].value.contacts[0].wa_id
+                        qry = `insert into meso_mensagens_solicitante (nome, whatsappid, mensagem, telefone, type ) VALUES ('${nome}', '${waId}','Link do documento: \nhttps://wpp.sicoobnossacoop.com.br:5995/midia/${msg}.pdf','${waId}','${type}');`
+                        //console.log('Satoru gojo', qry)
+                        executaQry(qry)
+
+                        let a = await api.get(`/pegaURL/${msg}`);
+                        //console.log(a.data);
+                        let url = a.data.url;
+                        console.log('MÃE SOLTEIRA', url)
+                        let bodyImage = {
+                            "url": url,
+                            "id": msg
+                        };
+                        let qry4 = `update meso_contatos set estado = 'Aguardando Atendimento', ultimamsg = 'documento' where telefone like '%${waId}%';`
+                        await executaQry(qry4)
+                        await api.post(`/geraDocument/`, bodyImage);
+                        emitMensagem(io, nome, `Link do documento: \nhttps://wpp.sicoobnossacoop.com.br:5995/midia/${msg}.pdf`, waId)
+
+                        const agora = new Date();
+                        const horaFormatada = new Intl.DateTimeFormat('pt-BR', {
+                            day: '2-digit',
+
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                        }).format(agora);
+                        console.log('minha msg', msg)
+
+                        io.emit('receive-message', [
+                            waId,
+                            nome,
+                            "agente",
+                            '551131646301',
+                            `${msg}.pdf`,
                             type,
                             horaFormatada
                         ]);
 
-                    } else {
-                        console.error('Erro ao obter a imagem:', geraMidia.status);
+                    } catch (error) {
+                        //   if (entry.changes[0].value.statuses[0].status != 'read') {
+                        //     mensagem = entry.changes[0].value.statuses[0].conversation
+
+                        //console.log('teste se e aqui', mensagem)
+
                     }
-
-                } catch (error) {
-                    console.error('Erro ao processar imagem:', error);
                 }
+            } else {
+                //console.log('mensagem enviada')
             }
-            else if (tudo.entry[0].changes[0].value.messages[0].type == 'audio' && numRecebe == '553130580254') {
-                //console.log('Eu sou o audio pae')
-                try {
-                    mensagem = entry.changes[0].value.messages[0]
-                    produto = entry.changes[0].value
+        } else if (numRecebe == '553130580254') {
+            let msg = tudo.entry[0].changes[0].value.messages[0].id
 
-                    //console.log('teste produto', produto.value)
-                    //console.log(mensagem, 'recebi')
-                    //console.log('maioria', tudo.entry[0].changes[0].value.messages[0])
-                    //console.log('eu sou tudo antes do if', tudo.entry[0].changes[0].value)
-                    let type = tudo.entry[0].changes[0].value.messages[0].type
-                    let msg = tudo.entry[0].changes[0].value.messages[0].audio.id
-                    let nome = tudo.entry[0].changes[0].value.contacts[0].profile.name
-                    let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id
-                    qry = `insert into meso_mensagens_solicitante (nome, whatsappid, mensagem, telefone, type ) VALUES ('${nome}', '${waId}','${msg}.mp3','${waId}','${type}');`
-                    //console.log('megumi fushiguro', qry)
-                    executaQry(qry)
+            //let msgBefore = tudo.entry[0].changes[0].value.messages[0].text.body
+            let type = tudo.entry[0].changes[0].value.messages[0].type
+            //console.log('eu sou msg', msg)
+            let nome = tudo.entry[0].changes[0].value.contacts[0].profile.name
+            //console.log('eu sou nome', nome)
+            let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id
+            //console.log('Foi não ó')
+            let qry5 = `select count(*) as contatoExiste from meso_contatos where telefone = '${waId}';`
+
+            //console.log(qry5)
+            let contatoExisteArray = await executaQry(qry5)
+
+            let contatoExiste = contatoExisteArray.dados[0].contatoExiste
+            if (tudo.entry[0].changes[0].value.messages[0].type == 'text' && numRecebe == '553130580254') {
+                msg = tudo.entry[0].changes[0].value.messages[0].text.body
+                let qry = `insert into meso_mensagens_solicitante (nome, whatsappid, mensagem, telefone, type ) VALUES ('${nome}', '${waId}','${msg}','${waId}','${type}');`
+
+                emitMensagem(io, nome, msg, waId)
+                executaQry(qry)
+            }
+            if (tudo.entry[0].changes[0].value.messages[0].type == 'audio' && numRecebe == '553130580254') {
+                console.log('Eu sou o audio pae')
+                try {
+                    let mensagem
+
+
+                    msg = tudo.entry[0].changes[0].value.messages[0].audio.id
+                    type = tudo.entry[0].changes[0].value.messages[0].type
+
+
+                    console.log('me mostre oque está errado')
+                    console.log('estou aqui', await api.get(`/pegaURL/${msg}`));
 
                     let a = await api.get(`/pegaURL/${msg}`);
-                    //console.log(a.data);
+                    console.log('teste do A', a);
                     let url = a.data.url;
 
+                    console.log('cheguei aqui')
                     let bodyImage = {
                         "url": url,
                         "id": msg
@@ -461,24 +655,38 @@ app.post("/webhooks", async (req, res) => {
                     await api.post(`/geraAudio/`, bodyImage);
 
                     let geraMidia = await api.get(`/get-audio/${msg}.mp3`, { responseType: 'arraybuffer' }); // Certifique-se de definir `responseType`
-
+                    console.log('eu sou o geramidaiStatus', geraMidia.status)
                     if (geraMidia.status === 200) {
                         const audioBuffer = Buffer.from(geraMidia.data, 'binary');
                         const base64Audio = `data:audio/mp3;base64,${audioBuffer.toString('base64')}`;
 
-                        let qry4 = `update meso_contatos set estado = 'Aguardando Atendimento' where telefone like '%${waId}%';`
-                        //console.log('veia chata', qry4)
-                        await executaQry(qry4)
 
-                        // Envia o áudio no formato base64
                         emitAudio(io, nome, base64Audio, waId);
+
+
                     }
+                    console.log('passei aqui')
+
+                    console.log('antes do envio')
+                    // Envia o áudio no formato base64
+                    let qryProtocolo = `insert into meso_mensagens_solicitante (telefone,nome,agent,wpnumber,mensagem, type) values ('${waId}','${nome}','${nome}','553130580254','audio','protocolo');`
+
+                    console.log('salvaProtocolo', qryProtocolo)
+                    await executaQry(qryProtocolo)
+
+                    let qryInsert2 = `
+                            INSERT INTO meso_mensagens_solicitante 
+                            (nome, whatsappid, mensagem, telefone, type) 
+                            VALUES ('${nome}', '${waId}','${msg}.mp3','${waId}','${type}');
+                        `;
+                    console.log('eu sou o qry insert', qryInsert2)
+                    await executaQry(qryInsert2)
 
                     /*let bodyMsg = {
                         "to": waId,
                         "body": `Para melhorar nosso atendimento, pedimos que as mensagens sejam enviadas apenas por texto! Obrigado.`,
                         "nome": "bot-Meso"
-
+ 
                     };*/
 
                     const agora = new Date();
@@ -490,7 +698,7 @@ app.post("/webhooks", async (req, res) => {
                         minute: '2-digit',
                         second: '2-digit',
                     }).format(agora);
-                    //console.log('minha msg', horaFormatada)
+                    console.log('minha msg', horaFormatada)
 
                     io.emit('receive-message', [
                         waId,
@@ -514,126 +722,47 @@ app.post("/webhooks", async (req, res) => {
 
                 }
             }
-            else if (tudo.entry[0].changes[0].value.messages[0].type == 'document' && numRecebe == '553130580254') {
-                //console.log('Eu sou o audio pae')
-                try {
-                    mensagem = entry.changes[0].value.messages[0]
-                    produto = entry.changes[0].value
 
-                    //console.log('teste produto', produto.value)
-                    // console.log(mensagem, 'recebi')
-                    //console.log('maioria', tudo.entry[0].changes[0].value.messages[0])
-                    //console.log('eu sou tudo antes do if', tudo.entry[0].changes[0].value)
-                    let type = tudo.entry[0].changes[0].value.messages[0].document.mime_type
-                    let msg = tudo.entry[0].changes[0].value.messages[0].document.id
-                    let nome = tudo.entry[0].changes[0].value.contacts[0].profile.name
-                    let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id
-                    qry = `insert into meso_mensagens_solicitante (nome, whatsappid, mensagem, telefone, type ) VALUES ('${nome}', '${waId}','${msg}.pdf','${waId}','${type}');`
-                    //console.log('Satoru gojo', qry)
-                    executaQry(qry)
+            //console.log('Eu sou o contatoExiste', contatoExiste)
 
-                    let a = await api.get(`/pegaURL/${msg}`);
-                    //console.log(a.data);
-                    let url = a.data.url;
-                    //console.log('MÃE SOLTEIRA', url)
-                    let bodyImage = {
-                        "url": url,
-                        "id": msg
-                    };
-
-                    await api.post(`/geraDocument/`, bodyImage);
-                    emitMensagem(io, nome, msg)
-
-                    const agora = new Date();
-                    const horaFormatada = new Intl.DateTimeFormat('pt-BR', {
-                        day: '2-digit',
-
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                    }).format(agora);
-                    //console.log('minha msg', msg)
-
-                    io.emit('receive-message', [
-                        waId,
-                        nome,
-                        "agente",
-                        '551131646301',
-                        `${msg}.pdf`,
-                        type,
-                        horaFormatada
-                    ]);
-
-                } catch (error) {
-                    //   if (entry.changes[0].value.statuses[0].status != 'read') {
-                    //     mensagem = entry.changes[0].value.statuses[0].conversation
-
-                    //console.log('teste se e aqui', mensagem)
-
-                }
+            let qry55 = `update meso_contatos set estado = 'Aguardando Atendimento' where telefone like '%${waId}%';`
+            console.log('veia chata', qry55)
+            await executaQry(qry55)
+            if (nome != 'template_plugphone2' && contatoExiste == 0) {
+                const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
+                const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
+                const qry4 = `INSERT INTO meso_contatos (nome, telefone, campanha) VALUES ('${nome}', '${waId}', '${campanha}');`;
+                executaQry(qry4);
             }
-        } else {
-            //console.log('mensagem enviada')
+
+            //tudo.entry[0].changes[0].value.messages[0].type
+
+
+
+
+            let protocolo = gerarProtocolo()
+
+            console.log('eu sou protocolo', protocolo)
+
+
+
+
+
+            emitMensagem(io, 'Bot-Sicoob', `Olá, ${nome}! Tudo bem? 😊\n
+Agradecemos o seu contato com o Sicoob Nossacoop! É um prazer te receber por aqui.\n
+Para melhor te atender, poderia nos dizer como podemos ajudar?\n\nSeu protocolo é : ${protocolo}`, waId)
+
+            sendprotocolo(waId, `Olá, ${nome}! Tudo bem? 😊\n
+Agradecemos o seu contato com o Sicoob Nossacoop! É um prazer te receber por aqui.\n
+Para melhor te atender, poderia nos dizer como podemos ajudar?\n\nSeu protocolo é : ${protocolo}`, 'Bot-Sicoob', res)
+
+
+
         }
-    } else if (numRecebe == '553130580254') {
-        let msg = tudo.entry[0].changes[0].value.messages[0].id
-
-
-        //console.log('eu sou msg', msg)
-        let nome = tudo.entry[0].changes[0].value.contacts[0].profile.name
-        //console.log('eu sou nome', nome)
-        let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id
-        //console.log('Foi não ó')
-        let qry5 = `select count(*) as contatoExiste from meso_contatos where telefone = '${waId}';`
-
-        //console.log(qry5)
-        let contatoExisteArray = await executaQry(qry5)
-
-        let contatoExiste = contatoExisteArray.dados[0].contatoExiste
-
-
-        //console.log('Eu sou o contatoExiste', contatoExiste)
-
-        let qry4 = `update meso_contatos set estado = 'Aguardando Atendimento' where telefone like '%${waId}%';`
-        //console.log('veia chata', qry4)
-        await executaQry(qry4)
-        if (nome != 'template_plugphone2' && contatoExiste == 0) {
-            const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
-            const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
-            const qry4 = `INSERT INTO meso_contatos (nome, telefone, campanha) VALUES ('${nome}', '${waId}', '${campanha}');`;
-            executaQry(qry4);
+        else {
+            console.log('Não serve')
         }
 
-        let protocolo = gerarProtocolo()
-
-        //console.log('eu sou protocolo', protocolo)
-
-
-
-
-
-        let template = "menu_plugphone3"
-        //console.log(numeroWhatsapp)
-        sendTemplateMenu(numeroWhatsapp, template, res)
-
-
-
-        let bodyMsg = {
-            "to": waId,
-            "body": `seu protocolo é: ${protocolo}`,
-            "nome": "bot-Meso"
-        };
-
-        sendprotocolo(waId, `seu protocolo é : ${protocolo}`, 'bot-PlugPhone', res)
-
-        let qryproto = `insert into meso_mensagens_solicitante (telefone,nome,agent,wpnumber,protocolo, type, estado,mensagem) values ('${waId}','bot-Meso','bot-Meso','553130580254','${protocolo}','protocolo', 'aberto','seu protocolo é : ${protocolo}');`
-        //console.log('KAMEHAMEHAAAAAAAAAAAAAAAAAAAA!', qryproto)
-        await executaQry(qryproto)
-    }
-    else {
-        //console.log('serve de porra nenhuma')
     }
     ////else{//console.log('Jurassic world')}
     res.status(200).end()
@@ -665,9 +794,8 @@ app.get("/webhooks", (req, res) => {
     hub.verify_token = req.query['hub.verify_token'];
     //console.log(req.query, hub);
     let resposta = hub.challenge;
-    res.send(resposta);
+    res.send('Webhook');
 });
-
 // Rota para download de um arquivo com base em um ID
 app.get('/download/:id/:nome/:formato', async (req, res) => {
     let id = req.params.id;
@@ -792,7 +920,7 @@ app.post("/login", async (req, res, next) => {
 app.use(bodyParser.json());
 
 app.post('/registrar-token', async (req, res) => {
-    //console.log("Aqui é bomba")
+    console.log("Aqui é bomba")
     const { token } = req.body;
     const { usuario } = req.body
     const tokenFunc = await funcToken(usuario);
@@ -809,7 +937,7 @@ app.post('/registrar-token-mobile', async (req, res) => {
     const { token } = req.body;
     const { usuario } = req.body
 
-    //console.log('auauau 123', token, usuario)
+    console.log('auauau 123', token, usuario)
 
     const tokenFuncMobile = await funcTokenMobile(usuario);
 
@@ -818,7 +946,7 @@ app.post('/registrar-token-mobile', async (req, res) => {
     if (token !== tokenFuncMobile) {
         let qry = `update meso_usuariologin set tokenMobile = '${token}' where usuario like '%${usuario}%'`;
         executaQry(qry);
-        //console.log("Token atualizado", qry);
+        console.log("Token atualizado", qry);
     }
     res.status(200).send('Token registrado com sucesso!');
 });
@@ -847,10 +975,10 @@ let pegatokenfire = async function (mensagem, nome, usuario, setor) {
             `
 
         let resultado = await executaQry(qry);
-        //console.log('🔍 Consulta executada:', qry);
+        console.log('🔍 Consulta executada:', qry);
 
         if (!Array.isArray(resultado.dados) || resultado.dados.length === 0) {
-            //console.log('⚠️ Nenhum token encontrado');
+            console.log('⚠️ Nenhum token encontrado');
             return;
         }
 
@@ -864,7 +992,7 @@ let pegatokenfire = async function (mensagem, nome, usuario, setor) {
         tokens = [...new Set(tokens)]; // remover duplicados
 
         if (tokens.length === 0) {
-            //console.log('⚠️ Lista final de tokens está vazia');
+            console.log('⚠️ Lista final de tokens está vazia');
             return;
         }
 
@@ -901,7 +1029,7 @@ let pegatokenfire = async function (mensagem, nome, usuario, setor) {
 
             const response = await admin.messaging().sendEachForMulticast(multicastMessage);
 
-            //console.log(`✅ Enviado lote de ${tokenBatch.length} tokens - Sucesso: ${response.successCount}, Falha: ${response.failureCount}`);
+            console.log(`✅ Enviado lote de ${tokenBatch.length} tokens - Sucesso: ${response.successCount}, Falha: ${response.failureCount}`);
 
             // 4. Tratar falhas
             if (response.failureCount > 0) {
@@ -914,7 +1042,7 @@ let pegatokenfire = async function (mensagem, nome, usuario, setor) {
                         console.warn(`⚠️ Falha no token: ${failedToken} → ${errCode} - ${errMsg}`);
 
                         if (errCode === 'messaging/registration-token-not-registered') {
-                            //console.log(`🗑️ Limpando token inválido: ${failedToken}`);
+                            console.log(`🗑️ Limpando token inválido: ${failedToken}`);
 
                             let removeQry = `
                                 UPDATE meso_usuariologin 
@@ -939,7 +1067,7 @@ let pegatokenfire = async function (mensagem, nome, usuario, setor) {
 let atualizaContato = async function (mensagem, telefone) {
     let qry = `update meso_contatos set ultimamsg = '${mensagem}', datahora = now() where telefone = '${telefone}'`;
     await executaQry(qry);
-    //console.log("chegou aqui", qry)
+    console.log("chegou aqui", qry)
 
 
 }
