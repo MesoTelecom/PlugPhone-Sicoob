@@ -4,7 +4,7 @@ const { executaQry } = require('/meso/whatsapp/webhook/db');
 
 let send = async function (to, body, nome, res) {
     console.log(to, body, nome)
-      let bodyLimpo = body.replace(/.*-Sicoob\s*/, "");
+      let bodyLimpo = body.replace(/.*-Sicoob-Nossacoop\s*/, "");
 
     const requestOptions = {
         method: 'POST',
@@ -490,7 +490,7 @@ let sendTemplateMenu = async (to, name, res) => {
         const data = await response.json();
 
         // Inserir dados no banco após enviar a mensagem
-        let qry = `insert into meso_mensagens_solicitante (telefone, whatsappid, nome,agent,wpnumber,mensagem, type) values ('${to}','${to}','Template-Sicoob','Template-Sicoob','553130580254','${name}','document');`
+        let qry = `insert into meso_mensagens_solicitante (telefone, whatsappid, nome,agent,wpnumber,mensagem, type) values ('${to}','${to}','Template-Sicoob-Nossacoop','Template-Sicoob-Nossacoop','553130580254','${name}','document');`
         await executaQry(qry);
 
         // Retorna a resposta aqui

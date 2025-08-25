@@ -2333,7 +2333,7 @@ class ExpressController {
     });
 
     this.expressAppWrapper.post("/insereusuario", async (req, res, next) => {
-      let usuario = req.body.usuario + "-Sicoob";
+      let usuario = req.body.usuario + "-Sicoob-Nossacoop";
       let senha = req.body.senha;
       let tipo = req.body.tipo;
       try {

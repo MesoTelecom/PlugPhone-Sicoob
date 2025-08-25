@@ -123,7 +123,7 @@ app.post("/webhooks", async (req, res) => {
     // Fora do horário comercial OU fora de segunda a sexta
     if (diaSemana === 0 || diaSemana === 6 || hora < 10 || hora >= 18) {
         console.log("Mensagem recebida fora do período permitido (10h às 16h)");
-        send(numeroWhatsapp, 'Bot-Sicoob\nOlá, muito obrigado por entrar em contato com o Sicoob Nossacoop. No momento, não estamos disponíveis. O nosso horário de atendimento é de segunda a sexta, das 10:00h às 16:00h. Envie sua solicitação abaixo, em breve retornaremos o seu contato em horario de atendimento.', 'Bot-Sicoob', res);
+        send(numeroWhatsapp, 'Bot-Sicoob-Nossacoop\nOlá, muito obrigado por entrar em contato com o Sicoob Nossacoop. No momento, não estamos disponíveis. O nosso horário de atendimento é de segunda a sexta, das 10:00h às 16:00h. Envie sua solicitação abaixo, em breve retornaremos o seu contato em horario de atendimento.', 'Bot-Sicoob-Nossacoop', res);
         return;
     } else {
 
@@ -748,13 +748,13 @@ app.post("/webhooks", async (req, res) => {
 
 
 
-            emitMensagem(io, 'Bot-Sicoob', `Olá, ${nome}! Tudo bem? 😊\n
+            emitMensagem(io, 'Bot-Sicoob-Nossacoop', `Olá, ${nome}! Tudo bem? 😊\n
 Agradecemos o seu contato com o Sicoob Nossacoop! É um prazer te receber por aqui.\n
 Para melhor te atender, poderia nos dizer como podemos ajudar?\n\nSeu protocolo é : ${protocolo}`, waId)
 
             sendprotocolo(waId, `Olá, ${nome}! Tudo bem? 😊\n
 Agradecemos o seu contato com o Sicoob Nossacoop! É um prazer te receber por aqui.\n
-Para melhor te atender, poderia nos dizer como podemos ajudar?\n\nSeu protocolo é : ${protocolo}`, 'Bot-Sicoob', res)
+Para melhor te atender, poderia nos dizer como podemos ajudar?\n\nSeu protocolo é : ${protocolo}`, 'Bot-Sicoob-Nossacoop', res)
 
 
 

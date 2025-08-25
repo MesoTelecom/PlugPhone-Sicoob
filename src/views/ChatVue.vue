@@ -20,8 +20,12 @@
             mdi-help-circle</v-icon>
         </v-row>
         <v-list dense>
+
           <br>
+
           <v-list-item-group v-model="selectedContact">
+            <h1 style="    text-align: center;">{{ estadoContatoFiltro }}</h1>
+
             <v-list-item v-for="(contact, index) in contacts" :key="index">
               <v-list-item-content>
                 <v-list-item-title class="sidebar" @click="selectContact(contact.telefone)">
@@ -65,17 +69,19 @@
       <v-main style="padding: 0px; height: 100vh; display: flex; flex-direction: column;">
         <v-container fluid>
           <v-row class="cabecalho">
-            <v-btn @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Todos')"
+            <v-btn @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Todos', FiltroMudaEstado())"
               class="botaoEstado">Todos</v-btn>
-            <v-btn @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Novo')"
+            <v-btn @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Novo', FiltroMudaEstado())"
               class="botaoEstado">Novo</v-btn>
-            <v-btn @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Aguardando Cliente')"
+            <v-btn
+              @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Aguardando Cliente', FiltroMudaEstado())"
               class="botaoEstado">Aguard...
               Cliente</v-btn>
-            <v-btn @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Aguardando Atendimento')"
+            <v-btn
+              @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Aguardando Atendimento', FiltroMudaEstado())"
               class="botaoEstado">Aguard...
               Atendimento</v-btn>
-            <v-btn @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Concluido')"
+            <v-btn @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Concluido', FiltroMudaEstado())"
               class="botaoEstado">Concluido</v-btn>
           </v-row>
 
@@ -83,16 +89,16 @@
             <v-col cols="12" md="12" style="padding: 0%;">
               <div class="messages" ref="messages" style="margin-left: 3%; max-height: 80vh; overflow-y: auto;">
                 <div v-for="(message, index) in messages" :key="'server-' + index" :class="{
-                  'message-requester': !message.sender.includes('-Sicoob'),
-                  'message-agent': message.sender.includes('-Sicoob'),
+                  'message-requester': !message.sender.includes('-Sicoob-Nossacoop'),
+                  'message-agent': message.sender.includes('-Sicoob-Nossacoop'),
                 }">
                   <div :class="{
-                    buttonSender: !message.sender.includes('-Sicoob'),
-                    button: message.sender.includes('-Sicoob'),
-                  }" :style="{ 'text-align': message.sender.includes('-Sicoob') ? 'end' : 'start' }">
+                    buttonSender: !message.sender.includes('-Sicoob-Nossacoop'),
+                    button: message.sender.includes('-Sicoob-Nossacoop'),
+                  }" :style="{ 'text-align': message.sender.includes('-Sicoob-Nossacoop') ? 'end' : 'start' }">
                     <span :class="{
-                      tituloSender: !message.sender.includes('-Sicoob'),
-                      titulo: message.sender.includes('-Sicoob'),
+                      tituloSender: !message.sender.includes('-Sicoob-Nossacoop'),
+                      titulo: message.sender.includes('-Sicoob-Nossacoop'),
                     }">
                       <b>{{ message.sender }}:</b><br />
                     </span>
@@ -458,7 +464,7 @@ export default {
     console.log('usuario oque?', usuario)
     this.id = usuario.id
     this.tipo = usuario.tipo;
-    this.usuario = usuario.usuario + "-Sicoob"
+    this.usuario = usuario.usuario + "-Sicoob-Nossacoop"
     //this.idsetinterval = setInterval(() => this.buscarContato(), 5000);
 
     console.log('UM REQUIEEEEEEEEEEM', this.apiWPurl)
@@ -862,7 +868,7 @@ export default {
       let area = this.setorSelect
       console.log('teste de select', area, usuario, this.wppnum)
 
-      let a = await api.get(`/transferirchamado/${area}/${this.wppnum}/${usuario}`);
+      let a = await apiWP.get(`/transferirchamado/${area}/${this.wppnum}/${usuario}`);
       console.log(a)
       location.reload()
 
@@ -897,8 +903,8 @@ export default {
       let arraySetores = getSetores.data.dados
       arraySetores.forEach((d) => {
         this.setor.push({
-          text: d.nome,       // o que aparece no select
-          value: d.id_nome // o valor que será capturado no v-model
+          text: `${d.id_agencia} - ${d.nome}`,       // o que aparece no select
+          value: d.nome // o valor que será capturado no v-model
 
           //          value: d.id_agencia // o valor que será capturado no v-model
         })
@@ -1037,6 +1043,11 @@ export default {
         audio.play();
       }, 1000);
 
+    },
+
+    async FiltroMudaEstado() {
+
+      this.messages = []
     },
 
     async sendTemplate() {
@@ -1242,7 +1253,7 @@ export default {
       }
       console.log(token)
       console.log('que gemido foi esse?', this.token)
-      let a = await apiWP.post('/whatsapp/registrar-token', { "usuario": nome + "-Sicoob", "token": token });
+      let a = await apiWP.post('/whatsapp/registrar-token', { "usuario": nome + "-Sicoob-Nossacoop", "token": token });
 
       console.log(a)
     },
@@ -1281,7 +1292,7 @@ export default {
 
       // Monta com PlugPhone
       let nomeFormatado = usuario.usuario.charAt(0).toUpperCase() + usuario.usuario.slice(1);
-      this.usuario = nomeFormatado + "-Sicoob";
+      this.usuario = nomeFormatado + "-Sicoob-Nossacoop";
 
       console.log('eu sou o this.usuario SATORU GOJO', this.usuario);
     },

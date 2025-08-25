@@ -55,7 +55,7 @@ export default {
     console.log('usuario oque?', usuario)
     this.id = usuario.id
     this.tipo = usuario.tipo;
-    this.usuario = usuario.usuario + "-Sicoob"
+    this.usuario = usuario.usuario + "-Sicoob-Nossacoop"
 
     this.carregar();
 

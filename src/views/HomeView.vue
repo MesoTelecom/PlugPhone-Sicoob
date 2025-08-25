@@ -75,7 +75,7 @@ export default {
         this.error = false;
 
         const res = await api.post("loginconfere/", {
-          login: this.usuario + "-Sicoob",
+          login: this.usuario + "-Sicoob-Nossacoop",
           senha: this.senha,
         });
 

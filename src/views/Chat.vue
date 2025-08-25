@@ -51,18 +51,18 @@
             <v-col cols="12" md="12" style="padding: 0%;">
               <div class="messages" ref="messages" style="margin-bottom: -65px;     margin-left: 3%;">
                 <div v-for="(message, index) in messages" :key="'server-' + index" :class="{
-                  'message-requester': !message.sender.includes('-Sicoob'),
-                  'message-agent': message.sender.includes('-Sicoob'),
+                  'message-requester': !message.sender.includes('-Sicoob-Nossacoop'),
+                  'message-agent': message.sender.includes('-Sicoob-Nossacoop'),
                 }">
                   <button :class="{
-                    buttonSender: !message.sender.includes('-Sicoob'),
-                    button: message.sender.includes('-Sicoob'),
+                    buttonSender: !message.sender.includes('-Sicoob-Nossacoop'),
+                    button: message.sender.includes('-Sicoob-Nossacoop'),
                   }" :style="{
-                    'text-align': message.sender.includes('-Sicoob') ? 'end' : 'start',
+                    'text-align': message.sender.includes('-Sicoob-Nossacoop') ? 'end' : 'start',
                   }">
                     <span :class="{
-                      tituloSender: !message.sender.includes('-Sicoob'),
-                      titulo: message.sender.includes('-Sicoob'),
+                      tituloSender: !message.sender.includes('-Sicoob-Nossacoop'),
+                      titulo: message.sender.includes('-Sicoob-Nossacoop'),
                     }">
                       <b>{{ message.sender }}:</b><br />
                     </span>
@@ -431,7 +431,7 @@ export default {
     let usuario = JSON.parse(localStorage.getItem('usu'));
     console.log('REVOLTA', usuario)
     this.tipo = usuario.tipo;
-    this.usuario = usuario.usuario + "-Sicoob"
+    this.usuario = usuario.usuario + "-Sicoob-Nossacoop"
     this.idsetinterval = setInterval(() => this.buscarContato(), 5000);
 
     this.buscarContato();
@@ -1037,7 +1037,7 @@ export default {
       console.log("Vou enviar o token", token, "para o ", nome)
       console.log(token)
       console.log('que gemido foi esse?', this.token)
-      let a = await apiWP.post('/registrar-token', { "usuario": nome + "-Sicoob", "token": token });
+      let a = await apiWP.post('/registrar-token', { "usuario": nome + "-Sicoob-Nossacoop", "token": token });
       console.log(a)
     },
 
@@ -1069,7 +1069,7 @@ export default {
     async buscaCidadao() {
       let usuario = JSON.parse(localStorage.getItem('usu'));
       console.log('eu sou o usuario', usuario)
-      this.usuario = usuario.usuario + "-Sicoob"
+      this.usuario = usuario.usuario + "-Sicoob-Nossacoop"
       console.log('eu sou o this.usuario', this.usuario)
 
     },

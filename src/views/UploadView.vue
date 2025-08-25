@@ -1,24 +1,26 @@
 <template>
   <v-app>
     <Navbar />
+    </br>
+    <v-alert v-if="uploadStatus" :type="uploadStatus.type" dismissible>
+      {{ uploadStatus.message }}
+    </v-alert>
+    <router-link to="./menurealtime" class="linkp">
+      <v-btn dark class="botaoSair">voltar</v-btn>
+
+    </router-link>
 
     <v-main>
       <v-container>
         <h2>Enviar Arquivo CSV</h2>
-        <v-file-input label="Selecione o arquivo" @change="onFileChange" :error-messages="fileError"></v-file-input>
-
+        <v-file-input v-if="!isSuccess" v-model="selectedFile" :key="fileInputKey" label="Selecione o arquivo"
+          accept=".csv" :error-messages="fileError" @change="onFileChange"></v-file-input>
         <v-text-field label="Digite o nome da campanha" name="usuario" type="text" color="#61a5e8"
           v-model="nomeCampanha" />
         <v-btn @click="uploadFile" color="primary">Enviar</v-btn>
         <v-btn @click="importarAversariantes" color="primary" style="margin-left: 1%;">aniversáriantes do dia</v-btn>
         <v-btn @click="importarAssociados" color="primary" style="left: 1%;">Importar Associados</v-btn>
 
-        <router-link to="./menurealtime" class="linkp">
-          <v-btn dark class="botaoSair" style="left: 2%;">voltar</v-btn>
-          <v-alert v-if="uploadStatus" :type="uploadStatus.type" dismissible>
-            {{ uploadStatus.message }}
-          </v-alert>
-        </router-link>
       </v-container>
       <br><br>
       <v-data-table :headers="headers" :items="dados" :search="search" class="elevation-1"></v-data-table>
@@ -46,7 +48,7 @@ export default {
     console.log('usuario oque?', usuario)
     this.id = usuario.id
     this.tipo = usuario.tipo;
-    this.usuario = usuario.usuario + "-Sicoob"
+    this.usuario = usuario.usuario + "-Sicoob-Nossacoop"
   },
 
   data() {
@@ -190,6 +192,7 @@ export default {
 
             this.uploadStatus = { type: 'success', message: 'Arquivo enviado com sucesso!' };
             this.idsetinterval = setInterval(() => this.listar(), 1000);
+            this.selectedFile = null; // Reseta o arquivo selecionado
 
           })
           .catch(error => {
@@ -207,7 +210,7 @@ export default {
 
 <style scoped>
 .botaoSair {
-  left: 1%;
+  left: 100px;
   background-color: green !important;
   text-decoration: none !important;
 }

@@ -77,7 +77,7 @@ let socketConnection = function (io) {
         }
       });
       // console.log("me mostra os contatos", agrupados)
-      io.emit("contatos-sicoob", agrupados);
+      io.emit("contatos-Sicoob-Nossacoop", agrupados);
 
     });
 
