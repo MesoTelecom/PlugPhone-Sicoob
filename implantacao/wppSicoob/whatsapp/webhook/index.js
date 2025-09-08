@@ -90,12 +90,13 @@ app.post("/webhooks", async (req, res) => {
     let body_param = req.body;
     let tudo = body_param
     //console.log('FALA FILHA DA PUTA!!!!!!!!!!',tudo.entry[0].changes[0].value.metadata.display_phone_number)
-    let numRecebe = tudo.entry[0].changes[0].value.metadata.display_phone_number
-    // console.log('Negocio aqui', JSON.stringify(body_param))
+    let numRecebe = tudo?.entry?.[0]?.changes?.[0]?.value?.metadata?.display_phone_number;
+    //console.log('Negocio aqui', JSON.stringify(body_param))
 
     // Verificação segura para evitar erros de leitura de propriedades
-    let numeroWhatsapp = body_param?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id;
 
+    console.log('tipo')
+    let numeroWhatsapp = body_param?.entry?.[0]?.changes?.[0]?.value?.contacts?.[0]?.wa_id;
     if (!numeroWhatsapp) {
         console.log('O número de WhatsApp não foi encontrado.');
         return res.status(400).json({ error: "Número de WhatsApp não encontrado na requisição" });
@@ -130,7 +131,7 @@ app.post("/webhooks", async (req, res) => {
         let qry = `select count(whatsappid) as quantNum from meso_mensagens_solicitante where whatsappid = '${numeroWhatsapp}' and DATE(datetime) = CURDATE()`;
         let quantNumArray = await executaQry(qry);
         let quantNum = quantNumArray.dados[0].quantNum;
-
+        console.log('eu sou o tipo', tudo.entry?.[0]?.changes?.[0]?.value.messages?.[0]?.type)
         let qry1 = `select estado from meso_mensagens_solicitante where type = 'protocolo' and telefone = '${numeroWhatsapp}'  order by id desc  limit 1`
         console.log('qry 1', qry1)
         let estado = await executaQry(qry1)
@@ -138,7 +139,7 @@ app.post("/webhooks", async (req, res) => {
         let estadoProtocolo = estado.dados.length > 0 ? estado.dados[0].estado : ""
         console.log(quantNum, 'e o outro', estadoProtocolo)
 
-        if (quantNum >= 1 && estadoProtocolo === 'aberto') {
+        if (estadoProtocolo === 'aberto') {
 
 
             //console.log(body_param);
@@ -148,7 +149,7 @@ app.post("/webhooks", async (req, res) => {
             //console.log('eu sou tudo antes de tudo', tudo.entry[0].value)
             if (tudo.entry[0].changes[0].value.messages) {
                 //console.log("Ninho de mafagafos")
-                if (tudo.entry[0].changes[0].value.messages[0].type == 'text' && numRecebe == '553130580254') {
+                if (tudo.entry[0].changes[0].value.messages[0].type == 'text' && numRecebe == '553130580254' /*numRecebe == '553195374514' */) {
                     try {
                         //console.log('o furacao tbm fura o gato?')
                         mensagem = entry.changes[0].value.messages[0]
@@ -210,7 +211,7 @@ app.post("/webhooks", async (req, res) => {
                         if (nome != 'template_plugphone2' && contatoExiste == 0) {
                             const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
                             const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
-                            const qry4 = `INSERT INTO meso_contatos (nome, telefone, campanha) VALUES ('${nome}', '${waId}', '${campanha}');`;
+                            const qry4 = `INSERT INTO meso_contatos (nome, telefone) VALUES ('${nome}', '${waId}', '${campanha}');`;
                             executaQry(qry4);
                         }
 
@@ -236,7 +237,7 @@ app.post("/webhooks", async (req, res) => {
                         }
 
                         console.log('eu sou o msgEnviada', msgEnviada)
-                        emitMensagem(io, nome, msg, waId)
+                        emitMensagem(io, msgEnviada);
                         io.emit('receive-message', [
                             msgEnviada.telefone,
                             msgEnviada.nome,
@@ -335,20 +336,41 @@ app.post("/webhooks", async (req, res) => {
                         //console.log('eu sou waId', waId)
 
                         let qry = `insert into meso_mensagens_solicitante (nome, whatsappid, mensagem, telefone, type ) VALUES ('${nome}', '${waId}','${msg}','${waId}','${type}');`
-                        //console.log(qry)
+                        console.log(qry)
 
                         executaQry(qry)
-                        let qry1 = `update meso_contatos set setor = '${msg}' where telefone = '${waId}'`
-                        executaQry(qry1)
-                        console.log('eu sou o teste qry1', qry1)
-                        let qry4 = `update meso_contatos set estado = 'Novo' where telefone = '${waId}'`
-                        executaQry(qry4)
-                        let qry5 = `select count(*) as contatoExiste from meso_contatos where telefone = '${waId}';`
+                        if (msg == 'Sim' || msg == 'Não') {
 
+                            let pergunta1 = `update meso_pesquisa set pergunta1 = ${msg} where cliente = '${waId} and pergunta1 is null`
+
+                            console.log('pergunta1', pergunta1)
+
+                            await executaQry(pergunta1)
+                        } else if (
+                            msg == '5 - Muito Satisfeito' ||
+                            msg == '4 - Satisfeito' ||
+                            msg == '3 - razoável' ||
+                            msg == '2 - Insatisfeito' ||
+                            msg == '1 - Muito Insatisfeito'
+                        ) {
+
+                            let nota = parseInt(msg.charAt(0));
+                            let pergunta2 = `update meso_pesquisa set pergunta2 = '${nota}' where cliente = '${waId}' and pergunta2 is null`
+                            console.log('pergunta2', pergunta2)
+                            await executaQry(pergunta2)
+                        }
+                        /*
+                                                let qry1 = `update meso_contatos set setor = '${msg}' where telefone = '${waId}'`
+                                                executaQry(qry1)
+                                                console.log('eu sou o teste qry1', qry1)
+                                                let qry4 = `update meso_contatos set estado = 'Novo' where telefone = '${waId}'`
+                                                executaQry(qry4)
+                                                let qry5 = `select count(*) as contatoExiste from meso_contatos where telefone = '${waId}';`
+                        */
                         let qryBuscaContato = `select * from meso_contatos where estado = 'Novo'`;
                         let resultBuscaContato = await executaQry(qryBuscaContato)
                         console.log("resultBuscarContato", resultBuscaContato);
-                        io.emit('contatos', resultBuscaContato.dados);
+                        //       io.emit('contatos', resultBuscaContato.dados);
 
                         //console.log(qry5)
 
@@ -360,7 +382,7 @@ app.post("/webhooks", async (req, res) => {
                         if (nome != 'template_plugphone2' && contatoExiste == 0) {
                             const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
                             const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
-                            const qry4 = `INSERT INTO meso_contatos (nome, telefone, campanha) VALUES ('${nome}', '${waId}', '${campanha}');`;
+                            const qry4 = `INSERT INTO meso_contatos (nome, telefone) VALUES ('${nome}', '${waId}');`;
                             executaQry(qry4);
                         }
 
@@ -408,8 +430,6 @@ app.post("/webhooks", async (req, res) => {
                             "url": url,
                             "id": msg
                         };
-
-                        console.log('eu sou o bodyImage:', bodyImage)
 
                         await api.post(`/geraImage/`, bodyImage);
 
@@ -606,7 +626,11 @@ app.post("/webhooks", async (req, res) => {
             } else {
                 //console.log('mensagem enviada')
             }
-        } else if (numRecebe == '553130580254') {
+        } else if (
+            numRecebe == '553130580254' &&
+            (estadoProtocolo === 'fechado' || estadoProtocolo === 'Novo') &&
+            tudo.entry?.[0]?.changes?.[0]?.value.messages?.[0]?.type != 'button'
+        ) {
             let msg = tudo.entry[0].changes[0].value.messages[0].id
 
             //let msgBefore = tudo.entry[0].changes[0].value.messages[0].text.body
@@ -731,7 +755,244 @@ app.post("/webhooks", async (req, res) => {
             if (nome != 'template_plugphone2' && contatoExiste == 0) {
                 const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
                 const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
-                const qry4 = `INSERT INTO meso_contatos (nome, telefone, campanha) VALUES ('${nome}', '${waId}', '${campanha}');`;
+                const qry4 = `INSERT INTO meso_contatos (nome, telefone) VALUES ('${nome}', '${waId}');`;
+                executaQry(qry4);
+            }
+
+            //tudo.entry[0].changes[0].value.messages[0].type
+
+
+
+
+            let protocolo = gerarProtocolo()
+
+            console.log('eu sou protocolo', protocolo)
+
+            emitMensagem(io, 'Bot-Sicoob-Nossacoop', `Olá, ${nome}! Tudo bem? 😊\n
+Agradecemos o seu contato com o Sicoob Nossacoop! É um prazer te receber por aqui.\n
+Para melhor te atender, poderia nos dizer como podemos ajudar?\n\nSeu protocolo é : ${protocolo}`, waId)
+
+            sendprotocolo(waId, `Olá, ${nome}! Tudo bem? 😊\n
+Agradecemos o seu contato com o Sicoob Nossacoop! É um prazer te receber por aqui.\n
+Para melhor te atender, poderia nos dizer como podemos ajudar?\n\nSeu protocolo é : ${protocolo}`, 'Bot-Sicoob-Nossacoop', res)
+
+
+
+        }
+        else if (tudo.entry[0].changes[0].value.messages[0].type == 'button' && numRecebe == '553130580254' && estadoProtocolo === 'fechado') {
+            try {
+                console.log('entrei no if do botão')
+                // mensagem = entry.changes[0].value.messages[0]
+                //produto = entry.changes[0].value.messaging_product
+
+                //console.log('teste produto', produto.value)
+                //console.log(mensagem, 'recebi')
+                //console.log('maioria', tudo.entry[0].changes[0].value.messages[0].text.body)
+                //console.log('eu sou tudo antes do if', tudo)
+
+                let type = tudo.entry[0].changes[0].value.messages[0].type
+                let msg = tudo.entry[0].changes[0].value.messages[0].button.text
+                //console.log('eu sou msg', msg)
+                let nome = tudo.entry[0].changes[0].value.contacts[0].profile.name
+                //console.log('eu sou nome', nome)
+                let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id
+                //console.log('eu sou waId', waId)
+
+
+                if (msg == 'Sim' || msg == 'Não') {
+
+                    let pergunta1 = `update meso_pesquisa set pergunta1 = '${msg}' where cliente = '${waId}' and pergunta1 is null`
+
+                    console.log('pergunta1', pergunta1)
+
+                    await executaQry(pergunta1)
+                } else if (
+                    msg == '5 - Muito Satisfeito' ||
+                    msg == '4 - Satisfeito' ||
+                    msg == '3 - razoável' ||
+                    msg == '2 - Insatisfeito' ||
+                    msg == '1 - Muito Insatisfeito'
+                ) {
+
+                    let nota = parseInt(msg.charAt(0));
+                    let pergunta2 = `update meso_pesquisa set pergunta2 = '${nota}' where cliente = '${waId}' and pergunta2 is null`
+                    console.log('pergunta2', pergunta2)
+                    await executaQry(pergunta2)
+                }
+                /*
+                                        let qry1 = `update meso_contatos set setor = '${msg}' where telefone = '${waId}'`
+                                        executaQry(qry1)
+                                        console.log('eu sou o teste qry1', qry1)
+                                        let qry4 = `update meso_contatos set estado = 'Novo' where telefone = '${waId}'`
+                                        executaQry(qry4)
+                                        let qry5 = `select count(*) as contatoExiste from meso_contatos where telefone = '${waId}';`
+                */
+                let qryBuscaContato = `select * from meso_contatos where estado = 'Novo'`;
+                let resultBuscaContato = await executaQry(qryBuscaContato)
+                console.log("resultBuscarContato", resultBuscaContato);
+                //       io.emit('contatos', resultBuscaContato.dados);
+
+                //console.log(qry5)
+
+
+
+                //console.log('Eu sou o contatoExiste', contatoExiste)
+
+
+                if (nome != 'template_plugphone2' && contatoExiste == 0) {
+                    const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
+                    const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
+                    const qry4 = `INSERT INTO meso_contatos (nome, telefone) VALUES ('${nome}', '${waId}');`;
+                    executaQry(qry4);
+                }
+
+                pegatokenfire(msg, nome)
+
+                emitMensagem(io, nome, msg, waId)
+
+
+
+
+
+            } catch (error) {
+                /*     if (entry.changes[0].value.statuses[0].status != 'read') {
+                         //mensagem = entry.changes[0].value.statuses[0].conversation
+     
+     
+                         //console.log('teste se e aqui', mensagem)
+                     }
+                     */
+            }
+        }
+        else if (
+            numRecebe == '553130580254' &&
+            tudo.entry?.[0]?.changes?.[0]?.value.messages?.[0]?.type != 'button'
+        ) {
+            let msg = tudo.entry[0].changes[0].value.messages[0].id
+
+            //let msgBefore = tudo.entry[0].changes[0].value.messages[0].text.body
+            let type = tudo.entry[0].changes[0].value.messages[0].type
+            //console.log('eu sou msg', msg)
+            let nome = tudo.entry[0].changes[0].value.contacts[0].profile.name
+            //console.log('eu sou nome', nome)
+            let waId = tudo.entry[0].changes[0].value.contacts[0].wa_id
+            //console.log('Foi não ó')
+            let qry5 = `select count(*) as contatoExiste from meso_contatos where telefone = '${waId}';`
+
+            //console.log(qry5)
+            let contatoExisteArray = await executaQry(qry5)
+
+            let contatoExiste = contatoExisteArray.dados[0].contatoExiste
+            if (tudo.entry[0].changes[0].value.messages[0].type == 'text' && numRecebe == '553130580254') {
+                msg = tudo.entry[0].changes[0].value.messages[0].text.body
+                let qry = `insert into meso_mensagens_solicitante (nome, whatsappid, mensagem, telefone, type ) VALUES ('${nome}', '${waId}','${msg}','${waId}','${type}');`
+
+                emitMensagem(io, nome, msg, waId)
+                executaQry(qry)
+            }
+            if (tudo.entry[0].changes[0].value.messages[0].type == 'audio' && numRecebe == '553130580254') {
+                console.log('Eu sou o audio pae')
+                try {
+                    let mensagem
+
+
+                    msg = tudo.entry[0].changes[0].value.messages[0].audio.id
+                    type = tudo.entry[0].changes[0].value.messages[0].type
+
+
+                    console.log('me mostre oque está errado')
+                    console.log('estou aqui', await api.get(`/pegaURL/${msg}`));
+
+                    let a = await api.get(`/pegaURL/${msg}`);
+                    console.log('teste do A', a);
+                    let url = a.data.url;
+
+                    console.log('cheguei aqui')
+                    let bodyImage = {
+                        "url": url,
+                        "id": msg
+                    };
+
+                    await api.post(`/geraAudio/`, bodyImage);
+
+                    let geraMidia = await api.get(`/get-audio/${msg}.mp3`, { responseType: 'arraybuffer' }); // Certifique-se de definir `responseType`
+                    console.log('eu sou o geramidaiStatus', geraMidia.status)
+                    if (geraMidia.status === 200) {
+                        const audioBuffer = Buffer.from(geraMidia.data, 'binary');
+                        const base64Audio = `data:audio/mp3;base64,${audioBuffer.toString('base64')}`;
+
+
+                        emitAudio(io, nome, base64Audio, waId);
+
+
+                    }
+                    console.log('passei aqui')
+
+                    console.log('antes do envio')
+                    // Envia o áudio no formato base64
+                    let qryProtocolo = `insert into meso_mensagens_solicitante (telefone,nome,agent,wpnumber,mensagem, type) values ('${waId}','${nome}','${nome}','553130580254','audio','protocolo');`
+
+                    console.log('salvaProtocolo', qryProtocolo)
+                    await executaQry(qryProtocolo)
+
+                    let qryInsert2 = `
+                            INSERT INTO meso_mensagens_solicitante 
+                            (nome, whatsappid, mensagem, telefone, type) 
+                            VALUES ('${nome}', '${waId}','${msg}.mp3','${waId}','${type}');
+                        `;
+                    console.log('eu sou o qry insert', qryInsert2)
+                    await executaQry(qryInsert2)
+
+                    /*let bodyMsg = {
+                        "to": waId,
+                        "body": `Para melhorar nosso atendimento, pedimos que as mensagens sejam enviadas apenas por texto! Obrigado.`,
+                        "nome": "bot-Meso"
+ 
+                    };*/
+
+                    const agora = new Date();
+                    const horaFormatada = new Intl.DateTimeFormat('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                    }).format(agora);
+                    console.log('minha msg', horaFormatada)
+
+                    io.emit('receive-message', [
+                        waId,
+                        nome,
+                        "agente",
+                        '551131646301',
+                        `${msg}.mp3`,
+                        type,
+                        horaFormatada
+                    ]);
+                    io.emit('buscar-contato')
+
+                    await api.post(`/send`, bodyMsg);
+
+
+                } catch (error) {
+                    //   if (entry.changes[0].value.statuses[0].status != 'read') {
+                    //     mensagem = entry.changes[0].value.statuses[0].conversation
+
+                    //console.log('teste se e aqui', mensagem)
+
+                }
+            }
+
+            //console.log('Eu sou o contatoExiste', contatoExiste)
+
+            let qry55 = `update meso_contatos set estado = 'Aguardando Atendimento' where telefone like '%${waId}%';`
+            console.log('veia chata', qry55)
+            await executaQry(qry55)
+            if (nome != 'template_plugphone2' && contatoExiste == 0) {
+                const listaCampanha = ['Aniversário', 'Negocie Já', 'Debitos', 'Boas Vindas'];
+                const campanha = listaCampanha[Math.floor(Math.random() * listaCampanha.length)];
+                const qry4 = `INSERT INTO meso_contatos (nome, telefone) VALUES ('${nome}', '${waId}');`;
                 executaQry(qry4);
             }
 
@@ -758,9 +1019,6 @@ Para melhor te atender, poderia nos dizer como podemos ajudar?\n\nSeu protocolo 
 
 
 
-        }
-        else {
-            console.log('Não serve')
         }
 
     }

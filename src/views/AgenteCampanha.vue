@@ -65,7 +65,6 @@ export default {
       headers: [
         { text: "Campanha", value: "nomeCampanha" },
         { text: "Soluções atendidas", value: "contaPesq" },
-        { text: "Solicitações Atendidas(%)", value: "mediaSolicitacao" },
         { text: "Media de satisfação", value: "mediaPesq" },
       ],
 

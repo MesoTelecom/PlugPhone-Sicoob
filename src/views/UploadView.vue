@@ -117,7 +117,7 @@ export default {
 
     listar: async function () {
 
-      let buscarCsv = await apiWP.get(`/buscarcsv/${this.nomeCampanha}`);
+      let buscarCsv = await api.get(`/buscarcsv/${this.nomeCampanha}`);
       console.log('buscarCSV', buscarCsv)
       this.dados = buscarCsv.data.dados
       console.log('dados csv', this.dados.length)
@@ -193,7 +193,7 @@ export default {
             this.uploadStatus = { type: 'success', message: 'Arquivo enviado com sucesso!' };
             this.idsetinterval = setInterval(() => this.listar(), 1000);
             this.selectedFile = null; // Reseta o arquivo selecionado
-
+            this.nomeCampanha = ""
           })
           .catch(error => {
             console.error('Erro ao enviar o arquivo:', error);
