@@ -130,7 +130,7 @@ export default {
       console.log('grupo', this.grupo)
 
       console.log('eu sou o this.dados', this.dados)
-      apiWP.get(`/criaCampanha/${this.usuario}/${this.nomeCampanha}`)
+      await apiWP.get(`/criaCampanha/${this.usuario}/${this.nomeCampanha}`)
 
       this.dados.forEach((d) => {
         console.log('kyojin karate eu sou o dan', d)

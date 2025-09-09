@@ -318,7 +318,7 @@
           <v-card-text>
             <v-row class="linhaContato">
 
-              <v-btn @click=" sendTemplate(), openDialog2 = false" class="btnAudio">
+              <v-btn @click="populaOportunidade(whatsapp), sendTemplate(), openDialog2 = false" class="btnAudio">
                 <v-icon style="    font-size: 45px;">mdi-whatsapp</v-icon>
               </v-btn>
               <v-btn @click="openDialogLigacao = true, openDialog2 = false" class="btnCall">
@@ -422,26 +422,7 @@
             <v-select :items="setor" label="Setor" v-model="setorSelect" @change="listar(setorSelect)" class="filtro" />
 
 
-            <v-select :items="items" v-model="usuarioSelect" label="Operadores" class="filtro" item-text="text"
-              item-value="value">
-              <!-- como cada item aparece na lista -->
-              <template v-slot:item="data">
-                <v-list-item v-bind="data.attrs" v-on="data.on">
-                  <v-list-item-content>
-                    <div class="d-flex align-center">
-                      <span class="bolinha" :style="getDotStyle(data.item)"></span>
-                      <span>{{ data.item.text }}</span>
-                    </div>
-                  </v-list-item-content>
-                </v-list-item>
-              </template>
-
-              <!-- como o item selecionado aparece no campo -->
-              <template v-slot:selection="data">
-                <span class="bolinha" :style="getDotStyle(data.item)"></span>
-                <span class="ml-2">{{ data.item.text }}</span>
-              </template>
-            </v-select>
+            <v-select :items="items" label="Operadores" v-model="usuarioSelect" class="filtro"></v-select>
           </v-row>
           <v-card-actions>
             <v-btn @click="transferir()" color="primary">Transferir</v-btn>
@@ -599,7 +580,7 @@ export default {
     };
   },
   created() {
-    this.socket = io('https://wpp.sicoobnossacoop.com.br:3993');
+    this.socket = io('https://whatsapp.sicoob.plugphone.cloud:3000');
 
     // Evento para mensagens de texto
     /* this.socket.on('chat message', (nome, msg) => {
@@ -722,110 +703,299 @@ export default {
   },
   methods: {
 
-    async listar(tipo) {
-      this.items = [];
+    listar: async function (tipo) {
+      console.log("Função 'listar' chamada com tipo:", tipo); // Verifica o valor de 'tipo'
 
-      const resp = await api.get(`/listausuariotipo/${tipo}`);
-      const listatotalfilas = resp.data.dados || [];
+      // Se 'tipo' for 0, podemos evitar que a função execute
+      if (tipo === 0) {
+        console.log("Valor '0' detectado, a função não será executada.");
+        return; // Não executa o restante da função se 'tipo' for 0
+      }
 
-      listatotalfilas.forEach((d) => {
-        this.items.push({
-          text: String(d.usuario || ''),       // o que aparece no select
-          value: String(d.nome || d.usuario),  // o que vai pro v-model
-          token: d.token ?? null,
-          tokenM: d.tokenMobile ?? null
+      this.items = [] // Limpa os itens antes de adicionar novos
+
+      try {
+        // Faz a requisição à API
+        let listafila = await api.get(`/listausuariotipo/${tipo}`);
+        console.log('Dados da resposta da API:', listafila); // Exibe os dados da resposta
+
+        let listatotalfilas = listafila.data.dados;
+        console.log('Lista das filas:', listatotalfilas);
+
+        // Itera sobre os dados recebidos
+        listatotalfilas.forEach((d) => {
+          console.log('Adicionando o usuário:', d.usuario); // Exibe o nome de cada usuário
+          this.items.push(d.usuario); // Adiciona o nome do usuário aos itens
         });
+
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+        this.items = []; // Limpa os itens caso ocorra um erro
+      }
+    }
+    ,
+
+
+    verificaEstado() {
+      console.log('eu sou o tipo', this.tipo)
+      if (this.tipo == 'Root' || this.tipo == 'Monitor') {
+        console.log('admin Online')
+      } else {
+        //this.openDialogRamal = true
+      }
+    },
+
+    async ramalDigitado() {
+      if (this.ramal == "" || this.ramal == undefined) {
+        alert('Seu ramal não pode ser Nulo')
+      } else {
+        let verRamal = await api.get(`/verificaramal/${this.ramal}`)
+        console.log('existe ramal?', verRamal.data.dados[0].ramal)
+        console.log('EEEEU SOU SIMPLEEEES :D', this.ramal)
+        let pegaRamal = verRamal.data.dados[0].ramal
+        console.log('peguei o ramal', pegaRamal)
+        if (pegaRamal >= 1) {
+          this.openDialogRamal = false
+        } else {
+          alert('O Ramal não existe')
+        }
+      }
+
+    },
+
+    toggleEmojiPicker() {
+      this.showEmojiPicker = !this.showEmojiPicker
+    },
+    onEmojiClick(event) {
+      this.newMessage += event.detail.unicode
+      this.showEmojiPicker = false
+    },
+
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const messagesContainer = this.$refs.messages;
+        if (messagesContainer) {
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
       });
     },
 
-    // pinta a bolinha conforme token/tokenMobile
-    getDotStyle(item) {
-      const hasToken = !!item.token;
-      const hasTokenM = !!item.tokenM;
+    async filtrar() {
+      this.messages = []
 
-      if (hasToken && hasTokenM) {
-        return 'background: green;';
+      try {
+        let receivedMessages = [];
+        console.log('MAIS FACIL DE ACHAR', this.usuario);
+
+        // Obter mensagens do servidor
+        let a = await apiWP.get(`/lidamsg/${this.wppnum}`);
+        console.log('eu sou o A Só que lido kkkkkkk', a);
+
+        console.log('eu sou o selected contact do receiveMessage', this.selectedContact, this.wppnum);
+
+        let msg = this.d1 !== '' && this.d2 !== '' ? { telefone: this.wppnum, data1: this.d1, data2: this.d2 } : { telefone: this.wppnum, protocolo: this.protocoSelecionado };
+        console.log('pirulito que bate bate', this.d1 !== '' && this.d2 !== '')
+        console.log('eu sou o wppnum', this.wppnum);
+        console.log('bizarro esse pirulito que bate bate', msg)
+        this.buscarCliente();
+
+        let response = await apiWP.post("/reciveMsgFiltrado", msg);
+        receivedMessages = response.data.dados;
+        this.d1 = ''
+        this.d2 = '';
+        this.protocoSelecionado = '';
+
+        console.log('Mensagens recebidas:', receivedMessages); // Verifique todas as mensagens
+
+        // Armazena todas as mensagens temporariamente antes de adicionar ao chat
+        let allMessages = [];
+
+        for (let message of receivedMessages) {
+          console.log('Mensagem:', message); // Verifique cada mensagem
+
+          if (message.type === 'image') {
+            // Processa imagens
+            try {
+              let imageResponse = await apiWP.get(`/get-image/${message.mensagem}`, { responseType: 'blob' });
+              let imageUrl = URL.createObjectURL(imageResponse.data);
+              allMessages.push({ text: imageUrl, datetime: message.datetime, sender: message.nome, isImage: true });
+            } catch (err) {
+              console.error('Erro ao buscar imagem:', err);
+            }
+            /* } else if (message.type === 'audio' || message.mensagem.endsWith('.mp3')) {
+               console.log('Processando áudio...');
+               try {
+                 let audioResponse = await apiWP.get(`/get-audio/${message.mensagem}`, { responseType: 'blob' });
+                 let audioUrl = URL.createObjectURL(audioResponse.data);
+                 allMessages.push({ text: audioUrl, datetime: message.datetime, sender: message.nome, isAudio: true });
+               } catch (err) {
+                 console.error('Erro ao buscar áudio:', err);
+               }*/
+          } else {
+            allMessages.push({ text: message.mensagem, datetime: message.datetime, sender: message.nome, isImage: false, isAudio: false });
+          }
+        }
+
+        console.log(allMessages);
+
+        // Adiciona todas as mensagens ao estado de uma só vez
+        this.messages.push(...allMessages);
+      } catch (error) {
+        console.error('Erro ao filtrar mensagens:', error);
       }
-      if (hasToken && !hasTokenM) {
-        return 'background: linear-gradient(to right, green 50%, red 50%);';
-      }
-      if (!hasToken && hasTokenM) {
-        return 'background: linear-gradient(to right, red 50%, green 50%);';
-      }
-      return 'background: red;';
-    }
-  }
-  ,
+    },
 
+    async buscaProtocolo(telefone) {
+      if (telefone) {
+        this.protocoloArray = []
+        console.log('eita', telefone)
+        let a = await apiWP.get(`/listaprotocolo/${telefone}`)
+        console.log('copo de café', a)
+        let protocolo = a.data.dados
 
-  verificaEstado() {
-    console.log('eu sou o tipo', this.tipo)
-    if (this.tipo == 'Root' || this.tipo == 'Monitor') {
-      console.log('admin Online')
-    } else {
-      //this.openDialogRamal = true
-    }
-  },
+        protocolo.forEach(e => {
+          this.protocoloArray.push(e.protocolo)
+        });
 
-  async ramalDigitado() {
-    if (this.ramal == "" || this.ramal == undefined) {
-      alert('Seu ramal não pode ser Nulo')
-    } else {
-      let verRamal = await api.get(`/verificaramal/${this.ramal}`)
-      console.log('existe ramal?', verRamal.data.dados[0].ramal)
-      console.log('EEEEU SOU SIMPLEEEES :D', this.ramal)
-      let pegaRamal = verRamal.data.dados[0].ramal
-      console.log('peguei o ramal', pegaRamal)
-      if (pegaRamal >= 1) {
-        this.openDialogRamal = false
+        console.log('cafezin dahora', this.protocoloArray)
       } else {
-        alert('O Ramal não existe')
+        console.log('aff meo')
       }
-    }
+    },
 
-  },
+    async transferir() {
+      let usuario = this.usuarioSelect
+      let area = this.setorSelect
+      console.log('teste de select', area, usuario, this.wppnum)
 
-  toggleEmojiPicker() {
-    this.showEmojiPicker = !this.showEmojiPicker
-  },
-  onEmojiClick(event) {
-    this.newMessage += event.detail.unicode
-    this.showEmojiPicker = false
-  },
+      let a = await apiWP.get(`/transferirchamado/${area}/${this.wppnum}/${usuario}`);
+      console.log(a)
+      location.reload()
 
-  scrollToBottom() {
-    this.$nextTick(() => {
-      const messagesContainer = this.$refs.messages;
-      if (messagesContainer) {
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    },
+    async finalizar(finaliza) {
+      console.log('finaliza', finaliza)
+
+      if (finaliza == true) {
+        //   let response = await api.get(`/finaliza/${processo}/aprovado`);
+        //  console.log(response)
+        let a = await apiWP.get(`/concluido/${this.wppnum}`)
+        console.log(a)
+
+        let c = await apiWP.get(`/finalizaprotocolo/${this.wppnum}`)
+        console.log(c)
+
+        let b = await apiWP.get(`/gerapesquisa/${this.wppnum}/${this.usuario}`)
+        console.log(b)
+
+        location.reload()
+
+      } else {
+        //let response = await api.get(`/finaliza/${processo}/reprovado`);
+        //console.log(response)
+        //location.reload()
+
       }
-    });
-  },
+    },
+    async listarSetores() {
+      let getSetores = await apiWP.get(`/getsetores`)
+      console.log('getSetores', getSetores)
+      let arraySetores = getSetores.data.dados
+      arraySetores.forEach((d) => {
+        this.setor.push({
+          text: `${d.id_agencia} - ${d.nome}`,       // o que aparece no select
+          value: d.nome // o valor que será capturado no v-model
 
-  async filtrar() {
-    this.messages = []
+          //          value: d.id_agencia // o valor que será capturado no v-model
+        })
+      })
+    },
 
-    try {
-      let receivedMessages = [];
+    async mudaEstado(telefone) {
+      let a = await apiWP.get(
+        `/mudamsg/${telefone}`
+      );
+
+      console.log('eu sou o A', a)
+    },
+
+    async lido(telefone) {
+      let a = await apiWP.get(
+        `/lidamsg/${telefone}`
+      );
+
+      console.log('eu sou o A', a)
+    },
+
+    async populaOportunidade(plataforma) {
+      console.log("eu sou", this.usuario)
+      console.log('eu sou oportunidade', this.processo[this.selectedContact])
+      let processo = this.processo[this.selectedContact].processo
+      this.plataforma = plataforma
+      console.log('eu sou plataforma', plataforma, processo)
+
+      if (this.tipo == 'Analista') {
+        console.log('OLA O PROCESSO AQUIIIII', processo)
+        var response = await api.get(`/oportunidade/${processo}/${this.plataforma}`);
+
+
+        let msg = {
+          to: this.wppnum,
+          name: this.name,
+          usuario: this.usuario
+        };
+        let template = await api.post("/sendtemplate", msg);
+
+        console.log(template)
+
+      } else {
+        response = await api.get(`/oportunidadeespecialista/${processo}/${this.plataforma}/${this.usuario}`);
+        let msg = {
+          name: this.name,
+          to: this.wppnum,
+          usuario: this.usuario
+
+        };
+        let template = await api.post("/sendtemplate", msg);
+
+        console.log(template)
+
+      }
+
+
+
+
+      console.log(response)
+
+    },
+
+    async receiveMessage() {
+
+
       console.log('MAIS FACIL DE ACHAR', this.usuario);
 
-      // Obter mensagens do servidor
-      let a = await apiWP.get(`/lidamsg/${this.wppnum}`);
-      console.log('eu sou o A Só que lido kkkkkkk', a);
+      this.buscaProtocolo(this.wppnum)
+
+      if (this.tipo == 'Monitor' || this.tipo == 'Root' || this.root == 'Gerente Cr') {
+        console.log('admin não atualiza usuario')
+      } else {
+        await apiWP.get(`/atualizausuario/${this.usuario}/${this.wppnum}`)
+      }
+
+
+      let a = await apiWP.get(`/lidamsg/${this.wppnum}`,);
+
+      console.log('eu sou o A Só que lido kkkkkkk', a)
 
       console.log('eu sou o selected contact do receiveMessage', this.selectedContact, this.wppnum);
+      console
 
-      let msg = this.d1 !== '' && this.d2 !== '' ? { telefone: this.wppnum, data1: this.d1, data2: this.d2 } : { telefone: this.wppnum, protocolo: this.protocoSelecionado };
-      console.log('pirulito que bate bate', this.d1 !== '' && this.d2 !== '')
+      let msg = { telefone: this.wppnum };
       console.log('eu sou o wppnum', this.wppnum);
-      console.log('bizarro esse pirulito que bate bate', msg)
       this.buscarCliente();
 
-      let response = await apiWP.post("/reciveMsgFiltrado", msg);
-      receivedMessages = response.data.dados;
-      this.d1 = ''
-      this.d2 = '';
-      this.protocoSelecionado = '';
+      let response = await apiWP.post("/reciveMsg", msg);
+      let receivedMessages = response.data.dados;
 
       console.log('Mensagens recebidas:', receivedMessages); // Verifique todas as mensagens
 
@@ -844,723 +1014,529 @@ export default {
           } catch (err) {
             console.error('Erro ao buscar imagem:', err);
           }
-          /* } else if (message.type === 'audio' || message.mensagem.endsWith('.mp3')) {
-             console.log('Processando áudio...');
-             try {
-               let audioResponse = await apiWP.get(`/get-audio/${message.mensagem}`, { responseType: 'blob' });
-               let audioUrl = URL.createObjectURL(audioResponse.data);
-               allMessages.push({ text: audioUrl, datetime: message.datetime, sender: message.nome, isAudio: true });
-             } catch (err) {
-               console.error('Erro ao buscar áudio:', err);
-             }*/
+        } else if (message.type === 'audio' || message.mensagem.endsWith('.mp3')) {
+          console.log('Processando áudio...');
+          try {
+            let audioResponse = await apiWP.get(`/get-audio/${message.mensagem}`, { responseType: 'blob' });
+            let audioUrl = URL.createObjectURL(audioResponse.data);
+            allMessages.push({ text: audioUrl, datetime: message.datetime, sender: message.nome, isAudio: true });
+          } catch (err) {
+            console.error('Erro ao buscar áudio:', err);
+          }
         } else {
           allMessages.push({ text: message.mensagem, datetime: message.datetime, sender: message.nome, isImage: false, isAudio: false });
         }
-      }
 
-      console.log(allMessages);
+
+      }
+      console.log(allMessages)
 
       // Adiciona todas as mensagens ao estado de uma só vez
       this.messages.push(...allMessages);
-    } catch (error) {
-      console.error('Erro ao filtrar mensagens:', error);
     }
-  },
-  async buscaProtocolo(telefone) {
-    if (telefone) {
-      this.protocoloArray = []
-      console.log('eita', telefone)
-      let a = await apiWP.get(`/listaprotocolo/${telefone}`)
-      console.log('copo de café', a)
-      let protocolo = a.data.dados
+    ,
 
-      protocolo.forEach(e => {
-        this.protocoloArray.push(e.protocolo)
-      });
+    playSound() {
 
-      console.log('cafezin dahora', this.protocoloArray)
-    } else {
-      console.log('aff meo')
-    }
-  },
+      var audio = new Audio(require('../../src/audios/notify.wav'));
+      setTimeout(function () {
+        audio.play();
+      }, 1000);
 
-  async transferir() {
-    let usuario = this.usuarioSelect
-    let area = this.setorSelect
-    console.log('teste de select', area, usuario, this.wppnum)
+    },
 
-    let a = await apiWP.get(`/transferirchamado/${area}/${this.wppnum}/${usuario}`);
-    console.log(a)
-    location.reload()
+    async FiltroMudaEstado() {
 
-  },
-  async finalizar(finaliza) {
-    console.log('finaliza', finaliza)
+      this.messages = []
+    },
 
-    if (finaliza == true) {
-      //   let response = await api.get(`/finaliza/${processo}/aprovado`);
-      //  console.log(response)
-      let a = await apiWP.get(`/concluido/${this.wppnum}`)
+    async sendTemplate() {
+
+      let msg = {
+        to: this.wppnum,
+        name: this.name,
+        usuario: this.usuario
+
+
+      };
+      let template = await apiWP.post("/sendtemplate", msg);
+
+      console.log(template)
+    },
+    async enviarMealing() {
+      this.openDialogLigacao = false
+      let atendeu
+      let reagendar
+      let interesse
+      let negociar
+
+      if (this.atendeu == true) {
+        atendeu = "sim"
+        console.log(atendeu)
+      } else {
+        atendeu = "nao"
+      }
+
+      if (this.reagendar == true) {
+        reagendar = "sim"
+        console.log(reagendar)
+      } else {
+        reagendar = "nao"
+      }
+
+
+      if (this.interesse == true) {
+        interesse = "sim"
+        console.log(interesse)
+      } else {
+        interesse = "nao"
+      }
+
+
+      if (this.negociar == true) {
+        negociar = "sim"
+        console.log(negociar)
+      } else {
+        negociar = "nao"
+      }
+
+      let processo = this.processo[this.selectedContact].processo
+      this.contact = []
+
+
+      let a = await api.get(`/estadoMealing/${processo}/${atendeu}/${reagendar}/${interesse}/${negociar}/${this.observacao}`)
       console.log(a)
 
-      let c = await apiWP.get(`/finalizaprotocolo/${this.wppnum}`)
-      console.log(c)
-
-      let b = await apiWP.get(`/gerapesquisa/${this.wppnum}/${this.usuario}`)
-      console.log(b)
+      this.openDialogForm = false
 
       location.reload()
+    },
+    selectContact(contact) {
+      //this.openDialog2 = true
+      console.log('eu sou o contact XURASTAY OU XURAIGO', this.contact)
+      this.messages = [];
+      this.selectedContact = contact;
+      //      let a =  api.get(`/insereusuario/${}`)
 
-    } else {
-      //let response = await api.get(`/finaliza/${processo}/reprovado`);
-      //console.log(response)
-      //location.reload()
+      this.wppnum = this.selectedContact;
+      apiWP.get(`/lidamsg/${this.wppnum}`);
+      this.buscarContato(this.filtroCargo, this.estadoContatoFiltro);
+      this.receiveMessage();
+    },
+    async startRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        this.recorder = new RecordRTC(stream, {
+          type: 'audio',
+          mimeType: 'audio/mp3',  // Definir o tipo MIME como áudio MP3
+          recorderType: RecordRTC.StereoAudioRecorder,
+          desiredSampRate: 16000,
+          audioBitsPerSecond: 128000,
+          numberOfAudioChannels: 1,
+          bufferSize: 16384,
+          sampleRate: 44100,
+          frameRate: 20000,
+        });
+        this.recorder.startRecording();
+        this.isRecording = true;
+      } catch (error) {
+        console.error('Error accessing microphone', error);
+      }
+    },
 
-    }
-  },
-  async listarSetores() {
-    let getSetores = await apiWP.get(`/getsetores`)
-    console.log('getSetores', getSetores)
-    let arraySetores = getSetores.data.dados
-    arraySetores.forEach((d) => {
-      this.setor.push({
-        text: `${d.id_agencia} - ${d.nome}`,       // o que aparece no select
-        value: d.nome // o valor que será capturado no v-model
+    stopRecording() {
+      this.recorder.stopRecording(() => {
+        this.audioBlob = this.recorder.getBlob();
 
-        //          value: d.id_agencia // o valor que será capturado no v-model
-      })
-    })
-  },
-
-  async mudaEstado(telefone) {
-    let a = await apiWP.get(
-      `/mudamsg/${telefone}`
-    );
-
-    console.log('eu sou o A', a)
-  },
-
-  async lido(telefone) {
-    let a = await apiWP.get(
-      `/lidamsg/${telefone}`
-    );
-
-    console.log('eu sou o A', a)
-  },
-
-  async populaOportunidade(plataforma) {
-    console.log("eu sou", this.usuario)
-    console.log('eu sou oportunidade', this.processo[this.selectedContact])
-    let processo = this.processo[this.selectedContact].processo
-    this.plataforma = plataforma
-    console.log('eu sou plataforma', plataforma, processo)
-
-    if (this.tipo == 'Analista') {
-      console.log('OLA O PROCESSO AQUIIIII', processo)
-      var response = await api.get(`/oportunidade/${processo}/${this.plataforma}`);
-
-
-      let msg = {
-        to: this.wppnum,
-        name: this.name,
-        usuario: this.usuario
-      };
-      let template = await api.post("/sendtemplate", msg);
-
-      console.log(template)
-
-    } else {
-      response = await api.get(`/oportunidadeespecialista/${processo}/${this.plataforma}/${this.usuario}`);
-      let msg = {
-        name: this.name,
-        to: this.wppnum,
-        usuario: this.usuario
-
-      };
-      let template = await api.post("/sendtemplate", msg);
-
-      console.log(template)
-
-    }
-
-
-
-
-    console.log(response)
-
-  },
-
-  async receiveMessage() {
-
-
-    console.log('MAIS FACIL DE ACHAR', this.usuario);
-
-    this.buscaProtocolo(this.wppnum)
-
-    if (this.tipo == 'Monitor' || this.tipo == 'Root' || this.root == 'Gerente Cr') {
-      console.log('admin não atualiza usuario')
-    } else {
-      await apiWP.get(`/atualizausuario/${this.usuario}/${this.wppnum}`)
-    }
-
-
-    let a = await apiWP.get(`/lidamsg/${this.wppnum}`,);
-
-    console.log('eu sou o A Só que lido kkkkkkk', a)
-
-    console.log('eu sou o selected contact do receiveMessage', this.selectedContact, this.wppnum);
-    console
-
-    let msg = { telefone: this.wppnum };
-    console.log('eu sou o wppnum', this.wppnum);
-    this.buscarCliente();
-
-    let response = await apiWP.post("/reciveMsg", msg);
-    let receivedMessages = response.data.dados;
-
-    console.log('Mensagens recebidas:', receivedMessages); // Verifique todas as mensagens
-
-    // Armazena todas as mensagens temporariamente antes de adicionar ao chat
-    let allMessages = [];
-
-    for (let message of receivedMessages) {
-      console.log('Mensagem:', message); // Verifique cada mensagem
-
-      if (message.type === 'image') {
-        // Processa imagens
-        try {
-          let imageResponse = await apiWP.get(`/get-image/${message.mensagem}`, { responseType: 'blob' });
-          let imageUrl = URL.createObjectURL(imageResponse.data);
-          allMessages.push({ text: imageUrl, datetime: message.datetime, sender: message.nome, isImage: true });
-        } catch (err) {
-          console.error('Erro ao buscar imagem:', err);
+        // Verifique o tipo de arquivo
+        if (this.audioBlob.type !== 'audio/mpeg') {
+          console.warn('O áudio não está no formato MP3, ele será enviado como WAV');
         }
-      } else if (message.type === 'audio' || message.mensagem.endsWith('.mp3')) {
-        console.log('Processando áudio...');
-        try {
-          let audioResponse = await apiWP.get(`/get-audio/${message.mensagem}`, { responseType: 'blob' });
-          let audioUrl = URL.createObjectURL(audioResponse.data);
-          allMessages.push({ text: audioUrl, datetime: message.datetime, sender: message.nome, isAudio: true });
-        } catch (err) {
-          console.error('Erro ao buscar áudio:', err);
-        }
+
+        this.audioUrl = URL.createObjectURL(this.audioBlob);
+        this.isRecording = false;
+      });
+    },
+    async uploadAudio() {
+      if (!this.audioBlob) {
+        console.error("Nenhum áudio selecionado");
+        return;
       } else {
-        allMessages.push({ text: message.mensagem, datetime: message.datetime, sender: message.nome, isImage: false, isAudio: false });
+        console.log('Tipo do áudio:', this.audioBlob.type);
+      }
+
+      // Cria um AudioContext para pegar a taxa de amostragem do arquivo WAV
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioBuffer = await audioContext.decodeAudioData(await this.audioBlob.arrayBuffer());
+
+      const sampleRate = audioBuffer.sampleRate; // Pega a taxa de amostragem do arquivo
+      console.log('Taxa de amostragem do áudio:', sampleRate);
+
+      // Pega os dados do canal de áudio, assume que é estéreo (2 canais), se não for, ajuste conforme necessário
+      const audioData = audioBuffer.getChannelData(0); // Usa o primeiro canal
+      const audioDataInt16 = new Int16Array(audioData.length);
+
+      // Converte Float32Array para Int16Array
+      for (let i = 0; i < audioData.length; i++) {
+        audioDataInt16[i] = Math.max(-1, Math.min(1, audioData[i])) < 0 ?
+          audioData[i] * 0x8000 :
+          audioData[i] * 0x7FFF;
+      }
+
+      // Cria uma instância do codificador MP3 com a mesma taxa de amostragem
+      const mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128); // 1 canal, sampleRate dinâmico, 128 kbps
+
+      const mp3Data = [];
+      const samplesPerFrame = 1152; // Tamanho do frame
+
+      // Codifica em frames
+      for (let i = 0; i < audioDataInt16.length; i += samplesPerFrame) {
+        const chunk = audioDataInt16.subarray(i, i + samplesPerFrame);
+        const mp3Chunk = mp3Encoder.encodeBuffer(chunk);
+        if (mp3Chunk.length > 0) {
+          mp3Data.push(new Uint8Array(mp3Chunk));
+        }
+      }
+
+      const mp3End = mp3Encoder.flush(); // Finaliza a codificação
+      if (mp3End.length > 0) {
+        mp3Data.push(new Uint8Array(mp3End));
+      }
+
+      // Cria um novo Blob em formato MP3
+      const mp3Blob = new Blob(mp3Data, { type: 'audio/mpeg' });
+
+      const formData = new FormData();
+      formData.append('audio', mp3Blob, 'recording.mp3');
+
+      try {
+        let response = await api.post("upload-audio", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+
+        console.log('Áudio enviado com sucesso, ID:', response.data.id);
+        let pegaId = response.data.id;
+
+        let enviaAudio = {
+          to: this.wppnum,
+          id: pegaId,
+          usuario: this.usuario
+        };
+        await api.post("sendAudio", enviaAudio);
+
+        // Criar URL do Blob do áudio
+        const audioUrl = URL.createObjectURL(mp3Blob);
+
+        // Adicionar a mensagem de áudio ao array de mensagens
+        this.messages.push({
+          text: audioUrl,
+          datetime: new Date().toISOString(), // Adicione a data e hora atuais
+          sender: this.usuario,
+          isAudio: true
+        });
+
+        this.openDialog1 = false;
+      } catch (error) {
+        console.error('Erro ao enviar áudio:', error);
+        this.openDialog1 = false;
+      }
+    },
+
+
+    async funcTokenFirebase() {
+      let usuario = JSON.parse(localStorage.getItem('usu'))
+      let nome = usuario.usuario
+
+      this.token = usuario.tokenFirebase
+      let token = {
+        token: this.token
+      }
+      console.log(token)
+      console.log('que gemido foi esse?', this.token)
+      let a = await apiWP.post('/whatsapp/registrar-token', { "usuario": nome + "-Sicoob-Nossacoop", "token": token });
+
+      console.log(a)
+    },
+
+    async sendMessage() {
+      this.usuario = this.usuario.charAt(0).toUpperCase() + this.usuario.slice(1);
+      console.log('teste usuario aqui', this.usuario)
+      if (this.newMessage.trim() !== "") {
+        let msg = {
+          to: this.wppnum,
+          body: `${this.usuario} \n${this.newMessage}`,
+          nome: this.usuario
+        };
+
+        console.log('me de o CUBO', msg)
+        this.messages.push({ text: this.newMessage, sender: this.usuario });
+        let resposta = await api.post("/whatsapp/send", msg);
+        console.log('verifica resposta da API', resposta.data.dados)
+        if (resposta.data.dados == "mensagem não tolerada") {
+          console.log('palavrão não kkkkkkkkkkk')
+          alert('Palavras de baixo calão não serão Permitidas!')
+        }
+        this.newMessage = "";
+        this.$nextTick(() => {
+          this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight;
+        });
+      }
+    },
+
+    async buscaCidadao() {
+      let usuario = JSON.parse(localStorage.getItem('usu'));
+      console.log('eu sou o usuario', usuario);
+
+      // Monta com PlugPhone
+      let nomeFormatado = usuario.usuario.charAt(0).toUpperCase() + usuario.usuario.slice(1);
+      this.usuario = nomeFormatado + "-Sicoob-Nossacoop";
+
+      console.log('eu sou o this.usuario SATORU GOJO', this.usuario);
+    },
+
+    async buscarCliente() {
+      let a = await apiWP.get(`/buscarmealing/${this.wppnum}`);
+      console.log('Vira lata Caramelo', a)
+      this.dados = a.data.dados;
+    },
+
+    async ligar() {
+      console.log('eu sou a função ligar', this.wppnum)
+      let liga = await api.get(`/ligar/${this.ramal}/${this.wppnum}`);
+      console.log('eou sou', liga)
+
+    },
+
+    async uploadImage() {
+      if (!this.selectedFile) {
+        console.error("Nenhuma imagem selecionada.");
+        return;
+      }
+
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!allowedTypes.includes(this.selectedFile.type)) {
+        console.error("O arquivo selecionado não é uma imagem.");
+        return;
+      }
+
+      let formData = new FormData();
+      formData.append("image", this.selectedFile, this.selectedFile.name);
+
+      try {
+        // Envia a imagem via POST
+        let response = await apiWP.post("/upload-image", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+
+        let pegaId = response.data.id;
+        this.messages.push({ text: URL.createObjectURL(this.selectedFile), sender: this.usuario, isImage: true });
+
+        // Envio da imagem via POST para o WhatsApp
+        let enviaImg = {
+          to: this.wppnum, id: pegaId, usuario: this.usuario
+        };
+        await apiWP.post("/sendimage", enviaImg);
+
+        // Recupera a URL da imagem
+        let getURL = await apiWP.get(`/pegaURL/${pegaId}`);
+        console.log('URL AQUI', getURL.data);
+        let imageURL = { "url": getURL.data.url, "id": pegaId };
+
+        console.log('EU SOU O IMAGE URL ', imageURL)
+        // Agora usamos o axios diretamente para fazer o GET na URL externa com os headers
+
+        // Fazendo a requisição GET para a URL externa
+        console.log('eu cheguei até aqui')
+        let image = await apiWP.post(`/geraImage/`, imageURL);
+        console.log('eu sou a imagem', image);
+
+        this.openDialog = false;
+      } catch (error) {
+        console.error("Erro ao enviar imagem:", error);
+        this.messages.push({ text: "Erro ao enviar imagem.", sender: this.usuario });
+        this.openDialog = false;
+      }
+    },
+
+    async uploadDocumento() {
+      if (!this.selectedFile) {
+        console.error("Nenhum documento selecionado.");
+        return;
+      }
+
+      // Tipos de documentos permitidos
+      const allowedTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // .xlsx
+      ];
+
+      if (!allowedTypes.includes(this.selectedFile.type)) {
+        console.error("O arquivo selecionado não é um documento válido.");
+        return;
+      }
+
+      let formData = new FormData();
+      formData.append("file", this.selectedFile, this.selectedFile.name);
+
+      try {
+        // Envia o documento para o backend
+        let response = await apiWP.post("/upload-document", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+
+        let pegaId = response.data.id;
+        let caminho = response.data.caminhoFinal
+
+        let caminhoLimpo = caminho.replace(/^uploads\//, '');
+        console.log('eu sou o caminho limpo, eu sou a luz', caminhoLimpo);
+        //console.log('eu sou o caminho, eu sou a verdade', caminho)
+        // Mensagem no chat indicando que o doc foi enviado (com nome e link temporário)
+        this.messages.push({
+          text: `${this.apiWPurl}/midia/${caminhoLimpo}`,
+          file: URL.createObjectURL(this.selectedFile),
+          sender: this.usuario,
+          isDocument: true
+        });
+
+        // Envio para o WhatsApp
+        let enviaDoc = {
+          to: this.wppnum,
+          id: `${caminhoLimpo}`,
+          nomeArquivo: this.selectedFile.name,
+          usuario: this.usuario
+        };
+
+        console.log('eu sou o enviaDoc', enviaDoc)
+        await apiWP.post("/senddocument", enviaDoc);
+
+        // Recupera URL final do documento
+        let getURL = await apiWP.get(`/midia/${caminhoLimpo}`);
+        let docURL = { url: getURL.data.url, id: pegaId };
+
+        console.log('URL DO DOCUMENTO:', docURL);
+
+        // Chamada final pro backend processar (se necessário)
+        //await apiWP.post("/geraDocumento", docURL);
+
+        this.selectedFile = null
+        this.openDialogAnexo = false;
+      } catch (error) {
+        //console.error("Erro ao enviar documento:", error);
+        // this.messages.push({ text: "Erro ao enviar documento.", sender: this.usuario });
+        //this.openDialogAnexo = false;
+      }
+    },
+
+    async verificaMensagem(telefone, idAgencia, usuario) {
+      this.contacts = []
+      let contatos = await apiWP.get(`/verificamensagem/${telefone}/`);
+      let contatosArray = contatos.data.dados;
+      console.log('EITA TESTE BÃO SÔ', contatosArray)
+      let tel = ""
+      let idAgenciaV = ""
+      let usuarioV = ""
+      contatosArray.forEach(e => {
+
+        tel = e.telefone
+        idAgenciaV = e.id_agencia
+        usuarioV = e.usuario
+      });
+
+      console.log('passei', tel
+        , idAgenciaV
+        , usuarioV, '// \n', telefone, idAgencia, usuario)
+      // this.playSound()
+
+
+      if ((idAgenciaV == idAgencia) && (usuarioV == usuario || usuarioV == null || usuarioV == "" || usuarioV == "null" || typeof usuarioV === "undefined")) {
+        this.playSound();
+      } else {
+        console.log('não passei pelo if');
+      }
+
+    },
+
+    async buscarContato(filtro, estadoContato) {
+
+      console.log("Me mostre ele", estadoContato)
+
+      this.contacts = []
+      let contatos = "";
+      let idAgencia = await api.get(`/getAgencia/${this.id}`);
+      this.idAgencia = idAgencia.data.dados[0].id_agencia
+
+      console.log("Me mostra o filtro", filtro)
+
+      if (filtro == "" || this.filtroValor == "") {
+        contatos = await apiWP.get(`/buscarcontatos/${this.tipo}/${this.usuario}/Geral/null/${estadoContato}/${this.idAgencia}`);
+        console.log("Rasta a tabaca na vara 1", contatos)
+      } else {
+        contatos = await apiWP.get(`/buscarcontatos/${this.tipo}/${this.usuario}/${filtro}/${this.filtroValor}/${estadoContato}/${this.idAgencia}`);
+        console.log("Rasta a tabaca na vara 2", contatos)
       }
 
 
-    }
-    console.log(allMessages)
+      this.filtroCargo = filtro;
+      this.estadoContatoFiltro = estadoContato
 
-    // Adiciona todas as mensagens ao estado de uma só vez
-    this.messages.push(...allMessages);
-  }
-  ,
+      console.log("Cuntatos Aqui", this.tipo, filtro, this.filtroValor)
 
-  playSound() {
+      let contatosArray = contatos.data.dados
+      console.log(contatosArray)
+      contatosArray.forEach(e => {
+        let dataFormatada = new Date(e.datahora).toLocaleString("pt-BR").replace(",", "");
 
-    var audio = new Audio(require('../../src/audios/notify.wav'));
-    setTimeout(function () {
-      audio.play();
-    }, 1000);
-
-  },
-
-  async FiltroMudaEstado() {
-
-    this.messages = []
-  },
-
-  async sendTemplate() {
-
-    let msg = {
-      to: this.wppnum,
-      name: this.name,
-      usuario: this.usuario
-
-
-    };
-    let template = await apiWP.post("/sendtemplate", msg);
-
-    console.log(template)
-  },
-  async enviarMealing() {
-    this.openDialogLigacao = false
-    let atendeu
-    let reagendar
-    let interesse
-    let negociar
-
-    if (this.atendeu == true) {
-      atendeu = "sim"
-      console.log(atendeu)
-    } else {
-      atendeu = "nao"
-    }
-
-    if (this.reagendar == true) {
-      reagendar = "sim"
-      console.log(reagendar)
-    } else {
-      reagendar = "nao"
-    }
-
-
-    if (this.interesse == true) {
-      interesse = "sim"
-      console.log(interesse)
-    } else {
-      interesse = "nao"
-    }
-
-
-    if (this.negociar == true) {
-      negociar = "sim"
-      console.log(negociar)
-    } else {
-      negociar = "nao"
-    }
-
-    let processo = this.processo[this.selectedContact].processo
-    this.contact = []
-
-
-    let a = await api.get(`/estadoMealing/${processo}/${atendeu}/${reagendar}/${interesse}/${negociar}/${this.observacao}`)
-    console.log(a)
-
-    this.openDialogForm = false
-
-    location.reload()
-  },
-  selectContact(contact) {
-    //this.openDialog2 = true
-    console.log('eu sou o contact XURASTAY OU XURAIGO', this.contact)
-    this.messages = [];
-    this.selectedContact = contact;
-    //      let a =  api.get(`/insereusuario/${}`)
-
-    this.wppnum = this.selectedContact;
-    apiWP.get(`/lidamsg/${this.wppnum}`);
-    this.buscarContato(this.filtroCargo, this.estadoContatoFiltro);
-    this.receiveMessage();
-  },
-  async startRecording() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      this.recorder = new RecordRTC(stream, {
-        type: 'audio',
-        mimeType: 'audio/mp3',  // Definir o tipo MIME como áudio MP3
-        recorderType: RecordRTC.StereoAudioRecorder,
-        desiredSampRate: 16000,
-        audioBitsPerSecond: 128000,
-        numberOfAudioChannels: 1,
-        bufferSize: 16384,
-        sampleRate: 44100,
-        frameRate: 20000,
-      });
-      this.recorder.startRecording();
-      this.isRecording = true;
-    } catch (error) {
-      console.error('Error accessing microphone', error);
-    }
-  },
-
-  stopRecording() {
-    this.recorder.stopRecording(() => {
-      this.audioBlob = this.recorder.getBlob();
-
-      // Verifique o tipo de arquivo
-      if (this.audioBlob.type !== 'audio/mpeg') {
-        console.warn('O áudio não está no formato MP3, ele será enviado como WAV');
-      }
-
-      this.audioUrl = URL.createObjectURL(this.audioBlob);
-      this.isRecording = false;
-    });
-  },
-  async uploadAudio() {
-    if (!this.audioBlob) {
-      console.error("Nenhum áudio selecionado");
-      return;
-    } else {
-      console.log('Tipo do áudio:', this.audioBlob.type);
-    }
-
-    // Cria um AudioContext para pegar a taxa de amostragem do arquivo WAV
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const audioBuffer = await audioContext.decodeAudioData(await this.audioBlob.arrayBuffer());
-
-    const sampleRate = audioBuffer.sampleRate; // Pega a taxa de amostragem do arquivo
-    console.log('Taxa de amostragem do áudio:', sampleRate);
-
-    // Pega os dados do canal de áudio, assume que é estéreo (2 canais), se não for, ajuste conforme necessário
-    const audioData = audioBuffer.getChannelData(0); // Usa o primeiro canal
-    const audioDataInt16 = new Int16Array(audioData.length);
-
-    // Converte Float32Array para Int16Array
-    for (let i = 0; i < audioData.length; i++) {
-      audioDataInt16[i] = Math.max(-1, Math.min(1, audioData[i])) < 0 ?
-        audioData[i] * 0x8000 :
-        audioData[i] * 0x7FFF;
-    }
-
-    // Cria uma instância do codificador MP3 com a mesma taxa de amostragem
-    const mp3Encoder = new lamejs.Mp3Encoder(1, sampleRate, 128); // 1 canal, sampleRate dinâmico, 128 kbps
-
-    const mp3Data = [];
-    const samplesPerFrame = 1152; // Tamanho do frame
-
-    // Codifica em frames
-    for (let i = 0; i < audioDataInt16.length; i += samplesPerFrame) {
-      const chunk = audioDataInt16.subarray(i, i + samplesPerFrame);
-      const mp3Chunk = mp3Encoder.encodeBuffer(chunk);
-      if (mp3Chunk.length > 0) {
-        mp3Data.push(new Uint8Array(mp3Chunk));
-      }
-    }
-
-    const mp3End = mp3Encoder.flush(); // Finaliza a codificação
-    if (mp3End.length > 0) {
-      mp3Data.push(new Uint8Array(mp3End));
-    }
-
-    // Cria um novo Blob em formato MP3
-    const mp3Blob = new Blob(mp3Data, { type: 'audio/mpeg' });
-
-    const formData = new FormData();
-    formData.append('audio', mp3Blob, 'recording.mp3');
-
-    try {
-      let response = await api.post("upload-audio", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
+        this.contacts.push({
+          nome: e.nome,
+          telefone: e.telefone,
+          estado: e.estado,
+          estadomsg: e.estadomsg,
+          ultimamsg: e.ultimamsg,
+          datahora: dataFormatada
+        });
+        //this.wppnum.push({telefone: e.Telefone})
+        console.log(this.wppnum)
+        console.log('eu sou os contatos :D', this.contacts)
       });
 
-      console.log('Áudio enviado com sucesso, ID:', response.data.id);
-      let pegaId = response.data.id;
+      /*this.estadoContatoAtual = estadoContato
+      this.contacts = [];
+      let contatos = "";
 
-      let enviaAudio = {
-        to: this.wppnum,
-        id: pegaId,
-        usuario: this.usuario
-      };
-      await api.post("sendAudio", enviaAudio);
+      contatos = await apiWP.get(`/buscarcontatos/${this.tipo}/Geral/null/${estadoContato}`);
+      let contatosArray = contatos.data.dados;
+      console.log("Esse é o contato array", contatosArray);
 
-      // Criar URL do Blob do áudio
-      const audioUrl = URL.createObjectURL(mp3Blob);
+      contatosArray.forEach(e => {
+        // Converte a data para o formato brasileiro e remove a vírgula
+        let dataFormatada = new Date(e.datahora).toLocaleString("pt-BR").replace(",", "");
 
-      // Adicionar a mensagem de áudio ao array de mensagens
-      this.messages.push({
-        text: audioUrl,
-        datetime: new Date().toISOString(), // Adicione a data e hora atuais
-        sender: this.usuario,
-        isAudio: true
+        this.contacts.push({
+          nome: e.nome,
+          telefone: e.telefone,
+          estado: e.estado,
+          estadomsg: e.estadomsg,
+          ultimamsg: e.ultimamsg,
+          datahora: dataFormatada
+        });
+
+        console.log("Eu sou os contatos :D", this.contacts);
       });
+      */
+    }
+    ,
 
-      this.openDialog1 = false;
-    } catch (error) {
-      console.error('Erro ao enviar áudio:', error);
-      this.openDialog1 = false;
+
+    closeDialogConcluir() {
+      this.openDialogConcluir = false
+    },
+    closeDialogAnexo() {
+      this.openDialogAnexo = false
     }
   },
-
-
-  async funcTokenFirebase() {
-    let usuario = JSON.parse(localStorage.getItem('usu'))
-    let nome = usuario.usuario
-
-    this.token = usuario.tokenFirebase
-    let token = {
-      token: this.token
-    }
-    console.log(token)
-    console.log('que gemido foi esse?', this.token)
-    let a = await apiWP.post('/whatsapp/registrar-token', { "usuario": nome + "-Sicoob-Nossacoop", "token": token });
-
-    console.log(a)
-  },
-
-
-
-
-  async sendMessage() {
-    this.usuario = this.usuario.charAt(0).toUpperCase() + this.usuario.slice(1);
-    console.log('teste usuario aqui', this.usuario)
-    if (this.newMessage.trim() !== "") {
-      let msg = {
-        to: this.wppnum,
-        body: `${this.usuario} \n${this.newMessage}`,
-        nome: this.usuario
-      };
-
-      console.log('me de o CUBO', msg)
-      this.messages.push({ text: this.newMessage, sender: this.usuario });
-      let resposta = await api.post("/whatsapp/send", msg);
-      console.log('verifica resposta da API', resposta.data.dados)
-      if (resposta.data.dados == "mensagem não tolerada") {
-        console.log('palavrão não kkkkkkkkkkk')
-        alert('Palavras de baixo calão não serão Permitidas!')
-      }
-      this.newMessage = "";
-      this.$nextTick(() => {
-        this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight;
-      });
-    }
-  },
-
-  async buscaCidadao() {
-    let usuario = JSON.parse(localStorage.getItem('usu'));
-    console.log('eu sou o usuario', usuario);
-
-    // Monta com PlugPhone
-    let nomeFormatado = usuario.usuario.charAt(0).toUpperCase() + usuario.usuario.slice(1);
-    this.usuario = nomeFormatado + "-Sicoob-Nossacoop";
-
-    console.log('eu sou o this.usuario SATORU GOJO', this.usuario);
-  },
-
-  async buscarCliente() {
-    let a = await apiWP.get(`/buscarmealing/${this.wppnum}`);
-    console.log('Vira lata Caramelo', a)
-    this.dados = a.data.dados;
-  },
-
-  async ligar() {
-    console.log('eu sou a função ligar', this.wppnum)
-    let liga = await api.get(`/ligar/${this.ramal}/${this.wppnum}`);
-    console.log('eou sou', liga)
-
-  },
-
-
-  async uploadImage() {
-    if (!this.selectedFile) {
-      console.error("Nenhuma imagem selecionada.");
-      return;
-    }
-
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    if (!allowedTypes.includes(this.selectedFile.type)) {
-      console.error("O arquivo selecionado não é uma imagem.");
-      return;
-    }
-
-    let formData = new FormData();
-    formData.append("image", this.selectedFile, this.selectedFile.name);
-
-    try {
-      // Envia a imagem via POST
-      let response = await apiWP.post("/upload-image", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-
-      let pegaId = response.data.id;
-      this.messages.push({ text: URL.createObjectURL(this.selectedFile), sender: this.usuario, isImage: true });
-
-      // Envio da imagem via POST para o WhatsApp
-      let enviaImg = {
-        to: this.wppnum, id: pegaId, usuario: this.usuario
-      };
-      await apiWP.post("/sendimage", enviaImg);
-
-      // Recupera a URL da imagem
-      let getURL = await apiWP.get(`/pegaURL/${pegaId}`);
-      console.log('URL AQUI', getURL.data);
-      let imageURL = { "url": getURL.data.url, "id": pegaId };
-
-      console.log('EU SOU O IMAGE URL ', imageURL)
-      // Agora usamos o axios diretamente para fazer o GET na URL externa com os headers
-
-      // Fazendo a requisição GET para a URL externa
-      console.log('eu cheguei até aqui')
-      let image = await apiWP.post(`/geraImage/`, imageURL);
-      console.log('eu sou a imagem', image);
-
-      this.openDialog = false;
-    } catch (error) {
-      console.error("Erro ao enviar imagem:", error);
-      this.messages.push({ text: "Erro ao enviar imagem.", sender: this.usuario });
-      this.openDialog = false;
-    }
-  },
-  async uploadDocumento() {
-    if (!this.selectedFile) {
-      console.error("Nenhum documento selecionado.");
-      return;
-    }
-
-    // Tipos de documentos permitidos
-    const allowedTypes = [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // .xlsx
-    ];
-
-    if (!allowedTypes.includes(this.selectedFile.type)) {
-      console.error("O arquivo selecionado não é um documento válido.");
-      return;
-    }
-
-    let formData = new FormData();
-    formData.append("file", this.selectedFile, this.selectedFile.name);
-
-    try {
-      // Envia o documento para o backend
-      let response = await apiWP.post("/upload-document", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-
-      let pegaId = response.data.id;
-      let caminho = response.data.caminhoFinal
-
-      let caminhoLimpo = caminho.replace(/^uploads\//, '');
-      console.log('eu sou o caminho limpo, eu sou a luz', caminhoLimpo);
-      //console.log('eu sou o caminho, eu sou a verdade', caminho)
-      // Mensagem no chat indicando que o doc foi enviado (com nome e link temporário)
-      this.messages.push({
-        text: `${this.apiWPurl}/midia/${caminhoLimpo}`,
-        file: URL.createObjectURL(this.selectedFile),
-        sender: this.usuario,
-        isDocument: true
-      });
-
-      // Envio para o WhatsApp
-      let enviaDoc = {
-        to: this.wppnum,
-        id: `${caminhoLimpo}`,
-        nomeArquivo: this.selectedFile.name,
-        usuario: this.usuario
-      };
-
-      console.log('eu sou o enviaDoc', enviaDoc)
-      await apiWP.post("/senddocument", enviaDoc);
-
-      // Recupera URL final do documento
-      let getURL = await apiWP.get(`/midia/${caminhoLimpo}`);
-      let docURL = { url: getURL.data.url, id: pegaId };
-
-      console.log('URL DO DOCUMENTO:', docURL);
-
-      // Chamada final pro backend processar (se necessário)
-      //await apiWP.post("/geraDocumento", docURL);
-
-      this.selectedFile = null
-      this.openDialogAnexo = false;
-    } catch (error) {
-      //console.error("Erro ao enviar documento:", error);
-      // this.messages.push({ text: "Erro ao enviar documento.", sender: this.usuario });
-      //this.openDialogAnexo = false;
-    }
-  },
-
-  async verificaMensagem(telefone, idAgencia, usuario) {
-    this.contacts = []
-    let contatos = await apiWP.get(`/verificamensagem/${telefone}/`);
-    let contatosArray = contatos.data.dados;
-    console.log('EITA TESTE BÃO SÔ', contatosArray)
-    let tel = ""
-    let idAgenciaV = ""
-    let usuarioV = ""
-    contatosArray.forEach(e => {
-
-      tel = e.telefone
-      idAgenciaV = e.id_agencia
-      usuarioV = e.usuario
-    });
-
-    console.log('passei', tel
-      , idAgenciaV
-      , usuarioV, '// \n', telefone, idAgencia, usuario)
-    // this.playSound()
-
-
-    if ((idAgenciaV == idAgencia) && (usuarioV == usuario || usuarioV == null || usuarioV == "" || usuarioV == "null" || typeof usuarioV === "undefined")) {
-      this.playSound();
-    } else {
-      console.log('não passei pelo if');
-    }
-
-  },
-
-  async buscarContato(filtro, estadoContato) {
-
-    console.log("Me mostre ele", estadoContato)
-
-    this.contacts = []
-    let contatos = "";
-    let idAgencia = await api.get(`/getAgencia/${this.id}`);
-    this.idAgencia = idAgencia.data.dados[0].id_agencia
-
-    console.log("Me mostra o filtro", filtro)
-
-    if (filtro == "" || this.filtroValor == "") {
-      contatos = await apiWP.get(`/buscarcontatos/${this.tipo}/${this.usuario}/Geral/null/${estadoContato}/${this.idAgencia}`);
-      console.log("Rasta a tabaca na vara 1", contatos)
-    } else {
-      contatos = await apiWP.get(`/buscarcontatos/${this.tipo}/${this.usuario}/${filtro}/${this.filtroValor}/${estadoContato}/${this.idAgencia}`);
-      console.log("Rasta a tabaca na vara 2", contatos)
-    }
-
-
-    this.filtroCargo = filtro;
-    this.estadoContatoFiltro = estadoContato
-
-    console.log("Cuntatos Aqui", this.tipo, filtro, this.filtroValor)
-
-    let contatosArray = contatos.data.dados
-    console.log(contatosArray)
-    contatosArray.forEach(e => {
-      let dataFormatada = new Date(e.datahora).toLocaleString("pt-BR").replace(",", "");
-
-      this.contacts.push({
-        nome: e.nome,
-        telefone: e.telefone,
-        estado: e.estado,
-        estadomsg: e.estadomsg,
-        ultimamsg: e.ultimamsg,
-        datahora: dataFormatada
-      });
-      //this.wppnum.push({telefone: e.Telefone})
-      console.log(this.wppnum)
-      console.log('eu sou os contatos :D', this.contacts)
-    });
-
-    /*this.estadoContatoAtual = estadoContato
-    this.contacts = [];
-    let contatos = "";
-
-    contatos = await apiWP.get(`/buscarcontatos/${this.tipo}/Geral/null/${estadoContato}`);
-    let contatosArray = contatos.data.dados;
-    console.log("Esse é o contato array", contatosArray);
-
-    contatosArray.forEach(e => {
-      // Converte a data para o formato brasileiro e remove a vírgula
-      let dataFormatada = new Date(e.datahora).toLocaleString("pt-BR").replace(",", "");
-
-      this.contacts.push({
-        nome: e.nome,
-        telefone: e.telefone,
-        estado: e.estado,
-        estadomsg: e.estadomsg,
-        ultimamsg: e.ultimamsg,
-        datahora: dataFormatada
-      });
-
-      console.log("Eu sou os contatos :D", this.contacts);
-    });
-    */
-  }
-  ,
-
-
-  closeDialogConcluir() {
-    this.openDialogConcluir = false
-  },
-  closeDialogAnexo() {
-    this.openDialogAnexo = false
-  }
-
 };
 </script>
 
