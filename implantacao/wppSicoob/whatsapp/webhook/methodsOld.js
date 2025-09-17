@@ -136,7 +136,7 @@ let sendImage = async function (to, id, res) {
         //////console.log(data);
 
 
-        let qry = `insert into meso_mensagens_solicitante (telefone,nome,agent,wpnumber,mensagem, type) values ('${to}','Ian-Sicoob','Ian-Sicoob','551131646301','${id}','image');`
+        let qry = `insert into meso_mensagens_solicitante (telefone,nome,agent,wpnumber,mensagem, type) values ('${to}','Ian-Sicoob-Nossacoop','Ian-Sicoob-Nossacoop','551131646301','${id}','image');`
         ////console.log('furia berserk',qry)
         executaQry(qry)
 
@@ -183,7 +183,7 @@ let sendVideo = async function (to, id, link, res) {
         //////console.log(data);
 
 
-        let qry = `insert into meso_mensagens_solicitante (telefone,nome,agent,wpnumber,mensagem, type) values ('55${to}','Ian-Sicoob','Ian-Sicoob','551131646301','${body}','video');`
+        let qry = `insert into meso_mensagens_solicitante (telefone,nome,agent,wpnumber,mensagem, type) values ('55${to}','Ian-Sicoob-Nossacoop','Ian-Sicoob-Nossacoop','551131646301','${body}','video');`
         ////console.log('furia berserk',qry)
         executaQry(qry)
 
@@ -227,7 +227,7 @@ let sendAudio = async function (to, id, res) {
         //////console.log(data);
 
 
-        let qry = `insert into meso_mensagens_solicitante (telefone,agent,wpnumber,mensagem,tipo) values ('55${to}','Ian-Sicoob','551131646301','${id}','audio');`
+        let qry = `insert into meso_mensagens_solicitante (telefone,agent,wpnumber,mensagem,tipo) values ('55${to}','Ian-Sicoob-Nossacoop','551131646301','${id}','audio');`
         ////console.log('furia berserk',qry)
         executaQry(qry)
 
@@ -271,7 +271,7 @@ let sendDocument = async (to, id, filename, res) => {
         //////console.log(data);
 
 
-        let qry = `insert into meso_mensagens_solicitante (telefone,nome,agent,wpnumber,mensagem, type) values ('55${to}','Ian-Sicoob','Ian-Sicoob','551131646301','${body}','document');`
+        let qry = `insert into meso_mensagens_solicitante (telefone,nome,agent,wpnumber,mensagem, type) values ('55${to}','Ian-Sicoob-Nossacoop','Ian-Sicoob-Nossacoop','551131646301','${body}','document');`
         ////console.log('furia berserk',qry)
         executaQry(qry)
 

@@ -1,8 +1,8 @@
 <template>
   <div class="limiter">
     <Navbar />
-    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details
-      class="busca"></v-text-field>
+    <v-text-field style="width: 100% !important;" v-model="search" append-icon="mdi-magnify" label="Search" single-line
+      hide-details class="busca"></v-text-field>
     <v-data-table :search="search" :headers="headers" :items="desserts" sort-by="calories" class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat>
@@ -26,17 +26,21 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.nome" label="Nome do Contato"></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field style="width: 100% !important;" v-model="editedItem.nome"
+                        label="Nome do Contato"></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.telefone" label="Digite a nova telefone"></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field style="width: 100% !important;" v-model="editedItem.telefone"
+                        label="Digite a nova telefone"></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.campanha" label="Digite a campanha"></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field style="width: 100% !important;" v-model="editedItem.campanha"
+                        label="Digite a campanha"></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.id_agencia" label="Numere a PA"></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field style="width: 100% !important;" v-model="editedItem.id_agencia"
+                        label="Numere a PA"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -228,7 +232,7 @@ export default {
         console.log("eusou edit1", this.editedItem);
       } else {
         //inclui
-        res = await apiWP.post("/insereusuario", this.editedItem);
+        res = await apiWP.post("/cadastrarcontato", this.editedItem);
         if (res.data.msg == "erro") {
           window.alert("Ocorreu um erro - code 2!");
         } else {

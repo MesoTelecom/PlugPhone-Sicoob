@@ -11,13 +11,11 @@
               mdi-arrow-left
             </v-icon>
           </router-link>
-          <v-icon @click="openDialogFiltrado = true" class="imageIcon" style="left: 65%;font-size: 169%;">
-            mdi-filter-variant
+          <v-icon @click="openDialogFiltrado = true" class="imageIcon" style="left: 60%;font-size: 230%;">
+            mdi-account-search
           </v-icon>
 
 
-          <v-icon @click="a = true" class="imageIcon" style="left: 70%; margin-bottom: -1%;">
-            mdi-help-circle</v-icon>
         </v-row>
         <v-list dense>
 
@@ -25,7 +23,22 @@
 
           <v-list-item-group v-model="selectedContact">
             <h1 style="    text-align: center;">{{ estadoContatoFiltro }}</h1>
-
+            <v-row>
+              <v-icon
+                @click="buscarContato(filtroSelecionado, estadoContatoFiltro, offset -= 100), contador > 1 ? contador-- : contador = 1"
+                class="imageIcon" style="left: 25%;
+    margin-bottom: -1%;
+">
+                mdi-arrow-left</v-icon>
+              <h2 style="        position: relative;
+    left: 39%;">{{ contador }}</h2>
+              <v-icon @click="buscarContato(filtroSelecionado, estadoContatoFiltro, offset += 100), contador++"
+                class="imageIcon" style="    left: 55%;
+    margin-bottom: -1%;">
+                mdi-arrow-right</v-icon>
+            </v-row>
+            <br>
+            <br>
             <v-list-item v-for="(contact, index) in contacts" :key="index">
               <v-list-item-content>
                 <v-list-item-title class="sidebar" @click="selectContact(contact.telefone)">
@@ -69,19 +82,22 @@
       <v-main style="padding: 0px; height: 100vh; display: flex; flex-direction: column;">
         <v-container fluid>
           <v-row class="cabecalho">
-            <v-btn @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Todos', FiltroMudaEstado())"
+            <v-btn
+              @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Todos', FiltroMudaEstado(),), contador = 1"
               class="botaoEstado">Todos</v-btn>
-            <v-btn @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Novo', FiltroMudaEstado())"
+            <v-btn
+              @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Novo', FiltroMudaEstado(),), contador = 1"
               class="botaoEstado">Novo</v-btn>
             <v-btn
-              @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Aguardando Cliente', FiltroMudaEstado())"
+              @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Aguardando Cliente', FiltroMudaEstado(),), contador = 1"
               class="botaoEstado">Aguard...
               Cliente</v-btn>
             <v-btn
-              @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Aguardando Atendimento', FiltroMudaEstado())"
+              @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Aguardando Atendimento', FiltroMudaEstado(),), contador = 1"
               class="botaoEstado">Aguard...
               Atendimento</v-btn>
-            <v-btn @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Concluido', FiltroMudaEstado())"
+            <v-btn
+              @click="buscarContato(filtroSelecionado, estadoContatoFiltro = 'Concluido', FiltroMudaEstado(),), contador = 1"
               class="botaoEstado">Concluido</v-btn>
           </v-row>
 
@@ -303,6 +319,8 @@
               class="protocolo"></v-select>
             <br>
 
+
+
             <br>
           </v-row>
           <br>
@@ -408,7 +426,8 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="buscarContato(filtroSelecionado, estadoContatoFiltro)">Filtrar</v-btn>
+            <v-btn color="primary" text
+              @click="buscarContato(filtroSelecionado, estadoContatoFiltro), contador = 1">Filtrar</v-btn>
             <v-btn color="secondary" text @click="openDialogFiltrado = false">Fechar</v-btn>
           </v-card-actions>
         </v-card>
@@ -520,6 +539,7 @@ export default {
 
       ],
       messages: [],
+      contador: 1,
       protocoloArray: [],
       d1: "",
       d2: "",
@@ -559,11 +579,11 @@ export default {
       finaliza: "",
       estadoContatoFiltro: "Todos",
       filtroValor: "",
-
+      offset: 0,
       estadoContatoAtual: "Todos",
       newMessage: "",
       audioBlob: "",
-      contacts: [],
+      contacts: [1],
       dados: [],
       dados2: [],
       selectedContact: null,
@@ -580,7 +600,7 @@ export default {
     };
   },
   created() {
-    this.socket = io('https://whatsapp.sicoob.plugphone.cloud:3000');
+    this.socket = io('https://wpp.sicoobnossacoop.com.br:3993');
 
     // Evento para mensagens de texto
     /* this.socket.on('chat message', (nome, msg) => {
@@ -854,8 +874,13 @@ export default {
         let protocolo = a.data.dados
 
         protocolo.forEach(e => {
-          this.protocoloArray.push(e.protocolo)
+          //this.protocoloArray.push(e.protocolo +"-"+ e.protocolo)
+
+          this.protocoloArray.push({ text: `${e.protocolo} - ${e.datetime}`, value: `${e.protocolo}` })
         });
+
+
+
 
         console.log('cafezin dahora', this.protocoloArray)
       } else {
@@ -976,7 +1001,7 @@ export default {
 
       this.buscaProtocolo(this.wppnum)
 
-      if (this.tipo == 'Monitor' || this.tipo == 'Root' || this.root == 'Gerente Cr') {
+      if (this.tipo == 'Monitor' || this.tipo == 'Root' || this.tipo == 'Gerente Cr' || this.tipo == 'Agente Cr') {
         console.log('admin não atualiza usuario')
       } else {
         await apiWP.get(`/atualizausuario/${this.usuario}/${this.wppnum}`)
@@ -1459,9 +1484,19 @@ export default {
 
     },
 
-    async buscarContato(filtro, estadoContato) {
-
+    async buscarContato(filtro, estadoContato, offset) {
+      console.log('pode n', offset)
       console.log("Me mostre ele", estadoContato)
+      console.log('contador', this.contador)
+
+
+      if (offset < 0) {
+        console.log('já está ná pagina inicial')
+        this.offset = 0
+        offset = 0
+
+      }
+
 
       this.contacts = []
       let contatos = "";
@@ -1471,13 +1506,15 @@ export default {
       console.log("Me mostra o filtro", filtro)
 
       if (filtro == "" || this.filtroValor == "") {
-        contatos = await apiWP.get(`/buscarcontatos/${this.tipo}/${this.usuario}/Geral/null/${estadoContato}/${this.idAgencia}`);
+        contatos = await apiWP.get(`/buscarcontatos/${this.tipo}/${this.usuario}/Geral/null/${estadoContato}/${this.idAgencia}/${offset}`);
         console.log("Rasta a tabaca na vara 1", contatos)
       } else {
-        contatos = await apiWP.get(`/buscarcontatos/${this.tipo}/${this.usuario}/${filtro}/${this.filtroValor}/${estadoContato}/${this.idAgencia}`);
+        contatos = await apiWP.get(`/buscarcontatos/${this.tipo}/${this.usuario}/${filtro}/${this.filtroValor}/${estadoContato}/${this.idAgencia}/${offset}`);
         console.log("Rasta a tabaca na vara 2", contatos)
       }
 
+
+      console.log("Sou o garanhão dos contatos", contatos);
 
       this.filtroCargo = filtro;
       this.estadoContatoFiltro = estadoContato
@@ -1502,18 +1539,62 @@ export default {
         console.log('eu sou os contatos :D', this.contacts)
       });
 
+      if (this.contacts.length == 0) {
+        console.log('ja passou do limite')
+        console.log(this.offset)
+        this.offset = 0
+        if (filtro == "" || this.filtroValor == "") {
+          contatos = await apiWP.get(`/buscarcontatos/${this.tipo}/${this.usuario}/Geral/null/${estadoContato}/${this.idAgencia}/${this.offset}`);
+          console.log("Rasta a tabaca na vara 1", contatos)
+        } else {
+          contatos = await apiWP.get(`/buscarcontatos/${this.tipo}/${this.usuario}/${filtro}/${this.filtroValor}/${estadoContato}/${this.idAgencia}/${this.offset}`);
+          console.log("Rasta a tabaca na vara 2", contatos)
+        }
+
+
+
+
+
+        this.filtroCargo = filtro;
+        this.estadoContatoFiltro = estadoContato
+
+        console.log("Cuntatos Aqui", this.tipo, filtro, this.filtroValor)
+
+        let contatosArray = contatos.data.dados
+        console.log(contatosArray)
+        contatosArray.forEach(e => {
+          let dataFormatada = new Date(e.datahora).toLocaleString("pt-BR").replace(",", "");
+
+          this.contacts.push({
+            nome: e.nome,
+            telefone: e.telefone,
+            estado: e.estado,
+            estadomsg: e.estadomsg,
+            ultimamsg: e.ultimamsg,
+            datahora: dataFormatada
+          });
+          //this.wppnum.push({telefone: e.Telefone})
+          console.log(this.wppnum)
+          console.log('eu sou os contatos :D', this.contacts)
+        });
+        this.contador = 1
+
+        alert('Não há mais contatos')
+
+      }
+
       /*this.estadoContatoAtual = estadoContato
       this.contacts = [];
       let contatos = "";
-
+ 
       contatos = await apiWP.get(`/buscarcontatos/${this.tipo}/Geral/null/${estadoContato}`);
       let contatosArray = contatos.data.dados;
       console.log("Esse é o contato array", contatosArray);
-
+ 
       contatosArray.forEach(e => {
         // Converte a data para o formato brasileiro e remove a vírgula
         let dataFormatada = new Date(e.datahora).toLocaleString("pt-BR").replace(",", "");
-
+ 
         this.contacts.push({
           nome: e.nome,
           telefone: e.telefone,
@@ -1522,21 +1603,22 @@ export default {
           ultimamsg: e.ultimamsg,
           datahora: dataFormatada
         });
-
+ 
         console.log("Eu sou os contatos :D", this.contacts);
       });
       */
     }
-    ,
+  }
+  ,
 
 
-    closeDialogConcluir() {
-      this.openDialogConcluir = false
-    },
-    closeDialogAnexo() {
-      this.openDialogAnexo = false
-    }
+  closeDialogConcluir() {
+    this.openDialogConcluir = false
   },
+  closeDialogAnexo() {
+    this.openDialogAnexo = false
+  }
+
 };
 </script>
 

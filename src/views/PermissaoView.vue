@@ -3,8 +3,8 @@
 
 
         <!-- Campo de Busca -->
-        <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisar Usuário" single-line hide-details
-            class="busca"></v-text-field>
+        <v-text-field style="width: 100% !important;" v-model="search" append-icon="mdi-magnify"
+            label="Pesquisar Usuário" single-line hide-details class="busca"></v-text-field>
 
         <!-- Tabela de Usuários -->
         <v-data-table :search="search" :headers="headers" :items="desserts" class="elevation-1">
@@ -51,7 +51,8 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12">
-                                <v-text-field v-model="editedItem.nome" label="Nome do Usuário"></v-text-field>
+                                <v-text-field style="width: 100% !important;" v-model="editedItem.nome"
+                                    label="Nome do Usuário"></v-text-field>
                             </v-col>
                             <v-col cols="12">
                                 <!-- v-select agora permite múltiplas seleções -->

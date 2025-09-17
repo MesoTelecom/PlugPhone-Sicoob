@@ -1,42 +1,30 @@
 <template>
   <div class="limiter">
     <Navbar />
-    <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          single-line
-          hide-details
-          class="busca"
-        ></v-text-field>
-    <v-data-table
-    :search="search"
-      :headers="headers"
-      :items="dados"
-      sort-by="calories"
-      class="elevation-1"
-    >
-    
-    
-    
+    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details
+      class="busca"></v-text-field>
+    <v-data-table :search="search" :headers="headers" :items="dados" sort-by="calories" class="elevation-1">
+
+
+
       <template v-slot:top>
-        
+
         <v-toolbar flat>
           <v-toolbar-title>Realtime dos Agentes</v-toolbar-title>
 
-       
+
           <v-divider class="mx-4" inset vertical></v-divider>
-          
+
           <v-spacer></v-spacer>
-           
-           <router-link to="./menurealtime" class="linkp">
-          <v-btn dark class="botaoSair">voltar</v-btn>
-        </router-link>
-        
+
+          <router-link to="./menurealtime" class="linkp">
+            <v-btn dark class="botaoSair">voltar</v-btn>
+          </router-link>
+
           <v-dialog v-model="dialog" max-width="500px">
-            
+
             <v-card>
-              
+
               <v-card-title>
                 <span class="text-h5">{{ formTitle }}</span>
               </v-card-title>
@@ -44,11 +32,8 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        v-model="editedItem.ramal"
-                        label="Editar ramal"
-                      ></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field v-model="editedItem.ramal" label="Editar ramal"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -73,11 +58,8 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        v-model="editedItem.ramal"
-                        label="Editar ramal"
-                      ></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field v-model="editedItem.ramal" label="Editar ramal"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -101,14 +83,11 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        v-model="editedItem.ramal"
-                        label="Editar ramal"
-                      ></v-text-field>
+
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field v-model="editedItem.ramal" label="Editar ramal"></v-text-field>
                     </v-col>
-                   
+
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -132,14 +111,11 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        v-model="editedItem.ramal"
-                        label="Editar ramal"
-                      ></v-text-field>
+
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field v-model="editedItem.ramal" label="Editar ramal"></v-text-field>
                     </v-col>
-                   
+
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -163,14 +139,11 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        v-model="editedItem.ramal"
-                        label="Editar ramal"
-                      ></v-text-field>
+
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field v-model="editedItem.ramal" label="Editar ramal"></v-text-field>
                     </v-col>
-                   
+
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -187,17 +160,11 @@
 
           <v-dialog v-model="dialogDelete" max-width="500px">
             <v-card>
-              <v-card-title class="text-h5"
-                >Tem certeza que deseja excluir?</v-card-title
-              >
+              <v-card-title class="text-h5">Tem certeza que deseja excluir?</v-card-title>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeDelete"
-                  >Cancel</v-btn
-                >
-                <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                  >OK</v-btn
-                >
+                <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
+                <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
                 <v-spacer></v-spacer>
               </v-card-actions>
             </v-card>
@@ -219,7 +186,7 @@
         </v-icon>
       </template>
 
-      
+
       <template v-slot:[`item.estado`]="{ item }">
         <v-chip :color="getColor(item.estado)" dark class="p-1">
           {{ item.estado }}
@@ -236,21 +203,21 @@ import { api } from "@/conf/api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/footer.vue";
 export default {
-    name: "HelloView",
+  name: "HelloView",
   async beforeMount() {
     //const { setIntervalAsync } = require("set-interval-async/legacy");
     this.exibir();
-        console.log('eu sou idsetinterval Before mount',this.idsetinterval)
+    console.log('eu sou idsetinterval Before mount', this.idsetinterval)
 
     this.idsetinterval = setInterval(() => this.exibir(), 5000);
-    
+
   },
 
-  async beforeDestroy(){
-    console.log('eu sou idsetinterval',this.idsetinterval)
+  async beforeDestroy() {
+    console.log('eu sou idsetinterval', this.idsetinterval)
     clearInterval(this.idsetinterval)
     this.idsetinterval = 0
-    
+
   },
 
   data: () => ({
@@ -276,8 +243,8 @@ export default {
       { text: "Chamada Entrante", value: "totaligaentrante" },
       { text: "Chamada Sainte", value: "totaligasainte" },
       { text: "Motivo Pausa", value: "motivo" },
-       { text: "Ação via Yealink", value: "yealink" },
-    //  { text: "Total de login", value: "totalloga" },
+      { text: "Ação via Yealink", value: "yealink" },
+      //  { text: "Total de login", value: "totalloga" },
 
       {
         text: "Logar | Deslogar | Pausar | Remover pausa",
@@ -524,27 +491,28 @@ export default {
       let res2;
       let res3;
       let res4;
-        //edita
-        //console.log('Item editado',this.editedItem)
-        res = await api.post("/deslogarpainel", this.editedItem);
-              this.closeLogin();
+      //edita
+      //console.log('Item editado',this.editedItem)
+      res = await api.post("/deslogarpainel", this.editedItem);
+      this.closeLogin();
 
-         res2 = await api.post("/deslogaestadort", this.editedItem);
-              this.closeLogin();
+      res2 = await api.post("/deslogaestadort", this.editedItem);
+      this.closeLogin();
 
-        res4 = await api.post("/deslogayealink", this.editedItem);
-          this.closeLogin();
+      res4 = await api.post("/deslogayealink", this.editedItem);
+      this.closeLogin();
 
-        res3 = await api.post("/logsdeslogar", this.editedItem);
-              this.closeLogout();
+      res3 = await api.post("/logsdeslogar", this.editedItem);
+      this.closeLogout();
 
-        if (res.data.msg == "erro" || res2.data.msg == "erro" || res3.data.msg == "erro" || res4.data.msg == "erro") {
-          window.alert("Ocorreu um erro code 1!");
-        } else {
+      if (res.data.msg == "erro" || res2.data.msg == "erro" || res3.data.msg == "erro" || res4.data.msg == "erro") {
+        window.alert("Ocorreu um erro code 1!");
+      } else {
         Object.assign(this.desserts[this.editedIndex], this.editedItem);
-        }},
+      }
+    },
 
-        pausar: async function () {
+    pausar: async function () {
       let res;
       let res2;
       let res3;
@@ -553,7 +521,7 @@ export default {
       res = await api.post("/pausarpainelrt", this.editedItem);
 
 
-       res2 = await api.post("/pausarestado", this.editedItem);
+      res2 = await api.post("/pausarestado", this.editedItem);
 
 
       res3 = await api.post("/logspausarrt", this.editedItem);
@@ -564,7 +532,7 @@ export default {
       if (
         res.data.msg == "erro" ||
         res2.data.msg == "erro" ||
-        res3.data.msg == "erro" 
+        res3.data.msg == "erro"
       ) {
         window.alert("Ocorreu um erro code 1!");
       } else {
@@ -581,7 +549,7 @@ export default {
       res = await api.post("/despausarpainelrt", this.editedItem);
 
 
-       res2 = await api.post("/estadoperador", this.editedItem);
+      res2 = await api.post("/estadoperador", this.editedItem);
 
 
       res3 = await api.post("/logsdespausarrt", this.editedItem);
@@ -592,7 +560,7 @@ export default {
       if (
         res.data.msg == "erro" ||
         res2.data.msg == "erro" ||
-        res3.data.msg == "erro" 
+        res3.data.msg == "erro"
       ) {
         window.alert("Ocorreu um erro code 1!");
       } else {
@@ -629,15 +597,18 @@ html {
   height: 100%;
   font-family: sans-serif;
 }
+
 .botaoSair {
   margin-left: 1%;
   background-color: green !important;
   text-decoration: none !important;
 }
+
 .linkp {
   margin-left: 2%;
   text-decoration: none;
 }
+
 /* ------------------------------------ */
 a {
   margin: 0px;
@@ -646,9 +617,11 @@ a {
   -o-transition: all 0.4s;
   -moz-transition: all 0.4s;
 }
+
 .botaoA {
   margin-left: 1%;
 }
+
 .datest {
   border-style: solid !important;
   display: inline;
@@ -668,9 +641,11 @@ a:focus {
 a:hover {
   text-decoration: none;
 }
+
 .cardform {
   background-color: #61a5e8;
 }
+
 /* ------------------------------------ */
 h1,
 h2,
@@ -701,8 +676,7 @@ textarea {
 }
 
 textarea:focus,
-input:focus {
-}
+input:focus {}
 
 /* ------------------------------------ */
 button {
@@ -798,6 +772,7 @@ iframe {
 #campaignMonitoringApplication table {
   font-size: 10pt;
 }
+
 div.neo-module-content {
   background-size: 100%;
   background-repeat: no-repeat;
@@ -812,9 +787,11 @@ div.registro {
   background-color: #ffffff;
   border: 1px solid #999999;
 }
+
 div.registro table {
   width: 100%;
 }
+
 .testeB {
   box-shadow: 0px 0px 19px -7px #060607;
   background: linear-gradient(to bottom, #243e57 5%, #4779ac 100%);
@@ -831,29 +808,35 @@ table.titulo {
   background-color: #61a5e8;
   height: 32px;
 }
-table.titulo > tbody > tr > td {
+
+table.titulo>tbody>tr>td {
   padding: 6px;
 }
+
 div.llamadas {
   overflow-y: auto;
   /*width: 100%;*/
   background-color: #243e57;
   border: 1px solid #999999;
 }
+
 div.llamadas table {
   width: 100%;
   border-spacing: 0;
   border-collapse: collapse;
 }
-div.llamadas table > tbody > tr:hover {
+
+div.llamadas table>tbody>tr:hover {
   background-color: #61caef;
   color: black;
 }
-div.llamadas table > tbody > tr > td {
+
+div.llamadas table>tbody>tr>td {
   padding: 6px;
   color: #ffffff;
   border-bottom: 1px #b6b6b6 solid;
 }
+
 .reciente {
   font-weight: bold;
 }
@@ -983,6 +966,7 @@ div.llamadas table > tbody > tr > td {
     padding-top: 16px;
     padding-bottom: 16px;
   }
+
   .row .cell:nth-child(1) {
     padding-left: 30px;
   }
@@ -1001,6 +985,7 @@ div.llamadas table > tbody > tr > td {
     width: 100% !important;
   }
 }
+
 #campaignMonitoringApplication {
   font-size: 10pt;
 }
@@ -1008,6 +993,7 @@ div.llamadas table > tbody > tr > td {
 #campaignMonitoringApplication table {
   font-size: 10pt;
 }
+
 div.neo-module-content {
   background-size: 100%;
   background-repeat: no-repeat;
@@ -1022,9 +1008,11 @@ div.registro {
   background-color: #ffffff;
   border: 1px solid #999999;
 }
+
 div.registro table {
   width: 100%;
 }
+
 .testeB {
   box-shadow: 0px 0px 19px -7px #060607;
   background: linear-gradient(to bottom, #243e57 5%, #4779ac 100%);
@@ -1041,29 +1029,35 @@ table.titulo {
   background-color: #61a5e8;
   height: 32px;
 }
-table.titulo > tbody > tr > td {
+
+table.titulo>tbody>tr>td {
   padding: 6px;
 }
+
 div.llamadas {
   overflow-y: auto;
   /*width: 100%;*/
   background-color: #243e57;
   border: 1px solid #999999;
 }
+
 div.llamadas table {
   width: 100%;
   border-spacing: 0;
   border-collapse: collapse;
 }
-div.llamadas table > tbody > tr:hover {
+
+div.llamadas table>tbody>tr:hover {
   background-color: #61caef;
   color: black;
 }
-div.llamadas table > tbody > tr > td {
+
+div.llamadas table>tbody>tr>td {
   padding: 6px;
   color: #ffffff;
   border-bottom: 1px #b6b6b6 solid;
 }
+
 .reciente {
   font-weight: bold;
 }
@@ -1089,7 +1083,8 @@ div.llamadas table > tbody > tr > td {
   position: relative;
   top: 1px;
 }
-.busca{
+
+.busca {
   width: 99%;
   margin-left: 5px !important;
 }

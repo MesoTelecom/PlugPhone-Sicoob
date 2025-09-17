@@ -4,8 +4,8 @@
     <div class="meubotao">
       <v-btn to="/cadastrousuariopermissao">Cadastrar Permissão</v-btn>
     </div>
-    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details
-      class="busca"></v-text-field>
+    <v-text-field style="width: 100% !important;" v-model="search" append-icon="mdi-magnify" label="Search" single-line
+      hide-details class="busca"></v-text-field>
     <v-data-table :search="search" :headers="headers" :items="desserts" sort-by="calories" class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat>
@@ -29,12 +29,13 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.usuario" label="Nome do Usuário"></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field style="width: 100% !important;" v-model="editedItem.usuario"
+                        label="Nome do Usuário"></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.senha" label="Digite a nova senha"
-                        type="password"></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field style="width: 100% !important;" v-model="editedItem.senha"
+                        label="Digite a nova senha" type="password"></v-text-field>
                     </v-col>
                     <v-col class="d-flex" cols="12" sm="6">
                       <v-select :items="pegaPermissao" v-model="editedItem.tipo" label="SELECIONE" outlined></v-select>

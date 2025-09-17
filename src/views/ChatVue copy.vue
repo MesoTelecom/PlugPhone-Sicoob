@@ -287,7 +287,7 @@
         <v-card class="dialogo1">
           <v-card-title>Por favor digite seu Ramal</v-card-title>
           <v-card-text>
-            <v-text-field v-model="ramal" label="Ramal" @keyup.enter="Ligar"
+            <v-text-field style="width: 100% !important;" v-model="ramal" label="Ramal" @keyup.enter="Ligar"
               placeholder="Digite seu ramal"></v-text-field>
           </v-card-text>
 
@@ -369,7 +369,8 @@
 
           <v-card-text>
             <!-- TextField no topo -->
-            <v-text-field label="Digite o valor do filtro" outlined v-model="filtroValor" class="mb-4"></v-text-field>
+            <v-text-field style="width: 100% !important;" label="Digite o valor do filtro" outlined
+              v-model="filtroValor" class="mb-4"></v-text-field>
 
             <!-- Radio Group para seleção única -->
             <v-radio-group v-model="filtroSelecionado">
@@ -439,7 +440,7 @@
             margin-top: -9%;
         "><b>Caso não tenha, tem interesse em negociar?
               </b></v-text>
-            <v-text-field v-model="observacao" label="Observação"></v-text-field>
+            <v-text-field style="width: 100% !important;" v-model="observacao" label="Observação"></v-text-field>
           </v-card-text>
           <v-card-actions>
             <v-btn @click="enviarMealing()" color="primary">Enviar</v-btn>

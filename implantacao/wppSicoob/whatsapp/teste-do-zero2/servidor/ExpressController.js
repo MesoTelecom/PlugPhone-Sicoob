@@ -169,14 +169,14 @@ class ExpressController {
     });
 
     this.expressAppWrapper.post('/cadastrarcontato', async (req, res) => {
-      let nome = req.body.nome;
-      let telefone = req.body.telefone;
-      let cpf = req.body.cpf;
-      let id_agencia = req.body.idAgencia;
+      console.log(req.body)
+      let mostra = req.body;
+      let { id, nome, telefone, campanha, id_agencia } = mostra;
+      //console.log(id,  senha, tipo);
 
       let qry = `
-    INSERT INTO meso_contatos (nome, telefone, estado, documento, id_agencia, setor, datahora)
-    VALUES ('${nome}', '${telefone}', 'Novo', '${cpf}', '${id_agencia}', 'Gerente', NOW())
+    INSERT INTO meso_contatos (nome, telefone, estado, campanha, id_agencia, datahora)
+    VALUES ('${nome}', '${telefone}', 'Novo', '${campanha}', '${id_agencia}', NOW())
   `;
 
       console.log('bumbum profundo', qry);
@@ -404,7 +404,7 @@ class ExpressController {
           url: url,
           responseType: 'stream',
           headers: {
-            'Authorization': 'Bearer EABpILka8Wz0BO2G1rtqYyWSXcueuIsbQZCMYxt6xd3Dp39MB9CIVJxs1yBv9G8W0ZCdnpIdPi5ZAC3pgsqjDZCLwtCMefB5SSdj6p9KeZC56FxdjZBwENoK6B0vlm7jJo1induvWW3tpVQ9mElh1HPJVl8byZBnYACtcnKl4ZCfFemPoOZBLaDsQmIarSCTKDiKMq'
+            'Authorization': 'Bearer EAAQ3q4D9ZAmkBOZCeQAzJieuoerIqQ2zSFjtIJ58AvkNooUACTV4Y3J1SzWylWUXy58EpzRalGe0lUqY3SIjfO3TBrIDhYTefQ1ZBM8ZAh4saa1D5OXHNydJ2PZBcjX53kO0uFhqbjZAZAkpHHRJXSWUxINPtU43jAb3AERHcOZAF31oxVDJQA6lIjlNFPFgbdzmmwZDZD'
           }
         });
 
@@ -451,7 +451,7 @@ class ExpressController {
           url: url,
           responseType: 'stream',
           headers: {
-            'Authorization': 'Bearer EABpILka8Wz0BO2G1rtqYyWSXcueuIsbQZCMYxt6xd3Dp39MB9CIVJxs1yBv9G8W0ZCdnpIdPi5ZAC3pgsqjDZCLwtCMefB5SSdj6p9KeZC56FxdjZBwENoK6B0vlm7jJo1induvWW3tpVQ9mElh1HPJVl8byZBnYACtcnKl4ZCfFemPoOZBLaDsQmIarSCTKDiKMq'
+            'Authorization': 'Bearer EAAQ3q4D9ZAmkBOZCeQAzJieuoerIqQ2zSFjtIJ58AvkNooUACTV4Y3J1SzWylWUXy58EpzRalGe0lUqY3SIjfO3TBrIDhYTefQ1ZBM8ZAh4saa1D5OXHNydJ2PZBcjX53kO0uFhqbjZAZAkpHHRJXSWUxINPtU43jAb3AERHcOZAF31oxVDJQA6lIjlNFPFgbdzmmwZDZD'
           }
         });
 
@@ -501,7 +501,7 @@ class ExpressController {
           url: url,
           responseType: 'stream',
           headers: {
-            'Authorization': 'Bearer EABpILka8Wz0BO2G1rtqYyWSXcueuIsbQZCMYxt6xd3Dp39MB9CIVJxs1yBv9G8W0ZCdnpIdPi5ZAC3pgsqjDZCLwtCMefB5SSdj6p9KeZC56FxdjZBwENoK6B0vlm7jJo1induvWW3tpVQ9mElh1HPJVl8byZBnYACtcnKl4ZCfFemPoOZBLaDsQmIarSCTKDiKMq'
+            'Authorization': 'Bearer EAAQ3q4D9ZAmkBOZCeQAzJieuoerIqQ2zSFjtIJ58AvkNooUACTV4Y3J1SzWylWUXy58EpzRalGe0lUqY3SIjfO3TBrIDhYTefQ1ZBM8ZAh4saa1D5OXHNydJ2PZBcjX53kO0uFhqbjZAZAkpHHRJXSWUxINPtU43jAb3AERHcOZAF31oxVDJQA6lIjlNFPFgbdzmmwZDZD'
           }
         });
 
@@ -566,12 +566,12 @@ class ExpressController {
                VALUES ('${usuario}', '${telefone}', '${campanha}', now())`;
         let res2 = await executaQry(qry);
 
-        let sat = await sendSatisfacao(telefone, usuario);
+        //  let sat = await sendSatisfacao(telefone, usuario);
         let pesq = await sendPesquisa(telefone, usuario);
 
         return res.json({
           pesquisa: res2,
-          satisfacao: sat,
+          //satisfacao: sat,
           pesquisaMsg: pesq
         });
 
@@ -609,7 +609,7 @@ class ExpressController {
       let campanha = campanhaArray.dados[0].campanha
 
       let qry = `select avg(pergunta2) as mediaPesq from meso_pesquisa WHERE datahora BETWEEN '${data1}' AND '${data2}'
-        AND pergunta1 IS NOT NULL and campanha = '${campanha}' AND pergunta2 IS NOT NULL 
+       and campanha = '${campanha}' AND pergunta2 IS NOT NULL 
     `;
       console.log(qry);
 
@@ -684,12 +684,6 @@ class ExpressController {
       }
 
     });
-
-
-    let funcBuscarMensagem = async function () {
-
-    }
-
     this.expressAppWrapper.get("/buscarcontatostel/:telefone", async (req, res, next) => {
       let qry
 
@@ -703,12 +697,16 @@ class ExpressController {
 
     })
 
-    this.expressAppWrapper.get("/buscarcontatos/:tipo/:filtro/:valorfiltro/:estado/:id_agencia", async (req, res, next) => {
+
+
+    this.expressAppWrapper.get("/buscarcontatos/:tipo/:usuario/:filtro/:valorfiltro/:estado/:id_agencia/:offset", async (req, res, next) => {
       let tipo = req.params.tipo
+      let usuario = req.params.usuario
       let filtro = req.params.filtro
       let filtroValor = req.params.valorfiltro
       let estadoContato = req.params.estado
       let idAgencia = req.params.id_agencia
+      let offset = parseInt(req.params.offset, 10) || 0
       let qry
 
       console.log("tipo ", tipo,)
@@ -716,43 +714,39 @@ class ExpressController {
       console.log("filtroValor ", filtroValor)
       console.log("estadoContato", estadoContato)
       console.log("id_agencia", idAgencia)
-
-      console.log(`tipo recebido bruto => [${tipo}]`);
-      console.log("tipo == 'Root'?", tipo == 'Root');
-
+      console.log("offset", offset)
 
       if (tipo === 'Root' || tipo === 'Monitor' || tipo === 'Gerente Cr' || tipo === 'Agente Cr') {
         let baseQuery = `
-    SELECT ct.*
-    FROM meso_contatos ct
-  `;
+SELECT ct.*
+FROM meso_contatos ct
+`;
 
         if (filtro === "Nome") {
-          baseQuery += ` where ct.nome LIKE '${filtroValor}%'`;
+          baseQuery += ` WHERE ct.nome LIKE '${filtroValor}%'`;
         } else if (filtro === "Cpf") {
-          baseQuery += ` where ct.documento LIKE '${filtroValor}%'`;
+          baseQuery += ` WHERE ct.documento LIKE '${filtroValor}%'`;
         } else if (filtro === "Campanha") {
-          baseQuery += ` where ct.campanha LIKE '${filtroValor}%'`;
+          baseQuery += ` WHERE ct.campanha LIKE '${filtroValor}%'`;
         }
 
         if (estadoContato !== 'Todos') {
-          baseQuery += ` where ct.estado = '${estadoContato}'`;
+          baseQuery += (baseQuery.includes("WHERE") ? " AND" : " WHERE") + ` ct.estado = '${estadoContato}'`;
         }
 
-        baseQuery += ` ORDER BY ct.datahora DESC`;
-
+        baseQuery += ` ORDER BY ct.datahora DESC LIMIT 20 OFFSET ${offset}`;
         qry = baseQuery;
-
 
       } else {
         // Demais perfis → filtra id_agencia
         let baseQuery = `
-    SELECT ct.*
-    FROM meso_contatos ct
-    JOIN meso_campanhas cp ON cp.campanha = ct.campanha
-    WHERE cp.estado = 'Ativo' 
-      AND ct.id_agencia = '${idAgencia}'
-  `;
+SELECT ct.*
+FROM meso_contatos ct
+JOIN meso_campanhas cp ON cp.campanha = ct.campanha
+WHERE cp.estado = 'Ativo' or cp.estado = 'Novo'
+AND ct.id_agencia = '${idAgencia}'
+AND (usuario = '${usuario}' OR usuario IS NULL)
+`;
 
         if (filtro === "Nome") {
           baseQuery += ` AND ct.nome LIKE '${filtroValor}%'`;
@@ -766,19 +760,19 @@ class ExpressController {
           baseQuery += ` AND ct.estado = '${estadoContato}'`;
         }
 
-        baseQuery += ` ORDER BY ct.datahora DESC`;
-
+        baseQuery += ` ORDER BY ct.datahora DESC LIMIT 20 OFFSET ${offset}`;
         qry = baseQuery;
         console.log('query kkkkk', qry, '\n');
       }
 
-
-      console.log('query kkkkk', qry, '\n');
+      console.log('query final:', qry, '\n');
       let res20 = await executaQry(qry);
       console.log('eu sou a a do res20', res20);
       res.json(res20);
-
     });
+
+
+
 
 
     this.expressAppWrapper.get("/buscarcontatos1/:tipo/:filtro/:valorfiltro", async (req, res, next) => {
@@ -940,7 +934,7 @@ class ExpressController {
             WHERE id = (
               SELECT MAX(id) 
               FROM meso_mensagens_solicitante 
-              WHERE telefone = '${telefone}' and nome not like '%-Meso%' and nome not like '%Template%' and mensagem is not null
+              WHERE telefone = '${telefone}' and nome not like '%-Sicoob-Nossacoop%' and nome not like '%Template%' and mensagem is not null
             );
           `;
           ////console.log("escreve aqui", qry)
@@ -998,7 +992,7 @@ class ExpressController {
         qry = ` select * from meso_mensagens_solicitante where telefone like "${telFormatado}" and datetime >= '${data1}' and datetime <= '${data2}'`;
       } else {
         let protocoloFormatado = protocolo.split(" ")
-        qry = ` select * from meso_mensagens_solicitante where telefone like "${telFormatado}" and protocolo like '${protocoloFormatado[0]}' and datetime >= '${dataInicio}' and datetime <= '${dataFim}'`;
+        qry = ` select * from meso_mensagens_solicitante where telefone like "${telFormatado}" and datetime >= '${dataInicio}' and datetime <= '${dataFim}'`;
       }
 
       console.log('qry:', qry)
@@ -1206,7 +1200,12 @@ class ExpressController {
           SELECT DISTINCT mc.id_campanha, mc.campanha
           FROM meso_campanhas mc
           JOIN meso_contatos c ON c.campanha = mc.campanha
-      
+  
+
+
+
+          
+          
         `;
         let res1 = await executaQry(qry);
         res.json(res1);
@@ -1723,94 +1722,101 @@ class ExpressController {
       })
       return multer({ storage: storage })
     }
-    let lerCsv = async function (filePathCompleto) {
+    let lerCsv = async (filePathCompleto) => {
       const results = [];
 
       return new Promise((resolve, reject) => {
         fs.createReadStream(filePathCompleto)
-          .pipe(csv())
+          .pipe(csv({ separator: ';', skipLines: 0 })) // força vírgula
           .on('data', (row) => {
             results.push({
               nome: row['nome'] || '',
               telefone: row['telefone_1'] || '',
               documento: row['documento'] || '',
               email: row['email'] || '',
-              data_nascimento: row['dtNascimento'] || '',
-              sexo: row['sexo'] || '',
-              estado_civil: row['estadoCivil'] || '',
-              escolaridade: row['escolaridade'] || '',
+              data_nascimento: row['dataNascimento'] || '',
               logradouro: row['endereco'] || '',
               numero: row['numeroEndereco'] || '',
-              complemento: row['complemento'] || '',
-              bairro: row['bairro'] || '',
+              cep: row['cep'] || '',
               municipio: row['municipio'] || '',
               uf: row['uf'] || '',
-              cep: row['cep'] || '',
               tipo_renda: row['tipoRenda'] || '',
               vinculo_empregaticio: row['vinculoEmpregaticio'] || '',
-              profissao: row['profissao'] || '',
               atividade_economica: row['atividadeEconomica'] || '',
               gerente_nome: row['nome_gerente'] || '',
-              mei: row['mei'] || '',
+              id_pa: row['id_pa'] || '',
               pa_descricao: row['nome_pa'] || '',
-              id_pa: row['id_pa'] || null,
-              id_agencia: row['id_agencia'] || null,
-              is_funcionario: row['is_funcionario'] || 0,
-              setor: row['setor'] || '',
-            });
 
+            });
           })
-          .on('end', () => {
-            resolve(results);
-          })
-          .on('error', (error) => {
-            reject(error);
-          });
+          .on('end', () => resolve(results))
+          .on('error', (error) => reject(error));
       });
     };
 
 
 
-
     let terminou = false;
+
+    function normalizarTelefone(numero) {
+      if (!numero) return '';
+
+      // 1. Remove tudo que não é dígito
+      let apenasDigitos = numero.replace(/\D/g, '');
+
+      // 2. Se tiver 11 dígitos e o 3º for "9", remove o 9
+      // Exemplo: 31989738409 -> 3189738409
+      if (apenasDigitos.length === 11 && apenasDigitos.startsWith('9', 2)) {
+        apenasDigitos = apenasDigitos.slice(0, 2) + apenasDigitos.slice(3);
+      }
+
+      // 3. Adiciona 55 na frente se não tiver
+      if (!apenasDigitos.startsWith('55')) {
+        apenasDigitos = '55' + apenasDigitos;
+      }
+
+      return apenasDigitos;
+    }
+
 
     //const uploadCSV3 = uploadArquivo();
     let inserirCsv = async (resultadoCsv, usuario, campanha) => {
       for (const e of resultadoCsv) {
+        // 🔥 Normaliza o telefone (tira caracteres e o 9 depois do DDD)
+        e.telefone = normalizarTelefone(e.telefone);
+
         let verNumero = `select count(*) as count from meso_contatos where telefone = '${e.telefone}'`
         let verNumArray = await executaQry(verNumero)
-        console.log('eu sou o verNumArray', verNumArray)
+
         if (verNumArray.dados[0].count >= 1) {
-          let qry = `update meso_contatos set campanha = '${campanha}' and id_agencia = '${e.id_pa}' where telefone = '${e.telefone}'  `
-
-          console.log('eu sou o query', qry)
-          await executaQry(qry)
-        } else {
-          // Query para inserir na tabela meso_contato
           let qry = `
-      INSERT INTO meso_contatos (
-        nome, telefone, documento, email, data_nascimento, sexo, estado_civil, escolaridade,
-        logradouro, numero, complemento, bairro, municipio, uf, cep, tipo_renda,
-        vinculo_empregaticio, profissao, atividade_economica, gerente_nome, mei, pa_descricao, usuario, id_agencia, 
-        campanha, datahora
-      ) VALUES (
-        '${e.nome}', '${e.telefone}', '${e.documento}', '${e.email}', '${e.data_nascimento}', '${e.sexo}',
-        '${e.estado_civil}', '${e.escolaridade}', '${e.logradouro}', '${e.numero}', '${e.complemento}',
-        '${e.bairro}', '${e.municipio}', '${e.uf}', '${e.cep}', '${e.tipo_renda}',
-        '${e.vinculo_empregaticio}', '${e.profissao}', '${e.atividade_economica}', '${e.gerente_nome}',
-        '${e.mei}', '${e.pa_descricao}', '${usuario}','${e.id_pa}','${campanha}', now()
-      );
-    `;
-
-          console.log('eu sou inserir csv', qry);
+UPDATE meso_contatos
+SET campanha = '${campanha}', id_agencia = '${e.id_pa}'
+WHERE telefone = '${e.telefone}'
+`;
+          await executaQry(qry);
+        } else {
+          let qry = `
+INSERT INTO meso_contatos (
+nome, telefone, documento, email, data_nascimento,
+logradouro, numero, bairro, municipio, uf, cep,
+profissao, atividade_economica, vinculo_empregaticio, tipo_renda,
+gerente_nome, pa_descricao, id_agencia,
+campanha, datahora
+) VALUES (
+'${e.nome}', '${e.telefone}', '${e.documento}', '${e.email}', '${e.data_nascimento}',
+'${e.logradouro}', '${e.numero}', '${e.bairro}', '${e.municipio}', '${e.uf}', '${e.cep}',
+'${e.profissao}', '${e.atividade_economica}', '${e.vinculo_empregaticio}', '${e.tipo_renda}',
+'${e.gerente_nome}', '${e.pa_descricao}', '${e.id_pa}',
+'${campanha}', now()
+);
+`;
           await executaQry(qry);
         }
-        // Se quiser adicionar delay entre inserções:
-        // await new Promise(resolve => setTimeout(resolve, 1000));
       }
-
       terminou = true;
     };
+
 
 
 
@@ -3480,7 +3486,7 @@ select * from meso_usuariologin where id_agencia = (select id_agencia from meso_
     });
 
     this.expressAppWrapper.post("/insereusuario", async (req, res, next) => {
-      let usuario = req.body.usuario + "-Meso";
+      let usuario = req.body.usuario + "-Sicoob-Nossacoop";
       let senha = req.body.senha;
       let tipo = req.body.tipo;
       try {
@@ -3497,7 +3503,7 @@ select * from meso_usuariologin where id_agencia = (select id_agencia from meso_
     });
 
     this.expressAppWrapper.post("/insere-usuario", async (req, res, next) => {
-      let usuario = req.body.usuario + "-Meso";
+      let usuario = req.body.usuario + "-Sicoob-Nossacoop";
       let senha = req.body.senha;
 
       try {

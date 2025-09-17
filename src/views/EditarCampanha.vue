@@ -1,8 +1,8 @@
 <template>
   <div class="limiter">
     <Navbar />
-    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details
-      class="busca"></v-text-field>
+    <v-text-field style="width: 100% !important;" v-model="search" append-icon="mdi-magnify" label="Search" single-line
+      hide-details class="busca"></v-text-field>
     <v-data-table :search="search" :headers="headers" :items="desserts" sort-by="calories" class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat>

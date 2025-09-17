@@ -25,7 +25,8 @@
     <br>
     <v-card class="cardform">
       <v-card-title class="cardtitulo">
-        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+        <v-text-field style="width: 100% !important;" v-model="search" append-icon="mdi-magnify" label="Search"
+          single-line hide-details></v-text-field>
       </v-card-title>
       <v-data-table :headers="headers" :items="dados" :search="search">
         <template v-slot:[`dado.disposition`]="{ dado }">
@@ -123,7 +124,7 @@ export default {
     },
 
     exibir: async function () {
-
+      console.log('eu sou o campanha', this.campanha)
       let filaapi = this.fila.extension
       console.log(filaapi)
       //console.log(this.d1, this.d2)

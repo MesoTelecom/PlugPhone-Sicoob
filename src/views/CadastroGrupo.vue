@@ -1,12 +1,7 @@
 <template>
   <div class="limiter">
     <Navbar />
-    <v-data-table
-      :headers="headers"
-      :items="desserts"
-      sort-by="calories"
-      class="elevation-1"
-    >
+    <v-data-table :headers="headers" :items="desserts" sort-by="calories" class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>Cadastro Grupos</v-toolbar-title>
@@ -29,17 +24,11 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        v-model="editedItem.grupo"
-                        label="Nome Do Grupo"
-                      ></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field v-model="editedItem.grupo" label="Nome Do Grupo"></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        v-model="editedItem.descricao"
-                        label="Descricao Do Grupo"
-                      ></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field v-model="editedItem.descricao" label="Descricao Do Grupo"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -54,9 +43,7 @@
           </v-dialog>
           <v-dialog v-model="dialogDelete" max-width="500px">
             <v-card>
-              <v-card-title class="text-h5"
-                >Tem certeza que deseja excluir?</v-card-title
-              >
+              <v-card-title class="text-h5">Tem certeza que deseja excluir?</v-card-title>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
@@ -85,7 +72,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/footer.vue";
 import verificaAcesso from "../acess/verificaAcessoMixin"
 export default {
-    name: "HelloView",
+  name: "HelloView",
   mixins: [verificaAcesso],
   data: () => ({
     dialog: false,
@@ -225,8 +212,8 @@ export default {
 }
 
 .voltar {
-    position: fixed;
-    right: 13%;
-    top: 16%;
+  position: fixed;
+  right: 13%;
+  top: 16%;
 }
 </style>

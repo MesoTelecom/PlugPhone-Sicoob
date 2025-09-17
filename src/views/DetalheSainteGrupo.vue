@@ -4,32 +4,33 @@
     <br />
     <div>
       <v-card class="filtrorelatorios">
-      <!--Entrada do Período da API-->
-      <input type="date" class="datest" v-model="d1" required />
+        <!--Entrada do Período da API-->
+        <input type="date" class="datest" v-model="d1" required />
 
-      <!--Saída do Período da API-->
-      <input type="date" class="datest" v-model="d2" required />
-      <v-text-field v-model="periodo" label="Informe o periodo que deseja filtrar" class="filtro" persistent-hint
-        return-object single-line></v-text-field>
-      <v-btn color="green" class="botaoA" @click="exibir()">
-        Consultar
-      </v-btn>
+        <!--Saída do Período da API-->
+        <input type="date" class="datest" v-model="d2" required />
+        <v-text-field style="width: 100% !important;" v-model="periodo" label="Informe o periodo que deseja filtrar"
+          class="filtro" persistent-hint return-object single-line></v-text-field>
+        <v-btn color="green" class="botaoA" @click="exibir()">
+          Consultar
+        </v-btn>
 
-      <router-link to="./menusupervisorsainte" class="linkp">
-        <v-btn dark class="botaoSair">voltar</v-btn>
-      </router-link>
-      <v-btn class="
+        <router-link to="./menusupervisorsainte" class="linkp">
+          <v-btn dark class="botaoSair">voltar</v-btn>
+        </router-link>
+        <v-btn class="
 botaoexportar 
   " @click="saveCSV()" style="width: 10%;">
-        Download<br>CSV
-      </v-btn>
+          Download<br>CSV
+        </v-btn>
 
-    </v-card>
+      </v-card>
     </div>
 
     <v-card class="cardform">
       <v-card-title class="cardtitulo">
-        <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+        <v-text-field style="width: 100% !important;" v-model="search" append-icon="mdi-magnify" label="Search"
+          single-line hide-details></v-text-field>
       </v-card-title>
       <v-data-table :headers="headers" :items="dados" :search="search"></v-data-table>
     </v-card>
@@ -117,7 +118,7 @@ export default {
 
       console.log(this.d1, this.d2)
       let detalhesSainteGrupo = await api.get(`/detalhessaintegrupo/${grupo}/${this.d1}/${this.d2}/${this.periodo}`)
-      console.log('Cloreto de Sódio',detalhesSainteGrupo)
+      console.log('Cloreto de Sódio', detalhesSainteGrupo)
       this.dados = detalhesSainteGrupo.data.dados;
 
     },
@@ -158,7 +159,7 @@ export default {
   }
 }
 </script>
-  
+
 <style scoped>
 /*//////////////////////////////////////////////////////////////////
 [ FONT ]*/

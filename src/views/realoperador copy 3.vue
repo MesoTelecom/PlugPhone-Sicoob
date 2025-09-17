@@ -1,8 +1,8 @@
 <template>
   <div class="limiter">
     <Navbar />
-    <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details
-      class="busca"></v-text-field>
+    <v-text-field style="width: 100% !important;" v-model="search" append-icon="mdi-magnify" label="Search" single-line
+      hide-details class="busca"></v-text-field>
     <v-data-table :search="search" :headers="headers" :items="dados" sort-by="calories" class="elevation-1">
       <template v-slot:top>
         <v-toolbar flat>
@@ -31,8 +31,9 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.ramal" label="Editar ramal"></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field style="width: 100% !important;" v-model="editedItem.ramal"
+                        label="Editar ramal"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -55,8 +56,9 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.ramal" label="Editar ramal"></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field style="width: 100% !important;" v-model="editedItem.ramal"
+                        label="Editar ramal"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -78,8 +80,9 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.ramal" label="Editar ramal"></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field style="width: 100% !important;" v-model="editedItem.ramal"
+                        label="Editar ramal"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -102,8 +105,9 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.ramal" label="Editar ramal"></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field style="width: 100% !important;" v-model="editedItem.ramal"
+                        label="Editar ramal"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -126,8 +130,9 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.ramal" label="Editar ramal"></v-text-field>
+                    <v-col cols="12" sm="6" md="12">
+                      <v-text-field style="width: 100% !important;" v-model="editedItem.ramal"
+                        label="Editar ramal"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -178,7 +183,7 @@ import { api } from "@/conf/api";
 import Navbar from "../components/Navbar";
 import Footer from "../components/footer.vue";
 export default {
-    name: "HelloView",
+  name: "HelloView",
   async beforeMount() {
     //const { setIntervalAsync } = require("set-interval-async/legacy");
     // this.iniciaFunc();

@@ -30,8 +30,8 @@
 </template>
 
 <script>
-import { api } from "@/conf/api";
-import { apiWP } from "@/conf/apiWP";
+import { api } from "../conf/api";
+import { apiWP } from "../conf/apiWP";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/footer.vue";
@@ -116,6 +116,9 @@ export default {
     },
 
     listar: async function () {
+      console.log('estou no listar')
+      let a = await apiWP.get(`/criaCampanha/${this.usuario}/${this.nomeCampanha}`)
+      console.log(a)
 
       let buscarCsv = await api.get(`/buscarcsv/${this.nomeCampanha}`);
       console.log('buscarCSV', buscarCsv)
@@ -130,7 +133,6 @@ export default {
       console.log('grupo', this.grupo)
 
       console.log('eu sou o this.dados', this.dados)
-      await apiWP.get(`/criaCampanha/${this.usuario}/${this.nomeCampanha}`)
 
       this.dados.forEach((d) => {
         console.log('kyojin karate eu sou o dan', d)
@@ -191,9 +193,8 @@ export default {
             console.log('eu sou o formData', response)
 
             this.uploadStatus = { type: 'success', message: 'Arquivo enviado com sucesso!' };
-            this.idsetinterval = setInterval(() => this.listar(), 1000);
+            this.listar();
             this.selectedFile = null; // Reseta o arquivo selecionado
-            this.nomeCampanha = ""
           })
           .catch(error => {
             console.error('Erro ao enviar o arquivo:', error);
