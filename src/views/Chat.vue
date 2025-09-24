@@ -115,12 +115,10 @@
 
           <template v-slot:item="{ item }">
 
-            <div class="table-row">
+            <div class="table-row" style=" display: inline-grid;">
               <div v-for="(header, index) in informacao" :key="index">
                 <br> <strong>{{ header.text }}:<br></strong> {{ item[header.value] }}
-
               </div>
-
             </div>
 
           </template>

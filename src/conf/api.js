@@ -1,8 +1,7 @@
 import axios from "axios";
 
-export const api = axios.create({
- // baseURL: `http>://10.109.5.31:1339`,
-  baseURL: `https://plugphone.sicoobnossacoop.com.br:1339`,
+export const apiWP = axios.create({
+    baseURL: `https://wpp.sicoobnossacoop.com.br:5995`,
   headers: {
     "Access-Control-Allow-Origin": "*",
     "Content-Type": "application/json",

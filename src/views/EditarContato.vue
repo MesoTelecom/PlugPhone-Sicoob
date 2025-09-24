@@ -35,8 +35,9 @@
                         label="Digite a nova telefone"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="12">
-                      <v-text-field style="width: 100% !important;" v-model="editedItem.campanha"
-                        label="Digite a campanha"></v-text-field>
+
+                      <v-select label="Selecione a campanha" :items="dadosCampanha"
+                        v-model="editedItem.campanha"></v-select>
                     </v-col>
                     <v-col cols="12" sm="6" md="12">
                       <v-text-field style="width: 100% !important;" v-model="editedItem.id_agencia"
@@ -86,6 +87,10 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/footer.vue";
 export default {
   name: "HelloView",
+  async beforeMount() {
+    this.carregar();
+
+  },
   data: () => ({
     selectedValue: "",
     dados: [],
@@ -93,6 +98,8 @@ export default {
     grupoArray: [],
     dialog: false,
     dialogDelete: false,
+    dadosCampanha: [],
+
     grupos: null,
     search: "",
     cloretoDeSodio: [],
@@ -164,6 +171,30 @@ export default {
   },
 
   methods: {
+
+    carregar: async function () {
+
+
+
+      let buscaCampanha = await apiWP.get(`/listarcampanha`)
+      let campanhas = buscaCampanha.data.dados
+
+      this.dadosCampanha = [] // zera pra não duplicar
+
+      console.log(buscaCampanha, campanhas)
+
+      campanhas.forEach(element => {
+        this.dadosCampanha.push({
+          text: element.campanha,
+          value: element.campanha
+        });
+        this.nomeCampanha = element.campanha
+      });
+      console.log('Teste Campanhas', this.campanha)
+      console.log("Campanhas formatado:", this.dadosCampanha)
+    },
+
+
     async initialize() {
       console.log('a gente veio do macaco?')
       let res = await apiWP.get("/listacontatos");

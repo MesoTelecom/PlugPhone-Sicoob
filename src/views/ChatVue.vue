@@ -60,10 +60,15 @@
                         ? 'red'
                         : 'black'
                   }">
+
                     {{ contact.estado }}
                   </v-icon>
                   <br>
+                  <a style=" margin-left: 21%; color: #494949;">Campanha: {{ contact.campanha }}</a>
+
+                  <br>
                   <a style="margin-left: 21%; color: #8f8f8f !important;">{{ contact.datahora }}</a>
+                  <br>
                   <hr>
 
                 </v-list-item-title>
@@ -72,7 +77,7 @@
           </v-list-item-group>
         </v-list>
 
-        <!--<img src="../assets/Logo_Meso_vetorizada.png" class="logo" />-->
+        <!--<img src=" ../assets/Logo_Meso_vetorizada.png" class="logo" />-->
 
 
       </v-navigation-drawer>
@@ -169,7 +174,7 @@
     border-width: thin;
     height: 90%;" hide-default-footer class="responsive-table" item-class="custom-row">
           <template v-slot:item="{ item }">
-            <div class="table-row">
+            <div class="table-row" style=" display: inline-grid;">
               <div v-for="(header, index) in informacao" :key="index">
                 <br> <strong>{{ header.text }}:<br></strong> {{ item[header.value] }}
               </div>
@@ -534,8 +539,14 @@ export default {
           sortable: false,
           value: 'nome',
         },
+        { text: 'Usuario', value: 'usuario' },
+
         { text: 'Telefone', value: 'telefone' },
-        { text: 'Agente associado', value: 'usuario' },
+        { text: 'Campanha', value: 'campanha' },
+        { text: 'Documento', value: 'documento' },
+        { text: 'Numero da PA', value: 'id_agencia' },
+        { text: 'Email', value: 'email' },
+
 
       ],
       messages: [],
@@ -1532,7 +1543,8 @@ export default {
           estado: e.estado,
           estadomsg: e.estadomsg,
           ultimamsg: e.ultimamsg,
-          datahora: dataFormatada
+          datahora: dataFormatada,
+          campanha: e.campanha
         });
         //this.wppnum.push({telefone: e.Telefone})
         console.log(this.wppnum)
