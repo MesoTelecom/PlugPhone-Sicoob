@@ -488,6 +488,7 @@ export default {
     console.log('usuario oque?', usuario)
     this.id = usuario.id
     this.tipo = usuario.tipo;
+    this.ramal = usuario.ramal
     this.usuario = usuario.usuario + "-Sicoob-Nossacoop"
     //this.idsetinterval = setInterval(() => this.buscarContato(), 5000);
 

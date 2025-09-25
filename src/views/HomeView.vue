@@ -86,6 +86,8 @@ export default {
 
           this.$store.state.token = token;
           this.$store.state.idPermissao = idPermissao;
+          this.$store.state.ramal = res.data.ramal || '';
+          console.log("Ramal do usuário:", this.$store.state.ramal);
 
           // 🔐 Adiciona o token ao header padrão
           api.defaults.headers.common["x-access-token"] = token;
@@ -104,6 +106,7 @@ export default {
             id: this.id,
             usuario: this.usuario,
             pin: token,
+            ramal: this.$store.state.ramal,
             tipo: tipo,
             tokenFirebase: this.$store.state.tokenFCM,
             rotas: rotas

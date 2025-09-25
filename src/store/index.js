@@ -10,6 +10,7 @@ export default new Vuex.Store({
       id: '',
       usuario: '',
       pin: '',
+      ramal: '',
       permissao: '', // ✅ novo nome, coerente com o banco
       tokenFCM: '',
       rotas: [],
@@ -26,7 +27,7 @@ export default new Vuex.Store({
    
     gravacaoAtual: null,
     tokenFCM: null,
-
+    
     token: null,
     logado: '',
     adm: false
